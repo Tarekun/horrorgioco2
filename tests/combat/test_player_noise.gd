@@ -29,6 +29,13 @@ func test_sprinting_makes_a_bigger_noise() -> void:
 	assert_eq(_noise.footstep_radius(5.5), 6.0)
 
 
+func test_a_sprint_in_danger_health_is_still_a_sprint() -> void:
+	var danger_sprint: float = _player.sprint_speed * HealthState.DANGER_SPEED_MULTIPLIER
+	var danger_run: float = _player.run_speed * HealthState.DANGER_SPEED_MULTIPLIER
+	assert_eq(_noise.footstep_radius(danger_sprint), _noise.sprint_radius)
+	assert_eq(_noise.footstep_radius(danger_run), _noise.run_radius)
+
+
 func test_footsteps_emit_noise_at_the_player() -> void:
 	_player.model.footstep_taken.emit(5.5)
 	assert_eq(_heard, [6.0] as Array[float])
