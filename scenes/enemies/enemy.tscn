@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/enemy.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/combat/hitbox.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_perception.gd" id="5"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.35
@@ -16,7 +17,7 @@ height = 1.8
 [sub_resource type="BoxShape3D" id="BoxShape3D_attack"]
 size = Vector3(0.9, 1.0, 1.2)
 
-[node name="Enemy" type="CharacterBody3D" node_paths=PackedStringArray("health_component", "hurtbox", "attack_hitbox", "navigation_agent")]
+[node name="Enemy" type="CharacterBody3D" node_paths=PackedStringArray("health_component", "hurtbox", "attack_hitbox", "navigation_agent", "perception")]
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("1")
@@ -24,6 +25,7 @@ health_component = NodePath("HealthComponent")
 hurtbox = NodePath("Hurtbox")
 attack_hitbox = NodePath("AttackHitbox")
 navigation_agent = NodePath("NavigationAgent3D")
+perception = NodePath("Perception")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
@@ -32,6 +34,11 @@ shape = SubResource("CapsuleShape3D_body")
 [node name="Mesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 mesh = SubResource("CapsuleMesh_body")
+
+[node name="Perception" type="Node3D" parent="." node_paths=PackedStringArray("enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("5")
+enemy = NodePath("..")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 path_desired_distance = 0.4
