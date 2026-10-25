@@ -1,6 +1,6 @@
 # Gameplay spec
 
-The reference for the core gameplay systems: movement, camera, combat, resources and saving. Story, setting and pillars live in the premise document (#8).
+The reference for the core gameplay systems: movement, camera, combat, resources and saving. Story, setting and pillars live in [premise.md](premise.md).
 
 Every number here is a **starting value**, not a final one. Implementations expose them as `@export` variables or resources so they can be tuned without code changes. If you change a rule (not just a number), update this document in the same PR.
 
