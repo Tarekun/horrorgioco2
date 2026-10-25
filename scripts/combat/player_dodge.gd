@@ -35,6 +35,9 @@ signal dodge_finished
 @export var model: PlayerModel
 @export var combat: PlayerCombat
 
+## While false, no dodge can start (set during a hit stagger and after death).
+var is_enabled: bool = true
+
 var is_dodging: bool = false
 
 var _elapsed: float = 0.0
@@ -110,7 +113,7 @@ func try_dodge() -> bool:
 ## Whether a dodge could start now, ignoring stamina: not already dodging, not
 ## cooling down, not dead, and not in the middle of a swing's windup or hit.
 func can_dodge() -> bool:
-	if is_dodging or _cooldown_left > 0.0 or health_component.is_dead:
+	if not is_enabled or is_dodging or _cooldown_left > 0.0 or health_component.is_dead:
 		return false
 	var is_swinging: bool = (
 		combat.state == PlayerCombat.State.SWING_LIGHT

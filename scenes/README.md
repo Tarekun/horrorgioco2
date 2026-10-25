@@ -19,3 +19,9 @@ Named in `project.godot` (`layer_names/3d_physics/*`); bit masks in `scripts/com
 | 7 | `enemy_hurtbox` | enemy `Hurtbox` nodes |
 
 Hitboxes sit on their own layer and only mask the opposing hurtbox layer; hurtboxes are passive (mask 0). Bodies mask `world` plus the opposing body layer.
+
+## UI
+
+`scenes/ui/` holds screen-space feedback scenes, instanced by the player scene: `damage_overlay.tscn` (the red edge flash when hit) and `game_over_screen.tscn` (shown on death, pauses the game, retry reloads the current scene).
+
+`scenes/levels/combat_test_arena.tscn` is a small flat arena with the player and two training dummies, for trying out combat by hand (run it with the editor's "Run Current Scene"). The dummies don't attack on their own.

@@ -45,6 +45,9 @@ extends Node3D
 @export var follow_smoothing_time: float = 0.1
 
 var _is_mouse_captured: bool = false
+var _shake_amplitude: float = 0.0
+var _shake_duration: float = 0.0
+var _shake_time_left: float = 0.0
 var _camera_pitch: float = 0.0
 var _camera_yaw: float = 0.0
 
@@ -83,6 +86,27 @@ func _process(delta: float) -> void:
 		_rotate_camera(-look.x * step, -look.y * step * _y_sign())
 
 	_follow_player(delta)
+	_update_shake(delta)
+
+
+## Shakes the camera for `duration` seconds, with offsets up to `amplitude`
+## metres that fade out. A stronger shake replaces a weaker one in progress.
+func shake(amplitude: float, duration: float) -> void:
+	if amplitude < _shake_amplitude * (_shake_time_left / maxf(_shake_duration, 0.001)):
+		return
+	_shake_amplitude = amplitude
+	_shake_duration = maxf(duration, 0.001)
+	_shake_time_left = _shake_duration
+
+
+## Offset applied to the camera pivot `time_left` of `duration` seconds into a
+## shake: random per axis, fading out linearly. `random_x` and `random_y` are
+## in [-1, 1] (injected so tests are deterministic).
+static func shake_offset(
+	amplitude: float, time_left: float, duration: float, random_x: float, random_y: float
+) -> Vector2:
+	var falloff: float = clampf(time_left / maxf(duration, 0.001), 0.0, 1.0)
+	return Vector2(random_x, random_y) * amplitude * falloff
 
 
 ## Returns the current camera yaw in radians.
@@ -112,6 +136,24 @@ func _set_mouse_captured(is_captured: bool) -> void:
 
 func _y_sign() -> float:
 	return -1.0 if invert_y else 1.0
+
+
+func _update_shake(delta: float) -> void:
+	if spring_arm == null:
+		return
+	var base := Vector3(shoulder_offset.x, shoulder_offset.y, 0.0)
+	if _shake_time_left <= 0.0:
+		spring_arm.position = base
+		return
+	_shake_time_left = maxf(_shake_time_left - delta, 0.0)
+	var offset: Vector2 = shake_offset(
+		_shake_amplitude,
+		_shake_time_left,
+		_shake_duration,
+		randf_range(-1.0, 1.0),
+		randf_range(-1.0, 1.0)
+	)
+	spring_arm.position = base + Vector3(offset.x, offset.y, 0.0)
 
 
 func _follow_player(delta: float) -> void:

@@ -201,6 +201,53 @@ const ACTIONS: Array = [
 		],
 	],
 	[
+		&"hit",
+		0.4,
+		[
+			[0.0, {}],
+			[
+				0.25,
+				{
+					"Spine": Vector3(0.45, 0, 0),
+					"Chest": Vector3(0.2, 0, 0.15),
+					"Head": Vector3(0.5, 0, 0),
+					"UpperArm_R": Vector3(0.6, 0, 0),
+					"UpperArm_L": Vector3(0.6, 0, 0)
+				}
+			],
+			[1.0, {}],
+		],
+	],
+	[
+		&"death",
+		1.2,
+		[
+			[0.0, {}],
+			[
+				0.4,
+				{
+					"Hips": Vector3(0.6, 0, 0),
+					"Spine": Vector3(0.4, 0, 0),
+					"UpperLeg_R": Vector3(0.8, 0, 0),
+					"UpperLeg_L": Vector3(0.5, 0, 0),
+					"LowerLeg_R": Vector3(-1.2, 0, 0),
+					"LowerLeg_L": Vector3(-0.8, 0, 0)
+				}
+			],
+			[
+				1.0,
+				{
+					"Hips": Vector3(1.45, 0, 0),
+					"Spine": Vector3(0.3, 0, 0),
+					"UpperArm_R": Vector3(-0.6, 0, 0.5),
+					"UpperArm_L": Vector3(-0.6, 0, -0.5),
+					"UpperLeg_R": Vector3(0.3, 0, 0),
+					"UpperLeg_L": Vector3(0.1, 0, 0)
+				}
+			],
+		],
+	],
+	[
 		&"backstep",
 		0.5,
 		[

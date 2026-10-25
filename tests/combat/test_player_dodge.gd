@@ -93,8 +93,8 @@ func test_first_quarter_second_is_invulnerable() -> void:
 	assert_eq(_player.health_component.current_health, 100.0)
 	await _seconds(0.2)
 	assert_false(_player.health_component.is_invulnerable)
-	assert_eq(_damage_player(30.0), 30.0, "after the window, still dodging")
-	assert_true(_dodge.is_dodging)
+	assert_true(_dodge.is_dodging, "still dodging, but vulnerable")
+	assert_eq(_damage_player(30.0), 30.0, "after the window")
 
 
 func test_dodge_costs_stamina() -> void:
