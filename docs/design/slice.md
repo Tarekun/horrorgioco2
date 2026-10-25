@@ -8,12 +8,12 @@ Names marked *working* are placeholders, as in premise.md. Ids in `code` are the
 
 - **Starts** at a new game with Luca waking in room 12, their old room. **Ends** when he unlocks the front door and steps out onto the seafront in the fog.
 - **Two floors** of the hotel: the first floor (the guest rooms) and the ground floor (dining room, kitchen, lobby). The floors above are implied, never reached.
-- **The loop:** find the service key to get downstairs, meet the night porter, find the key cabinet and its clue, go back up to the old room for the code (a crossover encounter waits there), come back down through a shortcut, open the front door.
-- **Five standard enemies**, all avoidable except one, which is very likely a fight. Plus **the visitor**: a scripted crossover encounter that can't be killed.
+- **The loop:** find the service key to get downstairs, meet the night porter, find the key cabinet and its clue, go back up to the old room for the code, come back down through a shortcut, open the front door.
+- **Five standard enemies**, all avoidable except one, which is very likely a fight.
 - **Melee only.** Firearms are milestone M3; see [Firearms in M3](#firearms-in-m3) for where they go later.
 - **Two save spots**, about 25 minutes of play on a first run.
 
-What's not in the slice: the prologue (the rave night), firearms, the fire axe (a midgame weapon), other locals, any other location.
+What's not in the slice: the prologue (the rave night), the crossovers with part 2, firearms, the fire axe (a midgame weapon), other locals, any other location.
 
 ## The hotel
 
@@ -52,7 +52,7 @@ North is the sea. Codes are explained in the [legend](#legend) below the plans.
 
 - **Room 12** is the corner room facing the sea, with a small balcony. Frosted dividers close it off from the neighbours' balconies.
 - **Stair hall**: open to both corridors. The main stairs down are filled with stacked sunbeds and folded umbrellas, impassable. The lift's doors are shut, with an *out of order* sign.
-- **Room 14** never opens. A TV is on behind the door, playing the slowed Italo-disco song from the rave. It goes silent after [the visitor](#the-visitor-crossover).
+- **Room 14** never opens. A TV is on behind the door, playing the slowed Italo-disco song from the rave.
 - **Room 13** is open and empty: a place to shut yourself in while E2 loses track (enemies can't open doors).
 - **Room 11** is simply locked. No key exists in the slice.
 
@@ -108,7 +108,7 @@ North is the sea. Codes are explained in the [legend](#legend) below the plans.
 | `door_room_12` | Room 12 ↔ corridor A | unlocked | |
 | `door_room_11` | Room 11 ↔ corridor A | locked | nothing ("It's locked.") |
 | `door_room_13` | Room 13 ↔ corridor B | unlocked | |
-| `door_room_14` | Room 14 ↔ corridor B | locked | nothing (only the visitor gets through) |
+| `door_room_14` | Room 14 ↔ corridor B | locked | nothing ("Do not disturb.") |
 | `door_room_15` | Room 15 ↔ corridor B | unlocked, ajar | |
 | `door_room_16` | Room 16 ↔ corridor B | locked | `key_room_16` (K2) |
 | `door_linen_room` | Linen room ↔ corridor B | unlocked | |
@@ -141,11 +141,10 @@ Times are rough for a first run.
 | 8 | **The night porter** | Lobby | The porter is behind the desk, small radio playing the song. First meeting: he greets Luca by name and gives him the room number nobody asked for (see [The night porter](#the-night-porter)). The clock wall, the key board (K2 hangs in pigeonhole 16; the hook for 12 is empty), the locked front door. Second save spot (S2). The TV room is optional (health drink, radio). | #98 | 3 min |
 | 9 | **The back office** | Back office | The key cabinet (P1), locked with a 4-digit combination. The porter's log (D3) on the desk: its last entry gives the clue. A first aid kit. The bolt on the door to the kitchen: the shortcut. | #82, #97 | 2 min |
 | 10 | **Back up** | Kitchen, service stairs, first floor | Through the shortcut, the kitchen (E3 again if it's still standing) and the service stairs. Optional: room 16 with K2 (D4). Any enemy avoided earlier is still where it was. | | 2 min |
-| 11 | **The visitor** | Corridor A, room 12 | The crossover. As Luca enters corridor A, something bursts out of room 12. It fights, then breaks away into room 14, whose door opens for it and locks again. The TV goes silent. See [The visitor](#the-visitor-crossover). | new task | 1 min |
-| 12 | **The clock** | Room 12 | On the nightstand, in the empty spot, there's now a flip clock, stopped at **04:47** *(working)*: the code. | #82 | 1 min |
-| 13 | **The cabinet** | Back office | Back down by the same route. The code opens the cabinet: room keys on hooks, and the front door key (K3). | #82 | 2 min |
-| 14 | **Checking out** | Lobby, front door | The porter, as Luca passes with K3: "Checking out already?" K3 opens the front door. | #98 | 1 min |
-| 15 | **The seafront** | Outside | Short cutscene: Luca steps out into the fog. Across the road, the beach and endless rows of folded umbrellas; the song from the beach club, very far away. Fade to black, end card, back to the main menu. | new task | 1 min |
+| 11 | **The clock** | Room 12 | On the nightstand, in the empty spot, there's now a flip clock, stopped at **04:47** *(working)*: the code. | #82 | 1 min |
+| 12 | **The cabinet** | Back office | Back down by the same route. The code opens the cabinet: room keys on hooks, and the front door key (K3). | #82 | 2 min |
+| 13 | **Checking out** | Lobby, front door | The porter, as Luca passes with K3: "Checking out already?" K3 opens the front door. | #98 | 1 min |
+| 14 | **The seafront** | Outside | Short cutscene: Luca steps out into the fog. Across the road, the beach and endless rows of folded umbrellas; the song from the beach club, very far away. Fade to black, end card, back to the main menu. | new task | 1 min |
 
 ## The night porter
 
@@ -167,7 +166,7 @@ Luca never answers.
 The slice's puzzle (#82, id `puzzle_key_cabinet`): a wall-mounted key cabinet in the back office, locked with a 4-wheel combination lock.
 
 - **The clue.** The porter's log (D3) ends with: *"Changed the cabinet code. Same as the clock in twelve, so I won't forget."*
-- **The answer.** The flip clock on room 12's nightstand, stopped at 04:47 *(working)*, so the code is **0447**. The clock isn't there when Luca wakes, only the spot where it stood; it appears with the visitor (beat 11). So the trip back up is required, even for players who searched room 12 thoroughly.
+- **The answer.** The flip clock on room 12's nightstand, stopped at 04:47 *(working)*, so the code is **0447**. The clock isn't there when Luca wakes, only the spot where it stood; it appears once D3 has been read. So the trip back up is required, even for players who searched room 12 thoroughly.
 - **The UI.** Four wheels, each 0–9. Up/down changes a digit, left/right moves between wheels. There's no penalty for wrong tries. The cabinet opens as soon as the wheels read the code.
 - **The reward.** `key_front_door` (K3).
 - **Saved state.** Solved or not.
@@ -187,19 +186,6 @@ All five are the standard enemy (100 health, hits for 15–25) with the existing
 | `enemy_e5` | Dining room | As E4 | As E4 | |
 
 Total health of the killable enemies: **500**.
-
-### The visitor (crossover)
-
-The premise's draft crossover "Hotel Miramare, their old floor", built for the slice. In part 2 this is Elena, searching their old room when something attacks her. From Luca's side it must read only as a monster.
-
-- **Trigger:** D3 has been read and Luca enters corridor A from the stair hall. `door_room_12` bursts open and the visitor comes out.
-- **Behaviour:** chases and attacks like a standard enemy, with standard hits.
-- **It can't die.** It breaks away when its health drops to 40 or below, or 15 s after it appears, whichever comes first. Hits stagger it as usual, but it can't be knocked down or stomped.
-- **It breaks away into room 14:** `door_room_14` opens for it, closes behind it and stays locked. The TV in 14 goes silent for good.
-- **Avoiding it:** backing off, dodging and staying out of reach until it leaves is a valid outcome. The player can't reach room 12 past it, though, so it has to be dealt with one way or the other.
-- **Saved flag:** `crossover_hotel_damage`, the total damage Luca dealt it (0 if he never hit it). Part 2 decides how to read it ("how much he hurt it").
-- **Look:** a monster, but one detail must make sense later from Elena's side. Decide it with the part 2 design; until then, placeholder.
-- **New work:** none of the existing issues covers an enemy that can't die and leaves on a script. It needs its own task.
 
 ## Items
 
@@ -228,7 +214,7 @@ The rule (gameplay.md): healing between save spots covers about **4–6 enemy hi
 |---|---|---|---|---|
 | Start → S1 | none | | | |
 | S1 → S2 | E2, E3, E4, E5, E1 (optional) | drinks in room 12\*, the linen room and the kitchen; drink in room 15 (optional) | 90 + 30 = 120 | 4.5–6 |
-| S2 → end | the visitor; E2, E3 again if avoided | first aid kit in the back office; drink in the TV room (optional) | 70 + 30 = 100 | 3.5–5 |
+| S2 → end | E2, E3 again if avoided | first aid kit in the back office; drink in the TV room (optional) | 70 + 30 = 100 | 3.5–5 |
 
 \* The drink in room 12 lies before S1 but there's nothing to spend it on until after S1, so it counts for S1 → S2.
 
@@ -245,14 +231,14 @@ When firearms land (M3), add them without moving anything else:
 - the **pistol**, in the back office desk drawer, with 7 rounds in the magazine;
 - one **8-round** pickup in room 16.
 
-15 rounds × 20 damage = 300, which is **60%** of the 500 enemy health, as gameplay.md asks. The pistol arrives just before the visitor, which makes shooting it, and the crossover flag, a real choice.
+15 rounds × 20 damage = 300, which is **60%** of the 500 enemy health, as gameplay.md asks.
 
 ## Save spots
 
 | Id | Where | Notes |
 |---|---|---|
 | `save_f1_stair_hall` (S1) | First floor, stair hall | A hub between both corridors with escape routes either way. It's within E2's flashlight sight range (18 m), which teaches that the light gets you noticed. |
-| `save_gf_lobby` (S2) | Ground floor, lobby, near the glass doors | Before the puzzle, the return trip and the visitor. Exits to the dining room, the back office and the TV room. |
+| `save_gf_lobby` (S2) | Ground floor, lobby, near the glass doors | Before the puzzle and the return trip. Exits to the dining room, the back office and the TV room. |
 
 Their look is placeholder (#91) until the art work. S1 → S2 is about 12 minutes on a first run and S2 → end about 10, inside the 15-minute guideline.
 
@@ -283,7 +269,7 @@ Things to look at (#79). Each has one or two lines, and none is explained.
 |---|---|---|
 | Room 12 | Phone | No signal. Battery low, and a little lower each time he looks. |
 | Room 12 | Wristband | The beach club's, from the closing party. |
-| Room 12 | Nightstand | Before the visitor: a clean spot in the dust where something stood. |
+| Room 12 | Nightstand | Before D3 is read: a clean spot in the dust where something stood. |
 | Room 12 | Beds | Two singles pushed together, one side slept in. |
 | Stair hall, lobby | Main stairs | Sunbeds and folded umbrellas, stacked to the ceiling. |
 | Stair hall | Lift | *Out of order.* The floor indicator shows a floor the hotel doesn't have. |
@@ -305,22 +291,20 @@ Every clue has at least two readings, and the slice confirms none (premise.md, t
 | *"Guest says keep it"* (D2) | Hungover generosity | Giving his things away |
 | *"Signor Luca came in"* (D3) | He walked back from the rave, as the drug reading needs | The porter's log is as unreliable as the clocks |
 | *"The signora went up already"* | The porter is remembering past summers | She really is upstairs |
-| The clock appears on the nightstand | He missed it the first time | Someone put it back (in part 2, Elena did) |
+| The clock appears on the nightstand | He missed it the first time | Someone put it back |
 | The clock stopped at 04:47 | A cheap clock that died at some point | A time that means something to him |
-| The visitor | A monster, or a trip | A person (part 2 shows who) |
 | The porter can't be reached across the desk | It's just a deep desk | He isn't there to be reached |
 
 ## What the slice needs beyond existing issues
 
-- **The visitor** (beat 11): an enemy variant that can't die, breaks away on a script and records `crossover_hotel_damage`. No task covers it yet.
-- **The ending cutscene** (beat 15): #96 covers only the opening. It can reuse #95's cutscene support.
+- **The ending cutscene** (beat 14): #96 covers only the opening. It can reuse #95's cutscene support.
 - **Double doors** (dining ↔ lobby): two `Door`s side by side, or one wider door scene.
 - **The bolt** (shortcut): a small `Interactable` that calls `unlock()` on its door.
-- **Scripted world changes:** the clock appearing in room 12, the TV in room 14 going silent, and the porter's line progression. All are saved state for #89.
+- **Scripted world changes:** the clock appearing in room 12 and the porter's line progression. All are saved state for #89.
 
 ### Saved world state
 
-On top of what gameplay.md lists (pickups, doors, documents read, dead enemies), the slice saves `puzzle_key_cabinet` (solved), `crossover_hotel_damage`, whether the visitor event has happened (it drives the clock and room 14's TV), and the porter's line index.
+On top of what gameplay.md lists (pickups, doors, documents read, dead enemies), the slice saves `puzzle_key_cabinet` (solved), whether the clock has appeared in room 12, and the porter's line index.
 
 ## Playtest notes
 
