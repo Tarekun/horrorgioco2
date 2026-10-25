@@ -7,7 +7,8 @@ A 3D survival horror game built with Godot 4 and GDScript.
 The project is pinned to **Godot 4.7.2-stable** (standard build, not .NET).
 The exact version lives in [`.godot-version`](.godot-version), which tooling reads;
 `project.godot` declares the `4.7` feature set. Download it from
-<https://github.com/godotengine/godot/releases/tag/4.7.2-stable>.
+<https://github.com/godotengine/godot/releases/tag/4.7.2-stable>, or on Linux (x86_64 or arm64) run
+`tools/install_godot.sh`, which downloads and verifies it and prints the binary's path.
 
 Open the project by importing `project.godot` in the editor, or run it from the command line:
 
@@ -35,6 +36,8 @@ Run `tools/check.sh` to import the project, load every script and scene, run the
 lint/format-check all GDScript and run the test suite. It needs Godot (set `GODOT` if it isn't on `PATH` as `godot`)
 and gdtoolkit (`pip install -r requirements-dev.txt`). See `AGENTS.md` for details and for the
 coding conventions (Godot 4 APIs only, static typing, naming, layout).
+
+CI (`.gitea/workflows/ci.yml`) runs the same script on every pull request and on pushes to `main`.
 
 ## Input map
 
