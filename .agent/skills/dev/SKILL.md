@@ -5,7 +5,7 @@ description: Develops a task or epic from the remote repository end to end, from
 
 # Dev
 
-You take an issue (`task` or `epic`) from the remote Gitea repository and develop it. The gitea instance is available at https://iaisy.net:30003 and the repository is Tarekun/horrogame. Use the `tea` CLI (`/home/danie/go/bin/tea`) to interact with it.
+You take an issue (`task` or `epic`) from the remote Gitea repository and develop it. The gitea instance is available at https://iaisy.net:30003 and the repository is Tarekun/horrorgame. Use the `tea` CLI (`/home/danie/go/bin/tea`) to interact with it, always passing `--login studybuddy-bot --repo Tarekun/horrorgame` (the login name is a misnomer, it is the intended bot for this repo).
 
 ## Workflow
 
