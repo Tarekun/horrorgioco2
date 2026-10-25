@@ -44,6 +44,9 @@ const STEP_PROBE_DISTANCE: float = 0.4
 ## Where enemy hitboxes hit the player (child node).
 @export var hurtbox: Hurtbox
 
+## The flashlight, which makes the player easier for enemies to see.
+@export var flashlight: Flashlight
+
 ## The visible character, animated from the player's ground speed.
 @export var model: PlayerModel
 
@@ -108,6 +111,11 @@ static func camera_relative_direction(input: Vector2, camera_yaw: float) -> Vect
 	var forward := Vector3(-sin(camera_yaw), 0.0, -cos(camera_yaw))
 	var right := Vector3(cos(camera_yaw), 0.0, -sin(camera_yaw))
 	return (forward * -input.y + right * input.x).normalized()
+
+
+## Whether the player's flashlight is on.
+func is_lit() -> bool:
+	return flashlight != null and flashlight.is_on()
 
 
 ## Returns the current movement speed.

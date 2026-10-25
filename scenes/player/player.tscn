@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/game_over_screen.tscn" id="13"]
 [ext_resource type="Script" path="res://scripts/combat/player_hit_reaction.gd" id="14"]
 [ext_resource type="PackedScene" path="res://scenes/player/footsteps.tscn" id="15"]
+[ext_resource type="Script" path="res://scripts/combat/player_noise.gd" id="16"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -28,7 +29,7 @@ size = Vector3(1.0, 1.4, 1.6)
 [sub_resource type="SphereShape3D" id="SphereShape3D_1"]
 radius = 0.2
 
-[node name="Player" type="CharacterBody3D" groups=["player"] node_paths=PackedStringArray("camera_controller", "stamina_component", "model", "health_component", "hurtbox")]
+[node name="Player" type="CharacterBody3D" groups=["player"] node_paths=PackedStringArray("camera_controller", "stamina_component", "model", "health_component", "hurtbox", "flashlight")]
 collision_layer = 2
 collision_mask = 5
 script = ExtResource("1")
@@ -37,6 +38,7 @@ stamina_component = NodePath("StaminaComponent")
 model = NodePath("Model")
 health_component = NodePath("HealthComponent")
 hurtbox = NodePath("Hurtbox")
+flashlight = NodePath("CameraController/SpringArm3D/Camera3D/Flashlight")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
@@ -86,6 +88,12 @@ script = ExtResource("10")
 player = NodePath("..")
 stamina_component = NodePath("../StaminaComponent")
 health_component = NodePath("../HealthComponent")
+model = NodePath("../Model")
+combat = NodePath("../PlayerCombat")
+
+[node name="PlayerNoise" type="Node" parent="." node_paths=PackedStringArray("player", "model", "combat")]
+script = ExtResource("16")
+player = NodePath("..")
 model = NodePath("../Model")
 combat = NodePath("../PlayerCombat")
 

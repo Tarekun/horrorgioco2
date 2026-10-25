@@ -43,6 +43,8 @@ func after_each() -> void:
 func _spawn_enemy(position: Vector3) -> Enemy:
 	var enemy := ENEMY_SCENE.instantiate() as Enemy
 	enemy.position = position
+	# Face the origin, where the player stands.
+	enemy.rotation.y = atan2(position.x, position.z)
 	add_child_autofree(enemy)
 	return enemy
 

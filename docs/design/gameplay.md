@@ -166,6 +166,14 @@ Noise events feed enemy hearing (#27). Gunshots are the loudest thing the player
 | Sprint footsteps | 6 m |
 | Walk / run footsteps | 0 m / 3 m |
 
+### Enemy perception
+
+A standard enemy notices the player by sight or by sound (#27). Values are `@export` starting values on `EnemyPerception`.
+
+- **Sight**: a 110° cone (55° each side) out to 10 m, with an unobstructed line from the enemy's eyes to the player. With the flashlight on, the range is ×1.8 (18 m). Within 1.5 m the player is noticed from any direction.
+- **Hearing**: a noise alerts every enemy within its radius to where it came from.
+- **Alert**: the enemy chases the player while it sees them, or goes to the last place it saw or heard them. After 6 s without a sighting or a noise it loses track and goes back to wandering. Being hit alerts it to the attacker.
+
 ## Health and healing
 
 - The player has 100 max health and **no natural regeneration**. A standard enemy hit deals 15–25.

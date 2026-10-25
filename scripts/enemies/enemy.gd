@@ -43,10 +43,6 @@ const PLAYER_GROUP: StringName = &"player"
 ## Seconds after a swing ends before the next may begin.
 @export var attack_cooldown: float = 1.0
 
-@export_group("Awareness")
-## Without a perception node, the enemy notices a target this close (metres).
-@export var notice_radius: float = 8.0
-
 @export_group("Timing")
 @export var idle_duration: float = 3.0
 @export var stagger_duration: float = 0.5
@@ -56,6 +52,7 @@ const PLAYER_GROUP: StringName = &"player"
 @export var hurtbox: Hurtbox
 @export var attack_hitbox: Hitbox
 @export var navigation_agent: NavigationAgent3D
+@export var perception: EnemyPerception
 
 ## The player being hunted. Found in the player group when not set.
 var target: Node3D
@@ -88,6 +85,7 @@ func _physics_process(delta: float) -> void:
 	if _cooldown_left > 0.0:
 		_cooldown_left -= delta
 
+	perception.update(delta, _get_target())
 	var senses := _gather_senses()
 	brain.tick(delta, senses)
 	_run_state(delta)
@@ -117,9 +115,10 @@ func pick_wander_point() -> Vector3:
 func _gather_senses() -> EnemySenses:
 	var senses := EnemySenses.new()
 	var player: Node3D = _get_target()
-	senses.has_target = player != null and _notices(player)
+	senses.has_target = perception.is_alert()
 	senses.can_attack = (
 		senses.has_target
+		and perception.is_target_visible
 		and not is_attacking
 		and _cooldown_left <= 0.0
 		and _distance_to(player) <= attack_range
@@ -137,11 +136,6 @@ func _get_target() -> Node3D:
 	return target
 
 
-## Whether the enemy is aware of `player`.
-func _notices(player: Node3D) -> bool:
-	return _distance_to(player) <= notice_radius
-
-
 func _distance_to(node: Node3D) -> float:
 	var offset: Vector3 = node.global_position - global_position
 	offset.y = 0.0
@@ -155,9 +149,7 @@ func _run_state(delta: float) -> void:
 		EnemyBrain.State.WANDER:
 			_move_along_path(wander_speed, delta)
 		EnemyBrain.State.CHASE:
-			var player: Node3D = _get_target()
-			if player:
-				navigation_agent.target_position = player.global_position
+			navigation_agent.target_position = perception.last_known_position
 			_move_along_path(chase_speed, delta)
 		EnemyBrain.State.ATTACK:
 			_stop()
@@ -243,11 +235,14 @@ func _on_state_changed(old_state: EnemyBrain.State, new_state: EnemyBrain.State)
 func _on_hit_received(hit: HitData, damage_dealt: float) -> void:
 	if damage_dealt <= 0.0 or not hit.causes_stagger or health_component.is_dead:
 		return
+	if hit.attacker:
+		perception.alert_to(hit.attacker.global_position)
 	brain.stagger()
 
 
 func _on_died() -> void:
 	brain.kill()
+	perception.lose_track()
 	remove_from_group(ENEMY_GROUP)
 	hurtbox.set_deferred(&"monitorable", false)
 	rotation_degrees.x = -90.0
