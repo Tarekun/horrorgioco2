@@ -151,3 +151,53 @@ func test_player_drives_the_model_from_its_speed() -> void:
 	for i: int in 90:
 		await get_tree().physics_frame
 	assert_gt(player.model.get_blend_speed(), 3.0, "running when moving")
+
+
+# --- Actions ---
+
+
+func test_action_clips_exist_and_target_existing_bones() -> void:
+	var player := _model.get_node("AnimationPlayer") as AnimationPlayer
+	for animation_name: StringName in [
+		&"attack_light_1",
+		&"attack_light_2",
+		&"attack_light_3",
+		&"attack_heavy_charge",
+		&"attack_heavy_swing",
+	]:
+		assert_true(player.has_animation(animation_name), str(animation_name))
+		var animation: Animation = player.get_animation(animation_name)
+		assert_eq(animation.loop_mode, Animation.LOOP_NONE)
+		for track: int in animation.get_track_count():
+			var bone: String = str(animation.track_get_path(track).get_concatenated_subnames())
+			assert_ne(_skeleton.find_bone(bone), -1, "%s: %s" % [animation_name, bone])
+
+
+func test_play_action_leaves_and_returns_to_locomotion() -> void:
+	_tree.advance(0.01)
+	assert_eq(_model.get_current_state(), PlayerModel.LOCOMOTION_STATE)
+	_model.play_action(&"attack_light_1")
+	_tree.advance(0.01)
+	assert_eq(_model.get_current_state(), &"attack_light_1")
+	_model.return_to_locomotion()
+	_tree.advance(0.01)
+	assert_eq(_model.get_current_state(), PlayerModel.LOCOMOTION_STATE)
+
+
+func test_action_moves_the_arm_and_locomotion_still_blends_after() -> void:
+	var arm: int = _skeleton.find_bone("UpperArm_R")
+	_model.play_action(&"attack_light_1")
+	_tree.advance(0.01)
+	_tree.advance(0.45 * 0.25)
+	assert_gt(absf(_skeleton.get_bone_pose_rotation(arm).get_euler().x), 1.0, "arm raised")
+	_model.return_to_locomotion()
+	_settle_at(3.5)
+	assert_almost_eq(_model.get_blend_speed(), 3.5, 0.05)
+	assert_gt(_leg_swing(), 0.0)
+
+
+func test_freezing_stops_the_animation() -> void:
+	_model.set_frozen(true)
+	assert_eq(_tree.callback_mode_process, AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL)
+	_model.set_frozen(false)
+	assert_eq(_tree.callback_mode_process, AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_IDLE)
