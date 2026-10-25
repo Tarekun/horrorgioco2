@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -7,6 +7,9 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
 height = 1.8
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_1"]
+radius = 0.2
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera_controller", "stamina_component")]
 script = ExtResource("1")
@@ -27,6 +30,7 @@ player = NodePath("..")
 spring_arm = NodePath("SpringArm3D")
 
 [node name="SpringArm3D" type="SpringArm3D" parent="CameraController"]
+shape = SubResource("SphereShape3D_1")
 
 [node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
 fov = 70.0

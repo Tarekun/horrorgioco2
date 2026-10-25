@@ -28,6 +28,9 @@ extends Node3D
 ## Joystick look sensitivity (degrees per second at full tilt).
 @export var joystick_sensitivity: float = 120.0
 
+## Inverts vertical look for both mouse and stick.
+@export var invert_y: bool = false
+
 ## Camera pitch limits in degrees. Positive looks up.
 @export var pitch_min: float = -60.0
 @export var pitch_max: float = 50.0
@@ -54,7 +57,7 @@ func _ready() -> void:
 		spring_arm.position = Vector3(shoulder_offset.x, shoulder_offset.y, 0.0)
 
 	if player:
-		position = player.position
+		global_position = player.global_position
 		# The arm would otherwise collide with the player's own body.
 		if spring_arm:
 			spring_arm.add_excluded_object(player.get_rid())
@@ -68,14 +71,16 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton and event.pressed:
 		_set_mouse_captured(true)
 	elif event is InputEventMouseMotion and _is_mouse_captured:
-		_rotate_camera(-event.relative.x * mouse_sensitivity, -event.relative.y * mouse_sensitivity)
+		_rotate_camera(
+			-event.relative.x * mouse_sensitivity, -event.relative.y * mouse_sensitivity * _y_sign()
+		)
 
 
 func _process(delta: float) -> void:
 	var look: Vector2 = Input.get_vector(&"look_left", &"look_right", &"look_up", &"look_down")
 	if look != Vector2.ZERO:
 		var step: float = joystick_sensitivity * delta
-		_rotate_camera(-look.x * step, -look.y * step)
+		_rotate_camera(-look.x * step, -look.y * step * _y_sign())
 
 	_follow_player(delta)
 
@@ -105,9 +110,13 @@ func _set_mouse_captured(is_captured: bool) -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if is_captured else Input.MOUSE_MODE_VISIBLE)
 
 
+func _y_sign() -> float:
+	return -1.0 if invert_y else 1.0
+
+
 func _follow_player(delta: float) -> void:
 	if player == null:
 		return
 
 	var t: float = 1.0 - exp(-delta / maxf(follow_smoothing_time, 0.001))
-	position = position.lerp(player.position, t)
+	global_position = global_position.lerp(player.global_position, t)
