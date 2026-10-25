@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://scripts/combat/player_combat.gd" id="7"]
 [ext_resource type="Script" path="res://scripts/combat/hitbox.gd" id="8"]
 [ext_resource type="Resource" path="res://assets/data/weapons/wooden_plank.tres" id="9"]
+[ext_resource type="Script" path="res://scripts/combat/player_dodge.gd" id="10"]
 [ext_resource type="PackedScene" path="res://scenes/player/flashlight.tscn" id="11"]
 [ext_resource type="PackedScene" path="res://scenes/player/footsteps.tscn" id="15"]
 
@@ -76,6 +77,14 @@ player = NodePath("..")
 stamina_component = NodePath("../StaminaComponent")
 model = NodePath("../Model")
 hitbox = NodePath("../MeleeHitbox")
+
+[node name="PlayerDodge" type="Node" parent="." node_paths=PackedStringArray("player", "stamina_component", "health_component", "model", "combat")]
+script = ExtResource("10")
+player = NodePath("..")
+stamina_component = NodePath("../StaminaComponent")
+health_component = NodePath("../HealthComponent")
+model = NodePath("../Model")
+combat = NodePath("../PlayerCombat")
 
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("player", "spring_arm")]
 top_level = true

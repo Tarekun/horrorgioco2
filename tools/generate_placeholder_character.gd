@@ -180,6 +180,45 @@ const ACTIONS: Array = [
 			[1.0, {}],
 		],
 	],
+	[
+		&"dodge",
+		0.5,
+		[
+			[0.0, {}],
+			[
+				0.4,
+				{
+					"Spine": Vector3(-0.9, 0, 0),
+					"UpperLeg_R": Vector3(0.9, 0, 0),
+					"UpperLeg_L": Vector3(0.9, 0, 0),
+					"LowerLeg_R": Vector3(-1.3, 0, 0),
+					"LowerLeg_L": Vector3(-1.3, 0, 0),
+					"UpperArm_R": Vector3(0.8, 0, 0),
+					"UpperArm_L": Vector3(0.8, 0, 0)
+				}
+			],
+			[1.0, {}],
+		],
+	],
+	[
+		&"backstep",
+		0.5,
+		[
+			[0.0, {}],
+			[
+				0.4,
+				{
+					"Spine": Vector3(0.35, 0, 0),
+					"UpperLeg_R": Vector3(-0.5, 0, 0),
+					"UpperLeg_L": Vector3(0.6, 0, 0),
+					"LowerLeg_L": Vector3(-0.8, 0, 0),
+					"UpperArm_R": Vector3(1.2, 0, 0),
+					"UpperArm_L": Vector3(1.2, 0, 0)
+				}
+			],
+			[1.0, {}],
+		],
+	],
 ]
 ## Fractions of a gait cycle at which a foot lands.
 const FOOTSTEP_PHASES: Array[float] = [0.25, 0.75]

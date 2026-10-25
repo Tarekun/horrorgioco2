@@ -13,7 +13,7 @@ The player's stand-in humanoid is **not an imported asset**: `tools/generate_pla
 - **License:** the same as the project; nothing to attribute.
 - **Replacing it:** swap in the final rigged model keeping the bone names, or retarget the `idle`, `walk` and `run` animations. The `AnimationTree` blend space (idle 0, walk 1.5, run 3.5, sprint 5.5 m/s) is driven by `PlayerModel.set_speed()`.
 
-The generator also builds the action clips (`attack_light_1` to `3`, `attack_heavy_charge`, `attack_heavy_swing`) as states of the `AnimationTree` state machine beside the `locomotion` blend space, and a wooden plank held in the right hand. `PlayerModel.play_action()` jumps to a clip and `return_to_locomotion()` goes back. Clip lengths match the default `MeleeWeapon` timings (`assets/data/weapons/wooden_plank.tres`); keep them in step when tuning.
+The generator also builds the action clips (`attack_light_1` to `3`, `attack_heavy_charge`, `attack_heavy_swing`, `dodge`, `backstep`) as states of the `AnimationTree` state machine beside the `locomotion` blend space, and a wooden plank held in the right hand. `PlayerModel.play_action()` jumps to a clip and `return_to_locomotion()` goes back. Clip lengths match the default `MeleeWeapon` timings (`assets/data/weapons/wooden_plank.tres`); keep them in step when tuning.
 
 Record the source and license of every imported asset here, as the visual style doc requires.
 

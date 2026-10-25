@@ -41,6 +41,9 @@ const ENEMY_GROUP: StringName = &"enemies"
 ## The hitbox swung in front of the player.
 @export var hitbox: Hitbox
 
+## While false, new attacks don't start (set by the dodge).
+var is_enabled: bool = true
+
 var state: State = State.IDLE
 
 var _held: float = 0.0
@@ -69,7 +72,7 @@ func _physics_process(delta: float) -> void:
 func attack_pressed() -> void:
 	match state:
 		State.IDLE:
-			if stamina_component.can_afford(weapon.light_stamina):
+			if is_enabled and stamina_component.can_afford(weapon.light_stamina):
 				_held = 0.0
 				_set_state(State.PENDING)
 		State.SWING_LIGHT:
