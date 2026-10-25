@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/player/stamina_component.gd" id="3"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player_model.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/player/flashlight.tscn" id="5"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -39,3 +40,5 @@ shape = SubResource("SphereShape3D_1")
 
 [node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
 fov = 70.0
+
+[node name="Flashlight" parent="CameraController/SpringArm3D/Camera3D" instance=ExtResource("5")]
