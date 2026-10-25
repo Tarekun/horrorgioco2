@@ -38,6 +38,12 @@ const STEP_PROBE_DISTANCE: float = 0.4
 ## Reference to the stamina component (child node).
 @export var stamina_component: StaminaComponent
 
+## The player's health (child node).
+@export var health_component: HealthComponent
+
+## Where enemy hitboxes hit the player (child node).
+@export var hurtbox: Hurtbox
+
 ## The visible character, animated from the player's ground speed.
 @export var model: PlayerModel
 
