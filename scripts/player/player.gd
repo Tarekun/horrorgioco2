@@ -38,6 +38,9 @@ const STEP_PROBE_DISTANCE: float = 0.4
 ## Reference to the stamina component (child node).
 @export var stamina_component: StaminaComponent
 
+## The visible character, animated from the player's ground speed.
+@export var model: PlayerModel
+
 var _current_speed: float = 0.0
 var _input_vector: Vector2 = Vector2.ZERO
 var _is_sprinting: bool = false
@@ -73,6 +76,7 @@ func _physics_process(delta: float) -> void:
 	_try_step_up(delta)
 	move_and_slide()
 	_update_facing(delta)
+	_update_model()
 
 
 ## Converts a movement input (x: right, y: back) into a world-space direction
@@ -162,6 +166,15 @@ func _update_facing(delta: float) -> void:
 	var delta_angle: float = angle_difference(rotation.y, target_angle)
 	var max_turn: float = deg_to_rad(turn_speed) * delta
 	rotation.y += clampf(delta_angle, -max_turn, max_turn)
+
+
+## Feeds the model the speed actually achieved, so pushing against a wall
+## plays idle rather than running on the spot.
+func _update_model() -> void:
+	if model == null:
+		return
+	var real_velocity: Vector3 = get_real_velocity()
+	model.set_speed(Vector2(real_velocity.x, real_velocity.z).length())
 
 
 func _on_exhausted() -> void:
