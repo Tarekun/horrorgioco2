@@ -1,0 +1,12 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/audio/footsteps.gd" id="1"]
+[ext_resource type="AudioStream" path="res://assets/audio/footstep_1.wav" id="2"]
+[ext_resource type="AudioStream" path="res://assets/audio/footstep_2.wav" id="3"]
+[ext_resource type="AudioStream" path="res://assets/audio/footstep_3.wav" id="4"]
+
+[node name="Footsteps" type="AudioStreamPlayer3D"]
+bus = &"SFX"
+max_distance = 30.0
+script = ExtResource("1")
+variants = Array[AudioStream]([ExtResource("2"), ExtResource("3"), ExtResource("4")])

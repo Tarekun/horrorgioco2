@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -12,6 +12,7 @@
 [ext_resource type="Resource" path="res://assets/data/weapons/wooden_plank.tres" id="9"]
 [ext_resource type="Script" path="res://scripts/combat/player_dodge.gd" id="10"]
 [ext_resource type="PackedScene" path="res://scenes/player/flashlight.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/player/footsteps.tscn" id="15"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -39,6 +40,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_1")
 
 [node name="Model" parent="." instance=ExtResource("4")]
+
+[node name="Footsteps" parent="." node_paths=PackedStringArray("model") instance=ExtResource("15")]
+model = NodePath("../Model")
 
 [node name="StaminaComponent" type="Node" parent="."]
 script = ExtResource("3")
