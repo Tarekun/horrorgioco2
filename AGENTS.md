@@ -6,28 +6,7 @@ Project skills live in `.agent/skills/`: `pm` for project management on the Gite
 
 ## Godot version
 
-The project is pinned to **Godot 4.7.2-stable** (standard build, not .NET). The exact version is in `.godot-version`, which tooling and CI read. If you change it, also update `config/features` in `project.godot`.
-
-Use **only Godot 4 APIs and GDScript 2.0 syntax**. Much of the Godot material online, and many model priors, are written for Godot 3, so double-check anything that looks unfamiliar against the [4.7 docs](https://docs.godotengine.org/en/4.7/). Common Godot 3 leftovers to avoid:
-
-| Godot 3 (don't use) | Godot 4 |
-|---|---|
-| `export var x`, `onready var y`, `tool` | `@export var x`, `@onready var y`, `@tool` |
-| `yield(obj, "signal")` | `await obj.signal` |
-| `connect("hit", self, "_on_hit")`, `emit_signal("hit")` | `hit.connect(_on_hit)`, `hit.emit()` |
-| `var x setget set_x, get_x` | `var x: int:` with `set(value):` / `get:` blocks |
-| `Spatial`, `KinematicBody`, `RigidBody`, `Area` | `Node3D`, `CharacterBody3D`, `RigidBody3D`, `Area3D` |
-| `move_and_slide(velocity, Vector3.UP)` | set `velocity` and `up_direction`, then call `move_and_slide()` |
-| `translation`, `Transform`, `Quat` | `position`, `Transform3D`, `Quaternion` |
-| `scene.instance()` | `scene.instantiate()` |
-| `get_tree().change_scene("res://...")` | `get_tree().change_scene_to_file("res://...")` |
-| `File`, `Directory` | `FileAccess`, `DirAccess` |
-| `OS.get_ticks_msec()` | `Time.get_ticks_msec()` |
-| `rand_range()`, `deg2rad()`, `stepify()` | `randf_range()`, `deg_to_rad()`, `snapped()` |
-| `PoolStringArray`, `PoolVector3Array` | `PackedStringArray`, `PackedVector3Array` |
-| `array.empty()`, `Engine.editor_hint` | `array.is_empty()`, `Engine.is_editor_hint()` |
-
-Godot 4 rejects most Godot 3 syntax at parse time, so `tools/check.sh` catches it. Renamed APIs only fail when the code is actually parsed or run, so test the code paths you touch.
+Pinned to **Godot 4.7.2-stable** (standard build) in `.godot-version`; keep `config/features` in `project.godot` in sync. Use **only Godot 4 APIs**. Most examples online are Godot 3, so check anything unfamiliar against the [4.7 docs](https://docs.godotengine.org/en/4.7/). Usual traps: annotations (`@export`, `@onready`, `@tool`), `await` instead of `yield`, `signal.connect(callable)`, `*3D` node types (`Node3D`, `CharacterBody3D`), `instantiate()`, `FileAccess`/`DirAccess`. `tools/check.sh` catches Godot 3 syntax, but renamed APIs only fail when that code runs.
 
 ## Conventions
 
