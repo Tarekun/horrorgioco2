@@ -1,6 +1,6 @@
 # Gameplay spec
 
-The reference for the core gameplay systems: movement, camera, combat, resources and saving. Story, setting and pillars live in the premise document (#8).
+The reference for the core gameplay systems: movement, camera, combat, resources and saving. Story, setting and pillars live in [premise.md](premise.md).
 
 Every number here is a **starting value**, not a final one. Implementations expose them as `@export` variables or resources so they can be tuned without code changes. If you change a rule (not just a number), update this document in the same PR.
 
@@ -217,7 +217,7 @@ Noise events feed enemy hearing (#27). Gunshots are the loudest thing the player
   - **Load game…**: pick any slot.
   - **Quit to title.**
 
-  If the player hasn't saved yet, "Load last save" restarts the game from its starting state. There are no hidden checkpoints, so death costs everything since the last save. Note that #24's "retry reloads the level" is replaced by this.
+  If the player hasn't saved yet, "Load last save" restarts the game from its starting state. Scripted story deaths, such as the end of part 1's prologue (see [premise.md](premise.md)), are cutscenes, not game overs. There are no hidden checkpoints, so death costs everything since the last save. Note that #24's "retry reloads the level" is replaced by this.
 - **Spacing guideline**: no more than about 15 minutes of normal play between save spots. Always place one before a major encounter, and never place one where the player can be trapped by enemies.
 
 ## Input actions
