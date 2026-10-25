@@ -3,10 +3,11 @@
 ## Exposed as @export variables so designers can tune values without code changes.
 ## The stamina system follows the gameplay spec:
 ## - Regeneration starts after a delay following the last stamina use.
-## - Sprinting drains stamina; when exhausted the player can't sprint until
-##   stamina recovers past the exhaustion threshold.
-##
-## Uses `Time.get_ticks_msec()` for time tracking so it works in test mode.
+## - Sprinting drains stamina continuously. At 0 the player is exhausted and
+##   can't sprint or start any action that costs stamina until stamina
+##   recovers past the exhaustion threshold.
+## - One-off actions (attacks, dodges) pay their full cost up front with
+##   try_spend(); an action that can't be afforded doesn't start.
 
 class_name StaminaComponent
 extends Node
@@ -26,60 +27,68 @@ signal exhausted
 ## Stamina drained per second while sprinting.
 @export var sprint_drain: float = 15.0
 
-## Stamina level below which the player is exhausted and cannot sprint.
+## Stamina level the player must get back above after hitting 0 to sprint again.
 @export var exhaustion_threshold: float = 30.0
 
-var current_stamina: float
+var current_stamina: float = 0.0
 var is_draining: bool = false
+var is_exhausted: bool = false
 
-## Mock time for testing. Set to >= 0 to enable mocked time, then increment
-## as you call `_process()`. When >= 0, `_get_time()` returns this value.
-var mock_time: float = -1.0
-
-var can_sprint: bool:
-	get:
-		## The spec blocks sprinting below 30 only *after hitting 0*.
-		if _is_recovering:
-			return current_stamina > exhaustion_threshold
-		return true
-
-var _last_use_time: float = 0.0
-var _is_recovering: bool = false
+var _idle_time: float = 0.0
 
 
-func _init() -> void:
-	current_stamina = max_stamina
+func _ready() -> void:
+	refill()
 
 
 func _process(delta: float) -> void:
-	if is_draining:
-		_last_use_time = _get_time()
-		current_stamina = max(0.0, current_stamina - sprint_drain * delta)
-		if current_stamina <= 0.0:
-			exhausted.emit()
-			_is_recovering = true
-	else:
-		var idle_time: float = _get_time() - _last_use_time
-		if idle_time >= regeneration_delay and current_stamina < max_stamina:
-			current_stamina = min(max_stamina, current_stamina + regeneration_rate * delta)
-			if current_stamina > exhaustion_threshold and _is_recovering:
-				_is_recovering = false
-		if current_stamina <= 0.0:
-			_is_recovering = true
+	var previous: float = current_stamina
 
-	## Emit the signal whenever stamina changes meaningfully.
-	if is_draining or current_stamina < max_stamina:
+	if is_draining:
+		_idle_time = 0.0
+		current_stamina = maxf(0.0, current_stamina - sprint_drain * delta)
+		if current_stamina <= 0.0:
+			_become_exhausted()
+	else:
+		_idle_time += delta
+		if _idle_time >= regeneration_delay:
+			current_stamina = minf(max_stamina, current_stamina + regeneration_rate * delta)
+			if is_exhausted and current_stamina > exhaustion_threshold:
+				is_exhausted = false
+
+	if not is_equal_approx(previous, current_stamina):
 		stamina_changed.emit(current_stamina)
 
 
 ## Returns true if the player can start sprinting.
-func is_sprinting_allowed() -> bool:
-	return can_sprint
+func can_sprint() -> bool:
+	return not is_exhausted and current_stamina > 0.0
+
+
+## Returns true if an action costing `cost` could start now: the player isn't
+## exhausted and the full cost is available.
+func can_afford(cost: float) -> bool:
+	return not is_exhausted and current_stamina >= cost
+
+
+## Pays `cost` for a one-off action. Returns false, spending nothing, if the
+## action can't be afforded. Restarts the regeneration delay.
+func try_spend(cost: float) -> bool:
+	if not can_afford(cost):
+		return false
+
+	current_stamina -= cost
+	_idle_time = 0.0
+	if current_stamina <= 0.0:
+		current_stamina = 0.0
+		_become_exhausted()
+	stamina_changed.emit(current_stamina)
+	return true
 
 
 ## Starts sprinting. Returns true if stamina was sufficient.
 func start_sprinting() -> bool:
-	if not is_sprinting_allowed():
+	if not can_sprint():
 		return false
 	is_draining = true
 	return true
@@ -90,8 +99,16 @@ func stop_sprinting() -> void:
 	is_draining = false
 
 
-## Returns current time in seconds. Uses `mock_time` when >= 0.
-func _get_time() -> float:
-	if mock_time >= 0:
-		return mock_time
-	return Time.get_ticks_msec() / 1000.0
+## Fills the pool to `max_stamina` and clears exhaustion.
+func refill() -> void:
+	current_stamina = max_stamina
+	is_exhausted = false
+	is_draining = false
+	_idle_time = 0.0
+
+
+func _become_exhausted() -> void:
+	is_draining = false
+	if not is_exhausted:
+		is_exhausted = true
+		exhausted.emit()
