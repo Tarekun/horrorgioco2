@@ -1,10 +1,12 @@
-[gd_scene format=3]
+[gd_scene load_steps=3 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/levels/graybox_level.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/effects/post_process.tscn" id="2"]
 
-[node name="Main" type="Node3D"]
+[node name="Main" type="Node" node_paths=PackedStringArray("screen_host")]
+script = ExtResource("1")
+screen_host = NodePath("ScreenHost")
 
-[node name="GrayboxLevel" parent="." instance=ExtResource("1")]
+[node name="ScreenHost" type="Node" parent="."]
 
 [node name="PostProcess" parent="." instance=ExtResource("2")]

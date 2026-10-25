@@ -1,6 +1,7 @@
 ## The game over screen: shown when the player dies, with a retry button.
 ##
-## Showing it pauses the game; retry unpauses and reloads the current scene.
+## Showing it pauses the game and tells GameFlow; retry unpauses and has
+## GameFlow restart the level.
 ## The gameplay spec replaces "retry reloads the level" with loading the last
 ## save once saving exists; this is the interim behaviour.
 
@@ -10,7 +11,7 @@ extends CanvasLayer
 ## Emitted when the player chooses to retry, before the scene reloads.
 signal retry_requested
 
-## Reload the current scene on retry. Tests turn it off.
+## Restart the level on retry. Tests turn it off.
 @export var is_reload_on_retry: bool = true
 
 ## The container shown and hidden with the screen.
@@ -35,6 +36,7 @@ func show_screen() -> void:
 	is_showing = true
 	panel.visible = true
 	get_tree().paused = true
+	GameFlow.enter_game_over()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	retry_button.grab_focus()
 
@@ -46,4 +48,4 @@ func retry() -> void:
 	panel.visible = false
 	retry_requested.emit()
 	if is_reload_on_retry:
-		get_tree().reload_current_scene()
+		GameFlow.restart_level()

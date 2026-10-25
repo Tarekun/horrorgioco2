@@ -50,7 +50,8 @@ func test_level_has_player_with_camera_and_outdoor_fog() -> void:
 	assert_eq(_level.get_node("Outdoors").find_children("*", "FogVolume", true, false).size(), 1)
 
 
-func test_main_scene_contains_the_level() -> void:
+func test_a_new_game_starts_in_the_level() -> void:
 	var main: Node = MAIN_SCENE.instantiate()
 	add_child_autofree(main)
-	assert_not_null(main.get_node_or_null("GrayboxLevel/WorldEnvironment"))
+	GameFlow.start_new_game()
+	assert_not_null(main.get_node_or_null("ScreenHost/GrayboxLevel/WorldEnvironment"))
