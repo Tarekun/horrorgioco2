@@ -4,6 +4,8 @@ This project is a 3D survival horror videogame built with Godot 4 and GDScript.
 
 Project skills live in `.agent/skills/`: `pm` for project management on the Gitea repo, `dev` for developing an issue through to a pull request.
 
+Design references live in `docs/design/`. Before implementing a gameplay task, read the relevant section of `docs/design/gameplay.md`, which holds the rules and starting values for movement, camera, combat, resources and saving.
+
 ## Godot version
 
 Pinned to **Godot 4.7.2-stable** (standard build) in `.godot-version`; keep `config/features` in `project.godot` in sync. Use **only Godot 4 APIs**. Most examples online are Godot 3, so check anything unfamiliar against the [4.7 docs](https://docs.godotengine.org/en/4.7/). Usual traps: annotations (`@export`, `@onready`, `@tool`), `await` instead of `yield`, `signal.connect(callable)`, `*3D` node types (`Node3D`, `CharacterBody3D`), `instantiate()`, `FileAccess`/`DirAccess`. `tools/check.sh` catches Godot 3 syntax, but renamed APIs only fail when that code runs.
