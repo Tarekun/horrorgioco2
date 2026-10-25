@@ -4,7 +4,11 @@ This project is a 3D survival horror videogame built with Godot 4 and GDScript.
 
 Project skills live in `.agent/skills/`: `pm` for project management on the Gitea repo, `dev` for developing an issue through to a pull request.
 
-Design references live in `docs/design/`. Before implementing a gameplay task, read the relevant section of `docs/design/gameplay.md`, which holds the rules and starting values for movement, camera, combat, resources and saving.
+Design references live in `docs/design/`. Before starting a task, read the relevant doc:
+
+- `gameplay.md`: the rules and starting values for movement, camera, combat, resources and saving;
+- `visual-style.md`: model and texture budgets, materials, lighting and post-processing, for art and rendering work;
+- `premise.md`: story, setting, tone and pillars.
 
 ## Godot version
 
