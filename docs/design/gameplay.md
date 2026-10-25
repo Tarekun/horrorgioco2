@@ -94,6 +94,7 @@ The player holds one melee weapon at a time, equipped from the inventory. Melee 
 ### Downed enemies and finishers
 
 - A standard enemy at 0 health falls down (#28). It gets up after 8 s (±2 s random) with 40% health, unless finished.
+- A fully charged heavy hit also knocks a standard enemy down, without touching its health: it gets up after the same delay with the health it had. A downed enemy can't be staggered, and doesn't hear or attack.
 - Pressing `attack` within 1.2 m of a downed enemy performs a **stomp** instead of a swing. The stomp takes 0.8 s, costs no stamina, kills the enemy for good and leaves the player exposed.
 - Bullets damage downed enemies normally, so shooting one is allowed but wastes ammo.
 - Dead enemies stay as corpses and are recorded in saves.

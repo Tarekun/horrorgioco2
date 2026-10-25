@@ -134,3 +134,54 @@ func test_state_changed_reports_old_and_new_state() -> void:
 	assert_signal_emitted_with_parameters(
 		_brain, "state_changed", [EnemyBrain.State.IDLE, EnemyBrain.State.CHASE]
 	)
+
+
+func test_knock_down_lasts_its_duration_then_resumes() -> void:
+	_brain.knock_down(2.0)
+	assert_eq(_brain.state, EnemyBrain.State.DOWNED)
+	assert_true(_brain.is_downed())
+	_tick(1.9)
+	assert_eq(_brain.state, EnemyBrain.State.DOWNED)
+	_senses.has_target = true
+	_tick(0.2)
+	assert_eq(_brain.state, EnemyBrain.State.CHASE)
+
+
+func test_getting_up_without_a_target_goes_idle() -> void:
+	_brain.knock_down(1.0)
+	_tick(1.1)
+	assert_eq(_brain.state, EnemyBrain.State.IDLE)
+
+
+func test_stagger_is_ignored_while_down() -> void:
+	_brain.knock_down(2.0)
+	_brain.stagger()
+	assert_eq(_brain.state, EnemyBrain.State.DOWNED)
+
+
+func test_a_second_knock_down_keeps_the_first_timer() -> void:
+	_brain.knock_down(2.0)
+	_tick(1.5)
+	_brain.knock_down(10.0)
+	_tick(0.6)
+	assert_eq(_brain.state, EnemyBrain.State.IDLE)
+
+
+func test_kill_works_on_a_downed_enemy_and_is_final() -> void:
+	_brain.knock_down(1.0)
+	_brain.kill()
+	assert_true(_brain.is_dead())
+	_tick(5.0)
+	assert_true(_brain.is_dead())
+	_brain.knock_down(1.0)
+	assert_true(_brain.is_dead())
+
+
+func test_a_knock_down_interrupts_an_attack() -> void:
+	_senses.has_target = true
+	_senses.can_attack = true
+	_tick(0.1)
+	_tick(0.1)
+	assert_eq(_brain.state, EnemyBrain.State.ATTACK)
+	_brain.knock_down(3.0)
+	assert_eq(_brain.state, EnemyBrain.State.DOWNED)

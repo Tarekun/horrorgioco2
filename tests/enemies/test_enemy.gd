@@ -104,10 +104,105 @@ func test_a_hit_staggers_the_enemy_and_cancels_the_attack() -> void:
 	assert_false(_enemy.attack_hitbox.is_active)
 
 
-func test_dies_at_zero_health() -> void:
+func test_falls_down_at_zero_health() -> void:
 	watch_signals(_enemy)
 	_enemy.hurtbox.receive_hit(HitData.create(100.0, _player))
 	await _frames(2)
+	assert_eq(_enemy.get_state(), EnemyBrain.State.DOWNED)
+	assert_true(_enemy.is_downed())
+	assert_true(_enemy.is_in_group(Enemy.DOWNED_GROUP))
+	assert_signal_emitted(_enemy, "downed")
+	assert_signal_not_emitted(_enemy, "died")
+	assert_eq(_enemy.rotation_degrees.x, -90.0)
+
+
+func test_a_downed_enemy_does_not_move_or_attack() -> void:
+	_enemy.hurtbox.receive_hit(HitData.create(100.0, _player))
+	var position: Vector3 = _enemy.global_position
+	await _seconds(1.0)
+	assert_eq(_enemy.get_state(), EnemyBrain.State.DOWNED)
+	assert_almost_eq(_enemy.global_position.x, position.x, 0.01)
+	assert_almost_eq(_enemy.global_position.z, position.z, 0.01)
+	assert_false(_enemy.is_attacking)
+
+
+func test_gets_back_up_after_the_delay_with_forty_percent_health() -> void:
+	_enemy.downed_variation = 0.0
+	_enemy.downed_duration = 2.0
+	watch_signals(_enemy)
+	_enemy.hurtbox.receive_hit(HitData.create(100.0, _player))
+	await _seconds(1.5)
+	assert_true(_enemy.is_downed())
+	await _seconds(0.7)
+	assert_false(_enemy.is_downed())
+	assert_signal_emitted(_enemy, "got_up")
+	assert_eq(_enemy.health_component.current_health, 40.0)
+	assert_false(_enemy.health_component.is_dead)
+	assert_eq(_enemy.rotation_degrees.x, 0.0)
+	assert_false(_enemy.is_in_group(Enemy.DOWNED_GROUP))
+	assert_true(_enemy.is_in_group(Enemy.ENEMY_GROUP))
+
+
+func test_down_time_is_randomised_around_eight_seconds() -> void:
+	var durations: Array[float] = []
+	for i: int in 20:
+		durations.append(_enemy._roll_downed_duration())
+	assert_gte(durations.min(), 6.0)
+	assert_lte(durations.max(), 10.0)
+	assert_gt(durations.max() - durations.min(), 0.1)
+
+
+func test_stomp_kills_a_downed_enemy_for_good() -> void:
+	watch_signals(_enemy)
+	_enemy.hurtbox.receive_hit(HitData.create(100.0, _player))
+	await _frames(2)
+	assert_true(_enemy.stomp())
+	await _frames(2)
+	assert_true(_enemy.is_dead())
 	assert_eq(_enemy.get_state(), EnemyBrain.State.DEAD)
 	assert_signal_emitted(_enemy, "died")
+	assert_signal_not_emitted(_enemy, "got_up")
 	assert_false(_enemy.is_in_group(Enemy.ENEMY_GROUP))
+	assert_false(_enemy.is_in_group(Enemy.DOWNED_GROUP))
+	assert_eq(_enemy.health_component.current_health, 0.0)
+
+
+func test_a_corpse_stays_and_never_gets_up() -> void:
+	_enemy.downed_variation = 0.0
+	_enemy.downed_duration = 1.0
+	_enemy.hurtbox.receive_hit(HitData.create(100.0, _player))
+	await _frames(2)
+	_enemy.stomp()
+	await _seconds(2.0)
+	assert_true(is_instance_valid(_enemy))
+	assert_true(_enemy.is_dead())
+	assert_eq(_enemy.rotation_degrees.x, -90.0)
+	assert_eq(_enemy.collision_layer, 0)
+
+
+func test_stomp_does_nothing_to_a_standing_enemy() -> void:
+	assert_false(_enemy.stomp())
+	assert_false(_enemy.is_dead())
+
+
+func test_a_knockdown_hit_downs_a_healthy_enemy_who_keeps_its_health() -> void:
+	var hit := HitData.create(10.0, _player)
+	hit.causes_knockdown = true
+	_enemy.hurtbox.receive_hit(hit)
+	await _frames(2)
+	assert_true(_enemy.is_downed())
+	assert_eq(_enemy.health_component.current_health, 90.0)
+	_enemy.brain.downed_duration = 0.0
+	await _frames(3)
+	assert_false(_enemy.is_downed())
+	assert_eq(_enemy.health_component.current_health, 90.0)
+
+
+func test_hits_do_not_stagger_a_downed_enemy() -> void:
+	var hit := HitData.create(10.0, _player)
+	hit.causes_knockdown = true
+	_enemy.hurtbox.receive_hit(hit)
+	await _frames(2)
+	_enemy.hurtbox.receive_hit(HitData.create(5.0, _player))
+	await _frames(2)
+	assert_eq(_enemy.get_state(), EnemyBrain.State.DOWNED)

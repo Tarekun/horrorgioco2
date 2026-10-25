@@ -111,9 +111,12 @@ func try_dodge() -> bool:
 
 
 ## Whether a dodge could start now, ignoring stamina: not already dodging, not
-## cooling down, not dead, and not in the middle of a swing's windup or hit.
+## cooling down, not dead, not stomping and not in the middle of a swing's
+## windup or hit.
 func can_dodge() -> bool:
 	if not is_enabled or is_dodging or _cooldown_left > 0.0 or health_component.is_dead:
+		return false
+	if combat.state == PlayerCombat.State.STOMP:
 		return false
 	var is_swinging: bool = (
 		combat.state == PlayerCombat.State.SWING_LIGHT

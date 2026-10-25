@@ -168,7 +168,7 @@ func test_an_enemy_that_lost_track_goes_back_to_wandering() -> void:
 	assert_eq(_enemy.get_state(), EnemyBrain.State.WANDER)
 
 
-func test_a_dead_enemy_hears_nothing() -> void:
+func test_a_downed_enemy_hears_nothing() -> void:
 	await _place_enemy(Vector3(0, 0, -20), PI)
 	_enemy.hurtbox.receive_hit(HitData.create(500.0, _player))
 	await _frames(2)
