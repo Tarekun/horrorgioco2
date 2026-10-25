@@ -5,6 +5,8 @@
 ## - Regeneration starts after a delay following the last stamina use.
 ## - Sprinting drains stamina; when exhausted the player can't sprint until
 ##   stamina recovers past the exhaustion threshold.
+##
+## Uses `Time.get_ticks_msec()` for time tracking so it works in test mode.
 
 class_name StaminaComponent
 extends Node
@@ -30,9 +32,16 @@ signal exhausted
 var current_stamina: float
 var is_draining: bool = false
 
+## Mock time for testing. Set to >= 0 to enable mocked time, then increment
+## as you call `_process()`. When >= 0, `_get_time()` returns this value.
+var mock_time: float = -1.0
+
 var can_sprint: bool:
 	get:
-		return current_stamina > exhaustion_threshold and not _is_recovering
+		## The spec blocks sprinting below 30 only *after hitting 0*.
+		if _is_recovering:
+			return current_stamina > exhaustion_threshold
+		return true
 
 var _last_use_time: float = 0.0
 var _is_recovering: bool = false
@@ -44,12 +53,13 @@ func _init() -> void:
 
 func _process(delta: float) -> void:
 	if is_draining:
-		_last_use_time = get_tree().get_time()
+		_last_use_time = _get_time()
 		current_stamina = max(0.0, current_stamina - sprint_drain * delta)
 		if current_stamina <= 0.0:
 			exhausted.emit()
+			_is_recovering = true
 	else:
-		var idle_time: float = get_tree().get_time() - _last_use_time
+		var idle_time: float = _get_time() - _last_use_time
 		if idle_time >= regeneration_delay and current_stamina < max_stamina:
 			current_stamina = min(max_stamina, current_stamina + regeneration_rate * delta)
 			if current_stamina > exhaustion_threshold and _is_recovering:
@@ -78,3 +88,10 @@ func start_sprinting() -> bool:
 ## Stops sprinting.
 func stop_sprinting() -> void:
 	is_draining = false
+
+
+## Returns current time in seconds. Uses `mock_time` when >= 0.
+func _get_time() -> float:
+	if mock_time >= 0:
+		return mock_time
+	return Time.get_ticks_msec() / 1000.0
