@@ -6,6 +6,9 @@
 ##
 ## The SpringArm3D has collision enabled so the camera never clips through
 ## walls or other geometry.
+##
+## The camera rig is top-level (not a child of the player) so it doesn't
+## inherit the player's rotation.
 
 class_name CameraController
 extends Node3D
@@ -19,96 +22,88 @@ extends Node3D
 ## Mouse look sensitivity (degrees per pixel).
 @export var mouse_sensitivity: float = 0.3
 
-## Joystick look sensitivity (degrees per axis unit).
-@export var joystick_sensitivity: float = 25.0
+## Joystick look sensitivity (degrees per axis unit per second).
+@export var joystick_sensitivity: float = 40.0
 
 ## Camera pitch limits in degrees.
 @export var pitch_min: float = -60.0
 @export var pitch_max: float = 50.0
 
 ## Reference to the player character (for position following).
-@export_node_path var player_path: NodePath
+@export var player: CharacterBody3D
 
 ## Reference to the SpringArm3D child node.
-@export_node_path var spring_arm_path: NodePath
+@export var spring_arm: SpringArm3D
 
 ## Camera follow smoothing time in seconds (how quickly the camera catches up).
 @export var follow_smoothing_time: float = 0.1
 
-var _spring_arm: SpringArm3D
-var _player: CharacterBody3D
 var _camera_pitch: float = 0.0
 var _camera_yaw: float = 0.0
 var _previous_player_position: Vector3 = Vector3.ZERO
 
 
 func _ready() -> void:
-	_player = get_node_or_null(player_path) as CharacterBody3D
-	_spring_arm = get_node_or_null(spring_arm_path) as SpringArm3D
+	## Make the camera rig top-level so it doesn't inherit player rotation.
+	top_level = true
 
 	## Enable collision on the spring arm to prevent wall clipping.
-	if _spring_arm != null:
-		_spring_arm.collide_with_enemies = false
-		_spring_arm.collide_with_areas = false
-		_spring_arm.collide_with_bodies = true
-		_spring_arm.collide_with_skeletons = false
+	if spring_arm:
+		spring_arm.collide_with_enemies = false
+		spring_arm.collide_with_areas = false
+		spring_arm.collide_with_bodies = true
+		spring_arm.collide_with_skeletons = false
 
 	## Initialise the previous position to avoid a jump on the first frame.
-	if _player != null:
-		_previous_player_position = _player.position
+	if player:
+		_previous_player_position = player.position
 
 
 func _process(delta: float) -> void:
-	## Orbit the camera with mouse or joystick input.
-	_handle_look_input()
+	# Orbit the camera with joystick input.
+	_handle_joystick_look(delta)
 
-	## Position the camera to follow the player with smoothing.
+	# Position the camera to follow the player with smoothing.
 	_follow_player(delta)
 
 
-func _handle_look_input() -> void:
-	var delta_yaw: float = 0.0
-	var delta_pitch: float = 0.0
+## Called from Player._unhandled_input() when the mouse is captured.
+func _handle_mouse_motion(event: InputEventMouseMotion) -> void:
+	var delta_yaw: float = -event.relative.x * mouse_sensitivity
+	var delta_pitch: float = event.relative.y * mouse_sensitivity
 
-	## Mouse input (only when captured).
-	var mouse_delta := Input.get_last_mouse_velocity()
-	if mouse_delta.length() > 0:
-		delta_yaw = mouse_delta.x * mouse_sensitivity
-		delta_pitch = -mouse_delta.y * mouse_sensitivity
+	_camera_yaw += delta_yaw
+	_camera_pitch = clampf(_camera_pitch + delta_pitch, pitch_min, pitch_max)
 
-	## Joystick input (always active for look).
-	if Input.is_action_pressed(&"look_right"):
-		delta_yaw += joystick_sensitivity
-	if Input.is_action_pressed(&"look_left"):
-		delta_yaw -= joystick_sensitivity
-	if Input.is_action_pressed(&"look_down"):
-		delta_pitch += joystick_sensitivity
-	if Input.is_action_pressed(&"look_up"):
-		delta_pitch -= joystick_sensitivity
+	if spring_arm:
+		spring_arm.rotation.y = deg_to_rad(_camera_yaw)
+		spring_arm.rotation.x = deg_to_rad(_camera_pitch)
 
-	if delta_yaw != 0.0 or delta_pitch != 0.0:
+
+func _handle_joystick_look(delta: float) -> void:
+	var look_x: float = Input.get_vector(&"look_left", &"look_right", &"look_up", &"look_down").x
+
+	if abs(look_x) > 0.0:
+		var delta_yaw: float = look_x * joystick_sensitivity * delta
 		_camera_yaw += delta_yaw
-		_camera_pitch = clamp(_camera_pitch + delta_pitch, pitch_min, pitch_max)
 
-		if _spring_arm != null:
-			_spring_arm.rotation.y = deg_to_rad(_camera_yaw)
-			_spring_arm.rotation.x = deg_to_rad(_camera_pitch)
+		if spring_arm:
+			spring_arm.rotation.y = deg_to_rad(_camera_yaw)
 
 
 func _follow_player(delta: float) -> void:
-	if _player == null:
+	if player == null:
 		return
 
-	## Smoothly follow the player position.
-	var target_position: Vector3 = _player.position
-	var smooth_time: float = max(follow_smoothing_time, delta)
-	var t: float = 1.0 - exp(-smooth_time / max(follow_smoothing_time, 0.001))
+	# Smoothly follow the player position.
+	var target_position: Vector3 = player.position
+	var t: float = 1.0 - exp(-delta / maxf(follow_smoothing_time, 0.001))
 	position = position.lerp(target_position, t)
 	_previous_player_position = target_position
 
-	## Set the shoulder offset on the spring arm.
-	if _spring_arm != null:
-		_spring_arm.position = Vector3(shoulder_offset.x, shoulder_offset.y, 0.0)
+	# Set the shoulder offset on the spring arm.
+	if spring_arm:
+		spring_arm.position = Vector3(shoulder_offset.x, shoulder_offset.y, 0.0)
 
 
 ## Returns the current camera yaw in radians.

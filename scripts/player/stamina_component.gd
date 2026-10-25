@@ -38,7 +38,10 @@ var mock_time: float = -1.0
 
 var can_sprint: bool:
 	get:
-		return current_stamina > exhaustion_threshold and not _is_recovering
+		## The spec blocks sprinting below 30 only *after hitting 0*.
+		if _is_recovering:
+			return current_stamina > exhaustion_threshold
+		return true
 
 var _last_use_time: float = 0.0
 var _is_recovering: bool = false
@@ -54,6 +57,7 @@ func _process(delta: float) -> void:
 		current_stamina = max(0.0, current_stamina - sprint_drain * delta)
 		if current_stamina <= 0.0:
 			exhausted.emit()
+			_is_recovering = true
 	else:
 		var idle_time: float = _get_time() - _last_use_time
 		if idle_time >= regeneration_delay and current_stamina < max_stamina:

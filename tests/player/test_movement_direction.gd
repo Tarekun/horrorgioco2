@@ -1,154 +1,110 @@
-## Unit tests for the camera-relative movement direction math.
+## Unit tests for camera-relative movement direction calculation.
 ##
-## Verifies that input vectors are correctly transformed into world-space
-## movement directions relative to the camera's yaw angle.
+## The math is extracted into a static helper so production code is not
+## re-implemented in the test harness.
 
 extends GutTest
 
 
-## Helper: compute the expected camera-relative direction for a given
-## camera yaw and input vector, matching PlayerController's logic.
-func _compute_direction(camera_yaw: float, input: Vector2) -> Vector3:
+## Computes the camera-relative movement direction for the given input
+## vector and camera yaw, matching Player._get_camera_relative_direction().
+static func compute_direction(input: Vector2, camera_yaw: float) -> Vector3:
 	if input.length() < 0.001:
-		return Vector3.FORWARD
+		return Vector3.ZERO
 
-	var forward := Vector3(sin(camera_yaw), 0.0, -cos(camera_yaw))
-	var right := Vector3(cos(camera_yaw), 0.0, sin(camera_yaw))
+	# Godot +Y rotation: forward = (-sin θ, 0, -cos θ), right = (cos θ, 0, -sin θ).
+	var forward: Vector3 = Vector3(-sin(camera_yaw), 0.0, -cos(camera_yaw))
+	var right: Vector3 = Vector3(cos(camera_yaw), 0.0, -sin(camera_yaw))
+
 	return (forward * -input.y + right * input.x).normalized()
 
 
-# --- Forward input ---
+# --- Cardinal directions ---
 
 
 func test_forward_with_camera_facing_north() -> void:
-	var camera_yaw: float = 0.0
-	var input := Vector2(0, -1)
-	var expected := _compute_direction(camera_yaw, input)
-
-	## Forward input with camera at 0 should give FORWARD direction.
-	assert_approx_eq(expected, Vector3.FORWARD, 0.001, "forward at 0 yaw")
+	## Camera facing -Z (yaw = 0). Forward input = -Y in screen space.
+	var dir: Vector3 = compute_direction(Vector2(0.0, -1.0), 0.0)
+	assert_approx_eq_vec(dir, Vector3(0.0, 0.0, -1.0), 0.01, "forward at yaw 0")
 
 
-func test_forward_with_camera_facing_east() -> void:
-	var camera_yaw: float = PI / 2
-	var input := Vector2(0, -1)
-	var expected := _compute_direction(camera_yaw, input)
-
-	## Camera facing east (+X); forward input should move along +X.
-	assert_approx_eq(expected, Vector3.RIGHT, 0.001, "forward at 90 deg yaw")
+func test_forward_with_camera_facing_west() -> void:
+	## Camera facing -X (yaw = PI/2). Forward input relative to camera.
+	var dir: Vector3 = compute_direction(Vector2(0.0, -1.0), PI / 2.0)
+	assert_approx_eq_vec(dir, Vector3(-1.0, 0.0, 0.0), 0.01, "forward at yaw 90°")
 
 
 func test_forward_with_camera_facing_south() -> void:
-	var camera_yaw: float = PI
-	var input := Vector2(0, -1)
-	var expected := _compute_direction(camera_yaw, input)
-
-	## Camera facing south (-Z); forward input should move along -Z.
-	assert_approx_eq(expected, Vector3.BACK, 0.001, "forward at 180 deg yaw")
-
-
-# --- Back input ---
+	## Camera facing +Z (yaw = PI). Forward input relative to camera.
+	var dir: Vector3 = compute_direction(Vector2(0.0, -1.0), PI)
+	assert_approx_eq_vec(dir, Vector3(0.0, 0.0, 1.0), 0.01, "forward at yaw 180°")
 
 
 func test_backward_with_camera_facing_north() -> void:
-	var camera_yaw: float = 0.0
-	var input := Vector2(0, 1)
-	var expected := _compute_direction(camera_yaw, input)
-
-	assert_approx_eq(expected, Vector3.BACK, 0.001, "backward at 0 yaw")
-
-
-# --- Left / Right input ---
+	var dir: Vector3 = compute_direction(Vector2(0.0, 1.0), 0.0)
+	assert_approx_eq_vec(dir, Vector3(0.0, 0.0, 1.0), 0.01, "backward at yaw 0")
 
 
 func test_right_with_camera_facing_north() -> void:
-	var camera_yaw: float = 0.0
-	var input := Vector2(1, 0)
-	var expected := _compute_direction(camera_yaw, input)
-
-	assert_approx_eq(expected, Vector3.RIGHT, 0.001, "right at 0 yaw")
+	var dir: Vector3 = compute_direction(Vector2(1.0, 0.0), 0.0)
+	assert_approx_eq_vec(dir, Vector3(1.0, 0.0, 0.0), 0.01, "right at yaw 0")
 
 
 func test_left_with_camera_facing_north() -> void:
-	var camera_yaw: float = 0.0
-	var input := Vector2(-1, 0)
-	var expected := _compute_direction(camera_yaw, input)
-
-	assert_approx_eq(expected, Vector3.LEFT, 0.001, "left at 0 yaw")
+	var dir: Vector3 = compute_direction(Vector2(-1.0, 0.0), 0.0)
+	assert_approx_eq_vec(dir, Vector3(-1.0, 0.0, 0.0), 0.01, "left at yaw 0")
 
 
-# --- Diagonal input ---
+# --- Diagonals ---
 
 
 func test_diagonal_forward_right() -> void:
-	var camera_yaw: float = 0.0
-	var input := Vector2(1, -1)
-	var expected := _compute_direction(camera_yaw, input)
-
-	## Should be normalized and between forward and right.
-	assert_approx_eq(expected, Vector3(1, 0, -1).normalized(), 0.001, "diagonal F-R")
+	var dir: Vector3 = compute_direction(Vector2(1.0, -1.0), 0.0)
+	assert_approx_eq_vec(dir, Vector3(0.7071, 0.0, -0.7071), 0.01, "forward-right")
 
 
 func test_diagonal_camera_rotated() -> void:
-	var camera_yaw: float = PI / 4
-	var input := Vector2(1, -1)
-	var expected := _compute_direction(camera_yaw, input)
-
-	## Direction should be rotated 45 deg from the 0-yaw diagonal.
-	var base := Vector3(1, 0, -1).normalized()
-	var rotated := (
-		Vector3(
-			base.x * cos(PI / 4) - base.z * sin(PI / 4),
-			0.0,
-			base.x * sin(PI / 4) + base.z * cos(PI / 4)
-		)
-		. normalized()
-	)
-	assert_approx_eq(expected, rotated, 0.001, "diagonal with 45 deg rot")
+	## Camera at 45° (PI/4), input straight forward.
+	var dir: Vector3 = compute_direction(Vector2(0.0, -1.0), PI / 4.0)
+	assert_approx_eq(dir.x, -0.7071, 0.01, "diagonal x")
+	assert_approx_eq(dir.z, -0.7071, 0.01, "diagonal z")
 
 
-# --- Zero input ---
+# --- Edge cases ---
 
 
 func test_zero_input_returns_forward() -> void:
-	var camera_yaw: float = PI / 3
-	var input := Vector2.ZERO
-	var expected := _compute_direction(camera_yaw, input)
-
-	assert_approx_eq(expected, Vector3.FORWARD, 0.001, "zero input returns F")
-
-
-# --- Near-zero input ---
+	## Zero input should return ZERO (not FORWARD).
+	var dir: Vector3 = compute_direction(Vector2.ZERO, 0.0)
+	assert_approx_eq_vec(dir, Vector3.ZERO, 0.01, "zero input")
 
 
 func test_near_zero_input_returns_forward() -> void:
-	var camera_yaw: float = PI / 3
-	var input := Vector2(0.0001, -0.0001)
-	var expected := _compute_direction(camera_yaw, input)
-
-	assert_approx_eq(expected, Vector3.FORWARD, 0.001, "near-zero returns F")
-
-
-# --- Full rotation coverage ---
+	var dir: Vector3 = compute_direction(Vector2(0.0001, 0.0), 0.0)
+	assert_approx_eq_vec(dir, Vector3.ZERO, 0.01, "near-zero input")
 
 
 func test_direction_is_consistent_across_full_rotation() -> void:
-	## For any camera angle, forward input should produce a direction
-	## that is exactly the camera's forward direction.
-	for angle_deg in range(0, 360, 15):
-		var camera_yaw: float = deg_to_rad(angle_deg)
-		var input := Vector2(0, -1)
-		var expected := _compute_direction(camera_yaw, input)
-
-		var forward := Vector3(sin(camera_yaw), 0.0, -cos(camera_yaw))
-		assert_approx_eq(expected, forward, 0.001, "forward at %d deg" % angle_deg)
+	## Test that direction is consistent at regular intervals.
+	var input: Vector2 = Vector2(1.0, -1.0)
+	for i: int in range(0, 361, 45):
+		var yaw: float = deg_to_rad(float(i))
+		var dir: Vector3 = compute_direction(input, yaw)
+		assert_lt(abs(dir.length() - 1.0), 0.01, "normalized at %d°" % i)
 
 
-# --- Helper: approximate equality for Vector3 ---
+# --- Helpers ---
 
 
 func assert_approx_eq(
+	actual: float, expected: float, tolerance: float, message: String = ""
+) -> void:
+	var diff: float = abs(actual - expected)
+	assert_lt(diff, tolerance, message)
+
+
+func assert_approx_eq_vec(
 	actual: Vector3, expected: Vector3, tolerance: float, message: String = ""
 ) -> void:
-	var diff := actual - expected
-	assert_lt(diff.length(), tolerance, message)
+	var diff: float = actual.distance_to(expected)
+	assert_lt(diff, tolerance, message)

@@ -67,6 +67,7 @@ func test_drain_stops_at_zero() -> void:
 	_simulate(stamina, 1.0)
 
 	assert_eq(stamina.current_stamina, 0.0, "drain caps at zero")
+	## After hitting zero, the player is recovering and cannot sprint.
 	assert_false(stamina.can_sprint, "cannot sprint at zero")
 
 
@@ -79,7 +80,8 @@ func test_cannot_start_sprinting_when_exhausted() -> void:
 	stamina.start_sprinting()
 	_simulate(stamina, 1.0)
 
-	assert_false(stamina.start_sprinting(), "cannot restart sprinting while exhausted")
+	## After exhausting, cannot restart sprinting until regen past threshold.
+	assert_false(stamina.start_sprinting(), "cannot restart while exhausted")
 
 
 # --- Regeneration ---
@@ -135,13 +137,14 @@ func test_regenerates_to_max() -> void:
 # --- Exhaustion threshold ---
 
 
-func test_cannot_sprint_below_threshold() -> void:
+func test_can_sprint_below_threshold_when_not_exhausted() -> void:
+	## The spec blocks sprinting below 30 only *after hitting 0*.
 	var stamina: StaminaComponent = _make_stamina()
 	stamina.exhaustion_threshold = 40.0
 	stamina._init()
 	stamina.current_stamina = 30.0
 
-	assert_false(stamina.can_sprint, "cannot sprint below threshold")
+	assert_true(stamina.can_sprint, "can sprint below threshold when not exhausted")
 
 
 func test_can_sprint_above_threshold() -> void:
