@@ -62,7 +62,7 @@ One pool shared by sprinting and combat (#13). Firearms never cost stamina.
 | Sprint drain | 15/s |
 | Exhausted | At 0, the player can't sprint, dodge or start an action that costs stamina until stamina is back above 30. |
 
-An action needs its full cost available; otherwise it doesn't start. There's no stamina bar: low stamina shows as heavier breathing, and exhaustion as a short winded animation.
+An action needs its full cost available; otherwise it doesn't start. There's no stamina bar: low stamina shows as heavier breathing (silent above 70%, louder and faster towards 0, calming slowly as it regenerates), and exhaustion as a short winded animation (0.9 s, with a gasp). The player can't move while winded. If the exhaustion comes while another action drives the body (the end of a dodge or attack, a stagger), the winded animation is skipped.
 
 ## Melee combat
 
