@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Downloads the pinned Godot editor (version in .godot-version) for Linux x86_64 and verifies its checksum.
+# Downloads the pinned Godot editor (version in .godot-version) for Linux x86_64 or arm64 and verifies its checksum.
 #
 # Usage: tools/install_godot.sh [DIR]
 #
@@ -19,13 +19,22 @@ if [[ -x "$BIN" ]]; then
 	exit 0
 fi
 
+case "$(uname -m)" in
+x86_64) ARCH="x86_64" ;;
+aarch64 | arm64) ARCH="arm64" ;;
+*)
+	echo "Unsupported architecture: $(uname -m)" >&2
+	exit 1
+	;;
+esac
+
 TAG="$VERSION-stable"
-NAME="Godot_v${TAG}_linux.x86_64"
+NAME="Godot_v${TAG}_linux.$ARCH"
 URL="https://github.com/godotengine/godot/releases/download/$TAG"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-echo "Downloading Godot $TAG..." >&2
+echo "Downloading Godot $TAG ($ARCH)..." >&2
 curl -fsSL -o "$TMP/$NAME.zip" "$URL/$NAME.zip"
 curl -fsSL -o "$TMP/SHA512-SUMS.txt" "$URL/SHA512-SUMS.txt"
 (cd "$TMP" && grep " $NAME.zip\$" SHA512-SUMS.txt | sha512sum --check --quiet -) >&2

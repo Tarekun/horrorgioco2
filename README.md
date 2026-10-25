@@ -7,7 +7,7 @@ A 3D survival horror game built with Godot 4 and GDScript.
 The project is pinned to **Godot 4.7.2-stable** (standard build, not .NET).
 The exact version lives in [`.godot-version`](.godot-version), which tooling reads;
 `project.godot` declares the `4.7` feature set. Download it from
-<https://github.com/godotengine/godot/releases/tag/4.7.2-stable>, or on Linux x86_64 run
+<https://github.com/godotengine/godot/releases/tag/4.7.2-stable>, or on Linux (x86_64 or arm64) run
 `tools/install_godot.sh`, which downloads and verifies it and prints the binary's path.
 
 Open the project by importing `project.godot` in the editor, or run it from the command line:

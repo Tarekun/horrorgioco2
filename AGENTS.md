@@ -86,7 +86,7 @@ Commit the `.uid` and `.import` sidecar files Godot generates next to scripts an
 
 Run `tools/check.sh` before every commit and fix anything it reports. It needs:
 
-- the pinned Godot editor binary (version in `.godot-version`) on `PATH` as `godot`, or set `GODOT=/path/to/godot`. `tools/install_godot.sh` downloads and verifies it, then prints its path (Linux x86_64), e.g. `export GODOT="$(tools/install_godot.sh)"`;
+- the pinned Godot editor binary (version in `.godot-version`) on `PATH` as `godot`, or set `GODOT=/path/to/godot`. `tools/install_godot.sh` downloads and verifies it, then prints its path (Linux x86_64 or arm64), e.g. `export GODOT="$(tools/install_godot.sh)"`;
 - gdtoolkit (`pip install -r requirements-dev.txt`), providing `gdlint` and `gdformat`.
 
 The script runs these steps and exits non-zero if any fails, listing the failed steps at the end:

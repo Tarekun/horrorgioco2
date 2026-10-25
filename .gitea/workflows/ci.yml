@@ -28,7 +28,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ~/godot
-          key: godot-${{ steps.godot.outputs.version }}-linux-x86_64
+          key: godot-${{ steps.godot.outputs.version }}-${{ runner.os }}-${{ runner.arch }}
       - name: Install Godot
         run: |
           tools/install_godot.sh "$HOME/godot"
