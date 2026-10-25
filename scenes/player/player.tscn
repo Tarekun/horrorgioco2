@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -12,6 +12,9 @@
 [ext_resource type="Resource" path="res://assets/data/weapons/wooden_plank.tres" id="9"]
 [ext_resource type="Script" path="res://scripts/combat/player_dodge.gd" id="10"]
 [ext_resource type="PackedScene" path="res://scenes/player/flashlight.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/ui/damage_overlay.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://scenes/ui/game_over_screen.tscn" id="13"]
+[ext_resource type="Script" path="res://scripts/combat/player_hit_reaction.gd" id="14"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -81,6 +84,21 @@ stamina_component = NodePath("../StaminaComponent")
 health_component = NodePath("../HealthComponent")
 model = NodePath("../Model")
 combat = NodePath("../PlayerCombat")
+
+[node name="DamageOverlay" parent="." instance=ExtResource("12")]
+
+[node name="GameOverScreen" parent="." instance=ExtResource("13")]
+
+[node name="PlayerHitReaction" type="Node" parent="." node_paths=PackedStringArray("player", "health_component", "combat", "dodge", "model", "camera_controller", "damage_overlay", "game_over_screen")]
+script = ExtResource("14")
+player = NodePath("..")
+health_component = NodePath("../HealthComponent")
+combat = NodePath("../PlayerCombat")
+dodge = NodePath("../PlayerDodge")
+model = NodePath("../Model")
+camera_controller = NodePath("../CameraController")
+damage_overlay = NodePath("../DamageOverlay")
+game_over_screen = NodePath("../GameOverScreen")
 
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("player", "spring_arm")]
 top_level = true
