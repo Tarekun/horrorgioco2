@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs every check an agent should pass before committing.
+# Runs every check and test an agent should pass before committing.
 #
 # Usage: tools/check.sh
 #
@@ -64,6 +64,12 @@ godot_run() {
 	fi
 }
 
+# run_tests runs the GUT suite configured in .gutconfig.json. GUT's exit code decides the result, since
+# tests may deliberately trigger engine errors.
+run_tests() {
+	"$GODOT" --headless --path "$ROOT" -s res://addons/gut/gut_cmdln.gd
+}
+
 gd_files() {
 	find . \( -path ./.godot -o -path ./.git -o -path ./addons \) -prune -o -name '*.gd' -print | sort
 }
@@ -79,6 +85,7 @@ step "Load scripts and scenes" godot_run --script res://tools/check_scripts.gd
 step "Run main scene" godot_run --quit
 step "gdlint" "$GDLINT" "${GD_FILES[@]}"
 step "gdformat --check" "$GDFORMAT" --check "${GD_FILES[@]}"
+step "Tests" run_tests
 
 if ((${#FAILED[@]})); then
 	echo "${RED}${BOLD}${#FAILED[@]} check(s) failed:${RESET} $(IFS=,; echo "${FAILED[*]}" | sed 's/,/, /g')"
