@@ -18,7 +18,7 @@ func _initialize() -> void:
 
 	var navmesh := NavigationMesh.new()
 	navmesh.agent_radius = 0.5
-	navmesh.agent_height = 1.8
+	navmesh.agent_height = 2.0
 	navmesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
 	navmesh.geometry_collision_mask = CombatLayers.WORLD
 
