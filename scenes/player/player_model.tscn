@@ -371,6 +371,23 @@ tracks/11/path = NodePath("Skeleton3D:Foot_L")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.0625, 1, 0, 0, 0, 1, 0.125, 1, 0, 0, 0, 1, 0.1875, 1, 0, 0, 0, 1, 0.25, 1, 0, 0, 0, 1, 0.3125, 1, 0.045905873, 0, 0, 0.9989458, 0.375, 1, 0.084751025, 0, 0, 0.99640214, 0.4375, 1, 0.11063857, 0, 0, 0.9938607, 0.5, 1, 0.119712204, 0, 0, 0.99280864, 0.5625, 1, 0.11063857, 0, 0, 0.9938607, 0.625, 1, 0.084751025, 0, 0, 0.99640214, 0.6875, 1, 0.045905873, 0, 0, 0.9989458, 0.75, 1, 2.2043642e-17, 0, 0, 1, 0.8125, 1, 0, 0, 0, 1, 0.875, 1, 0, 0, 0, 1, 0.9375, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1)
+tracks/12/type = "method"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath(".")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0.25, 0.75),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"emit_footstep"
+}, {
+"args": [],
+"method": &"emit_footstep"
+}]
+}
 
 [sub_resource type="Animation" id="Animation_e26wm"]
 loop_mode = 1
@@ -458,6 +475,23 @@ tracks/11/path = NodePath("Skeleton3D:Foot_L")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 0.0625, 1, 0, 0, 0, 1, 0.125, 1, 0, 0, 0, 1, 0.1875, 1, 0, 0, 0, 1, 0.25, 1, 0, 0, 0, 1, 0.3125, 1, 0.026784636, 0, 0, 0.99964124, 0.375, 1, 0.049477264, 0, 0, 0.99877524, 0.4375, 1, 0.0646265, 0, 0, 0.99790955, 0.5, 1, 0.06994285, 0, 0, 0.997551, 0.5625, 1, 0.0646265, 0, 0, 0.99790955, 0.625, 1, 0.049477264, 0, 0, 0.99877524, 0.6875, 1, 0.026784636, 0, 0, 0.99964124, 0.75, 1, 1.28587915e-17, 0, 0, 1, 0.8125, 1, 0, 0, 0, 1, 0.875, 1, 0, 0, 0, 1, 0.9375, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1)
+tracks/12/type = "method"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath(".")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0.25, 0.75),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"emit_footstep"
+}, {
+"args": [],
+"method": &"emit_footstep"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ncfbf"]
 _data = {
@@ -533,11 +567,11 @@ states/locomotion/node = SubResource("AnimationNodeBlendSpace1D_5dcga")
 states/locomotion/position = Vector2(0, 0)
 transitions = ["Start", "locomotion", SubResource("AnimationNodeStateMachineTransition_syjun")]
 
-[node name="PlayerModel" type="Node3D" unique_id=907423438 node_paths=PackedStringArray("animation_tree")]
+[node name="PlayerModel" type="Node3D" unique_id=358605014 node_paths=PackedStringArray("animation_tree")]
 script = ExtResource("1_54w00")
 animation_tree = NodePath("AnimationTree")
 
-[node name="Skeleton3D" type="Skeleton3D" parent="." unique_id=1469980534]
+[node name="Skeleton3D" type="Skeleton3D" parent="." unique_id=827061924]
 bones/0/name = "Hips"
 bones/0/parent = -1
 bones/0/rest = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
@@ -644,139 +678,140 @@ bones/14/position = Vector3(0, -0.44, 0)
 bones/14/rotation = Quaternion(0, 0, 0, 1)
 bones/14/scale = Vector3(1, 1, 1)
 
-[node name="HipsAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1089503452]
+[node name="HipsAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1041688190]
 bone_name = "Hips"
 
-[node name="Hips0" type="MeshInstance3D" parent="Skeleton3D/HipsAttachment" unique_id=1492000598]
+[node name="Hips0" type="MeshInstance3D" parent="Skeleton3D/HipsAttachment" unique_id=312843735]
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("BoxMesh_vyyk8")
 
-[node name="SpineAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=806746850]
+[node name="SpineAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1577869327]
 bone_name = "Spine"
 
-[node name="Spine0" type="MeshInstance3D" parent="Skeleton3D/SpineAttachment" unique_id=1484073313]
+[node name="Spine0" type="MeshInstance3D" parent="Skeleton3D/SpineAttachment" unique_id=1739218685]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("BoxMesh_cuhgi")
 
-[node name="ChestAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=117238368]
+[node name="ChestAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1360961770]
 bone_name = "Chest"
 
-[node name="Chest0" type="MeshInstance3D" parent="Skeleton3D/ChestAttachment" unique_id=867268619]
+[node name="Chest0" type="MeshInstance3D" parent="Skeleton3D/ChestAttachment" unique_id=396235718]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("BoxMesh_e734v")
 
-[node name="NeckAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1203017834]
+[node name="NeckAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1761648609]
 bone_name = "Neck"
 
-[node name="Neck0" type="MeshInstance3D" parent="Skeleton3D/NeckAttachment" unique_id=1104054639]
+[node name="Neck0" type="MeshInstance3D" parent="Skeleton3D/NeckAttachment" unique_id=2072770766]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
 material_override = SubResource("StandardMaterial3D_h5gvi")
 mesh = SubResource("CapsuleMesh_rfycw")
 
-[node name="HeadAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1952054728]
+[node name="HeadAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=108932122]
 bone_name = "Head"
 
-[node name="Head0" type="MeshInstance3D" parent="Skeleton3D/HeadAttachment" unique_id=563149113]
+[node name="Head0" type="MeshInstance3D" parent="Skeleton3D/HeadAttachment" unique_id=2104996812]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 material_override = SubResource("StandardMaterial3D_h5gvi")
 mesh = SubResource("SphereMesh_mj8wc")
 
-[node name="Head1" type="MeshInstance3D" parent="Skeleton3D/HeadAttachment" unique_id=1952622086]
+[node name="Head1" type="MeshInstance3D" parent="Skeleton3D/HeadAttachment" unique_id=13460558]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, -0.11)
 material_override = SubResource("StandardMaterial3D_h5gvi")
 mesh = SubResource("BoxMesh_lwyi2")
 
-[node name="UpperArm_RAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=232592519]
+[node name="UpperArm_RAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1415698739]
 bone_name = "UpperArm_R"
 
-[node name="UpperArm_R0" type="MeshInstance3D" parent="Skeleton3D/UpperArm_RAttachment" unique_id=1489986067]
+[node name="UpperArm_R0" type="MeshInstance3D" parent="Skeleton3D/UpperArm_RAttachment" unique_id=936741009]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14, 0)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("CapsuleMesh_4lhdc")
 
-[node name="LowerArm_RAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=2051407586]
+[node name="LowerArm_RAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1796581553]
 bone_name = "LowerArm_R"
 
-[node name="LowerArm_R0" type="MeshInstance3D" parent="Skeleton3D/LowerArm_RAttachment" unique_id=1298776896]
+[node name="LowerArm_R0" type="MeshInstance3D" parent="Skeleton3D/LowerArm_RAttachment" unique_id=1320131829]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14, 0)
 material_override = SubResource("StandardMaterial3D_h5gvi")
 mesh = SubResource("CapsuleMesh_1uftg")
 
-[node name="LowerArm_R1" type="MeshInstance3D" parent="Skeleton3D/LowerArm_RAttachment" unique_id=1775334812]
+[node name="LowerArm_R1" type="MeshInstance3D" parent="Skeleton3D/LowerArm_RAttachment" unique_id=2138477989]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("BoxMesh_tiweb")
 
-[node name="UpperArm_LAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1262124569]
+[node name="UpperArm_LAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=661040551]
 bone_name = "UpperArm_L"
 
-[node name="UpperArm_L0" type="MeshInstance3D" parent="Skeleton3D/UpperArm_LAttachment" unique_id=979745399]
+[node name="UpperArm_L0" type="MeshInstance3D" parent="Skeleton3D/UpperArm_LAttachment" unique_id=946086800]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14, 0)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("CapsuleMesh_g6bvx")
 
-[node name="LowerArm_LAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=727525943]
+[node name="LowerArm_LAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=663216140]
 bone_name = "LowerArm_L"
 
-[node name="LowerArm_L0" type="MeshInstance3D" parent="Skeleton3D/LowerArm_LAttachment" unique_id=758993485]
+[node name="LowerArm_L0" type="MeshInstance3D" parent="Skeleton3D/LowerArm_LAttachment" unique_id=631356623]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14, 0)
 material_override = SubResource("StandardMaterial3D_h5gvi")
 mesh = SubResource("CapsuleMesh_psntq")
 
-[node name="UpperLeg_RAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1572721383]
+[node name="UpperLeg_RAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=662973628]
 bone_name = "UpperLeg_R"
 
-[node name="UpperLeg_R0" type="MeshInstance3D" parent="Skeleton3D/UpperLeg_RAttachment" unique_id=1995706574]
+[node name="UpperLeg_R0" type="MeshInstance3D" parent="Skeleton3D/UpperLeg_RAttachment" unique_id=786909262]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.23, 0)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("CapsuleMesh_6l5l2")
 
-[node name="LowerLeg_RAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1953552771]
+[node name="LowerLeg_RAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=990527400]
 bone_name = "LowerLeg_R"
 
-[node name="LowerLeg_R0" type="MeshInstance3D" parent="Skeleton3D/LowerLeg_RAttachment" unique_id=185827416]
+[node name="LowerLeg_R0" type="MeshInstance3D" parent="Skeleton3D/LowerLeg_RAttachment" unique_id=54845681]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22, 0)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("CapsuleMesh_qnrl6")
 
-[node name="Foot_RAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=895226418]
+[node name="Foot_RAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1294505078]
 bone_name = "Foot_R"
 
-[node name="Foot_R0" type="MeshInstance3D" parent="Skeleton3D/Foot_RAttachment" unique_id=560034624]
+[node name="Foot_R0" type="MeshInstance3D" parent="Skeleton3D/Foot_RAttachment" unique_id=747434555]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, -0.06)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("BoxMesh_ynfjr")
 
-[node name="UpperLeg_LAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=349962024]
+[node name="UpperLeg_LAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1795904525]
 bone_name = "UpperLeg_L"
 
-[node name="UpperLeg_L0" type="MeshInstance3D" parent="Skeleton3D/UpperLeg_LAttachment" unique_id=971054126]
+[node name="UpperLeg_L0" type="MeshInstance3D" parent="Skeleton3D/UpperLeg_LAttachment" unique_id=1556151757]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.23, 0)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("CapsuleMesh_781a3")
 
-[node name="LowerLeg_LAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1350085346]
+[node name="LowerLeg_LAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=234611787]
 bone_name = "LowerLeg_L"
 
-[node name="LowerLeg_L0" type="MeshInstance3D" parent="Skeleton3D/LowerLeg_LAttachment" unique_id=1668728153]
+[node name="LowerLeg_L0" type="MeshInstance3D" parent="Skeleton3D/LowerLeg_LAttachment" unique_id=29555280]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22, 0)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("CapsuleMesh_mftr4")
 
-[node name="Foot_LAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=973902976]
+[node name="Foot_LAttachment" type="BoneAttachment3D" parent="Skeleton3D" unique_id=1019152229]
 bone_name = "Foot_L"
 
-[node name="Foot_L0" type="MeshInstance3D" parent="Skeleton3D/Foot_LAttachment" unique_id=1878896974]
+[node name="Foot_L0" type="MeshInstance3D" parent="Skeleton3D/Foot_LAttachment" unique_id=887860383]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, -0.06)
 material_override = SubResource("StandardMaterial3D_6o6pb")
 mesh = SubResource("BoxMesh_gnbca")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1424301876]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=2039356070]
 libraries/ = SubResource("AnimationLibrary_ncfbf")
 
-[node name="AnimationTree" type="AnimationTree" parent="." unique_id=1595229995]
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=1976505575]
+callback_mode_method = 1
 tree_root = SubResource("AnimationNodeStateMachine_ue6dc")
 anim_player = NodePath("../AnimationPlayer")
 parameters/locomotion/blend_position = 0.0

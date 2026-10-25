@@ -1,7 +1,10 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
 [ext_resource type="Environment" path="res://assets/data/atmosphere_environment.tres" id="2"]
+
+[ext_resource type="Script" path="res://scripts/audio/ambience_player.gd" id="4"]
+[ext_resource type="AudioStream" path="res://assets/audio/ambience_drone.wav" id="3"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_1"]
 
@@ -19,6 +22,12 @@ albedo = Color(0.6, 0.66, 0.74, 1)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("2")
+
+[node name="Ambience" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3")
+volume_db = -8.0
+bus = &"Ambience"
+script = ExtResource("4")
 
 [node name="Floor" type="StaticBody3D" parent="."]
 transform = Transform3D(60, 0, 0, 0, 0.2, 0, 0, 0, 60, 0, -0.1, 0)
