@@ -6,16 +6,19 @@ Some answers are deliberately open (see [Open questions](#open-questions)). Name
 
 ## In one paragraph
 
-On the last night of the summer season, in a fading resort town on the Adriatic coast, a man leaves a beach rave just before dawn. It's meant to be his last night alive. On the way home the town turns wrong: the fog comes in, the streets loop, and things that shouldn't exist start mocking him for the one thing he can't forgive himself for. The second half of the game relives the same night from the side of his ex-partner. She has been told what he plans to do and is searching the same streets for him, at the same hours, and to her *he* is one of the monsters. Both halves end in the same place, at the same moment, face to face, each seeing a monster.
+On the last night of the summer season, in a fading resort town on the Adriatic coast, a man leaves a beach rave just before dawn, high, on what's meant to be his last night alive. On the walk home the town turns wrong, and things that shouldn't exist hunt him down and kill him. Then he wakes up in the hotel room where he and his ex spent every summer, a room he doesn't remember booking. Was it a bad trip? From then on time stops making sense, and the things keep coming back, mocking him for the one thing he can't forgive himself for.
+
+The second half follows his ex-partner. She's told what he plans to do and drives to the town that same night to find him. But the rave is over, her car vanishes, and the night gives way to a time she can't name. She searches the same places he walks through, and to her *he* is one of the monsters. Both halves end in the same place, face to face, each seeing a monster.
 
 ## Protagonists
 
-Two protagonists, a couple who broke up some time ago. Both are in their early thirties and Italian.
+Two protagonists, a couple who broke up some time ago. Both are in their late twenties and Italian.
 
 | | **Luca** *(working)* | **Elena** *(working)* |
 |---|---|---|
 | Plays | Part 1 | Part 2 |
-| Why he or she is in town | Came back for one last good night before taking his life. **Part 1 never reveals this**; the player can only sense it through details (a letter left at home, giving his things away, not caring about tomorrow). | She's warned during the night that he's going to kill himself, drives to the town and looks for him. Who warns her is an open question. |
+| Why he or she is in town | Came back for one last good night before taking his life. **Part 1 never reveals this**; the player can only sense it through details (a letter left at home, giving his things away, not caring about tomorrow). | During the rave night she's warned that he's going to kill himself. She drives to the town and goes to the rave to find him. Who warns her is an open question. |
+| The rational explanation | **Drugs.** Drug use is part of his story, not only that night: his way of escaping, part of what went wrong. He's high when he leaves the rave, so the first monsters could be a drug-induced psychosis. | **Something of her own** (open): for example days without sleep, medication, or panic attacks and dissociation. It keeps her half as ambiguous as his. |
 | Relationship to the town | They met here as teenagers and spent their summers here as a couple. The town holds the best memories of their relationship. | Same shared past, remembered differently. |
 | Inner wound | The breakup reason (open), carried as shame and inadequacy. | The breakup reason, carried as guilt for leaving, or for staying too long. |
 
@@ -34,7 +37,7 @@ Whichever is chosen, the topic has to be handled with the same care as the suici
 
 ## Setting
 
-**Lido Sant'Elmo** *(working)* is a fictional resort town on the **Riviera Romagnola**, in the **present day**, on the night of the season's closing party in late September. Saint Elmo's fire is the sailors' omen of the sea, which suits the town.
+**Lido Sant'Elmo** *(working)* is a fictional resort town on the **Riviera Romagnola**, in the **present day**, starting on the night of the season's closing party in late September. Saint Elmo's fire is the sailors' omen of the sea, which suits the town.
 
 The tourists are gone, the beach umbrellas are folded into endless grey rows, the hotels are shuttered, and the fog off the sea swallows the seafront. It is the place of their happiest summers, emptied out and slowly going wrong.
 
@@ -44,30 +47,35 @@ Each location is a real Romagna seaside place that also carries meaning for the 
 
 | Location | What it is | What it holds |
 |---|---|---|
-| The beach club (rave) | Closing-season rave on the sand, ending at 4 a.m. | Part 1 opens here as Luca leaves; the last good night. |
+| The beach club (rave) | Closing-season rave on the sand, ending at 4 a.m. | Part 1 opens here as Luca leaves: the last good night. Part 2 opens here too, after the rave is over and the beach club is deserted. |
 | Seafront promenade (*lungomare*) | Shuttered *piadina* kiosks, flickering neon, rows of closed umbrellas | The route home that keeps looping back. |
 | The luna park | A small amusement park, closed for the season | Teenage dates, which now feel like a funhouse of the past. |
-| Hotel Miramare *(working)* | The family hotel where they stayed every summer | Their room, their memories, intimacy turned hostile. |
+| Hotel Miramare *(working)* | The family hotel where they stayed every summer | Where Luca wakes after the prologue, in their old room, booked under his name. Their memories, intimacy turned hostile. |
 | The fishing huts (*padelloni*) | Wooden huts on stilts at the canal mouth, with giant nets | Things caught and lost; the sea taking things. |
 | The abandoned *colonia* | A huge abandoned seaside holiday camp for children, from the 1930s | Childhood, institutions, the future that never came. |
 | The pier (*molo*) | A long breakwater out into the fog | A candidate for the boss arena. |
 | The pine wood (*pineta*) | Coastal pine forest behind the beach | Getting lost; where the surreal is strongest. |
 
-**The town reflects the mind of whoever is in it.** The same places look different to each of them: his version decays toward emptiness and failure, hers toward guilt and pursuit. Shared landmarks keep the two halves recognisable as one night.
+**The town reflects the mind of whoever is in it.** The same places look different to each of them: his version decays toward emptiness and failure, hers toward guilt and pursuit. Shared landmarks keep the two halves recognisable as one story.
 
 **Phones.** In the present day a phone would solve too much, so phones work just badly enough: no signal, a battery draining too fast, messages arriving out of order or from contacts who shouldn't exist, a camera that sees things the eye doesn't. The phone becomes a horror device rather than a lifeline.
 
+**Time.** Only the rave night is clearly night. After Luca wakes, and after Elena's car disappears, time is unclear on purpose: light that doesn't match the clocks, clocks that disagree with each other and with phones, a dusk that lasts for hours, dates that change. The game never says whether hours or days pass. Crossovers still line up, because the halves share an *order* of events, not a clock time.
+
 ## Structure
 
-The game covers one night in two halves, played in sequence. Both happen at the **same places and the same times**.
+The game has two halves, played in sequence. They cover the **same places and the same sequence of events**. After the rave night, though, neither protagonist (nor the player) can tell how much time passes.
 
-1. **Part 1 (Luca).** He leaves the rave at about 4 a.m., and weird things begin on the walk home. He moves through the town, meets the surreal locals, and fights or avoids monsters, some of which are Elena. Part 1 ends as he enters the final arena and sees the monster waiting there. **Cliff-hanger.**
-2. **Part 2 (Elena).** She's tipped off during the night and arrives at the rave just after he has left. She follows his trail through the same places. Scenes from part 1 replay from her side, and at key moments she meets the "monster" that is Luca. Part 2 reaches the same arena at the same moment, and the **boss fight against him begins**.
+1. **Part 1 (Luca).**
+   - **Prologue: the rave night.** He leaves the rave at about 4 a.m., high, and things go wrong on the walk home. The first monsters could be a drug-induced psychosis, and the prologue lets that reading stand. It ends with the monsters killing him. This death is scripted, not a game over.
+   - **The awakening.** He wakes up in Hotel Miramare, in the room they shared every summer, booked under his name, with no memory of booking it. Was it a dream, a trip, or something else?
+   - **The main part.** From here on, time is unreliable (see [Time](#setting)). He moves through the town, meets the surreal locals, and fights or avoids monsters, some of which are Elena. Part 1 ends as he enters the final arena and sees the monster waiting there. **Cliff-hanger.**
+2. **Part 2 (Elena).** Warned during the rave night, she drives to the town and goes to the beach club to find him. The rave is over and nobody is there, and when she gets back to her car, it's gone. She follows his trail on foot through the same places. At some point she realizes it's no longer night, but she can't tell what time it is either. Scenes from part 1 replay from her side, and at key moments she meets the "monster" that is Luca. Part 2 reaches the same arena at the same point in events, and the **boss fight against him begins**.
 3. **Endings.** The boss fight resolves into one of several endings (see below).
 
 ### Crossovers
 
-At a handful of scripted **crossovers** the two halves meet: the same place, the same moment, each seeing the other as a monster. Part 2 reveals what part 1's encounters really were, and **what Luca did carries over**: if he attacked or shot the "monster", Elena carries the wound, and the scene plays out differently from her side. Crossovers are the only branching between the halves; each one stores a few flags.
+At a handful of scripted **crossovers** the two halves meet: the same place at the same point in events, each seeing the other as a monster. Part 2 reveals what part 1's encounters really were, and **what Luca did carries over**: if he attacked or shot the "monster", Elena carries the wound, and the scene plays out differently from her side. Crossovers are the only branching between the halves; each one stores a few flags.
 
 Draft examples, to be fixed by the level and narrative work:
 
@@ -94,9 +102,11 @@ Drafts, to be written once the breakup reason and the canonical truth are settle
 
 The horror may not be real. The game **never confirms** what is happening: drugs from the rave, a mind in crisis, the town itself, or something else. The canonical truth is **decided later in a private writers' note**. Until then, every scene must respect this contract:
 
-- Both halves are the same night, with the same places and times.
+- The rave happened, and both of them were in the town that night. This is the last firm ground.
+- Both halves cover the same places and the same sequence of events, even though neither can tell how much time passes.
 - Each sees the other as a monster. Neither ever sees the other as a person until the endings, and maybe not even then.
-- Luca's suicide plan is real.
+- Luca's suicide plan is real, and so is his drug use.
+- Each has a plausible rational explanation for what they see (his drugs, her own). The game never confirms either one, and never rules it out.
 - Nothing in the game is objectively confirmed as real or unreal. Every clue has at least two readings.
 
 ## Tone
@@ -112,26 +122,19 @@ The horror may not be real. The game **never confirms** what is happening: drugs
 These guide every decision. When two options are close, pick the one that serves more pillars.
 
 1. **Personal, not generic.** Every monster, location and surreal event reflects the two protagonists, their relationship and the wound that ended it. If it could appear in any horror game, cut it or make it theirs.
-2. **One night, two sides.** The same places and moments are seen twice, and the second time changes the meaning of the first. Design every part-1 scene knowing how it looks from part 2.
+2. **Same places, two sides.** The same places and moments are seen twice, and the second time changes the meaning of the first. Design every part-1 scene knowing how it looks from part 2.
 3. **Never explain.** Ambiguity is the experience. Show, imply and contradict; never confirm. Surreal events stay unexplained.
 4. **Fragile, not powerful.** The protagonists are ordinary people: clumsy in a fight, short on resources, always vulnerable (see [gameplay.md](gameplay.md)). Avoiding a fight is often the smart move.
 5. **The summer that died.** Italian seaside nostalgia turned uncanny. Favor specific Romagna textures (umbrellas, neon, *piadine*, *colonie*, fog off the Adriatic) over generic horror sets.
-
-## Sensitive themes
-
-The story is about suicide, and probably infertility or loss. Handle them with care:
-
-- Show a person in crisis, not a method. Never depict means or steps in detail, and never present suicide as a solution, a romantic gesture or a reward.
-- No ending glorifies his death. The ambiguous endings stay ambiguous without making death beautiful.
-- The monsters' mockery targets the protagonists' *shame*, not the condition itself. Infertility or loss is never the punchline.
-- Show a content warning before the game starts, and list crisis resources in the menu and the credits: in Italy, Telefono Amico (02 2327 2327) and emergency number 112; internationally, findahelpline.com.
 
 ## Open questions
 
 | Question | Blocks |
 |---|---|
 | The breakup reason (candidates above) | Monster design, the mockery, endings |
-| The canonical truth behind the night | Endings, the writers' note |
+| The canonical truth behind the story | Endings, the writers' note |
+| Elena's rational explanation (days without sleep, medication, panic attacks or dissociation…) | Part 2's monsters and surreal events |
+| Whether any of the prologue's monsters was Elena, which would undermine the drug reading | The prologue |
 | Who tips Elena off, and how | Part 2's opening |
 | Where the final arena is (the pier? the *colonia*? the luna park?) | Level design for the ending of both halves |
 | Final names for the characters and the town | Writing, voice |
