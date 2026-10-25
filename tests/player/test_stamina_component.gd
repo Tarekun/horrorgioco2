@@ -156,3 +156,57 @@ func test_instances_are_independent() -> void:
 	_simulate(b, 1.0)
 	assert_almost_eq(a.current_stamina, 85.0, 0.1)
 	assert_eq(b.current_stamina, 100.0)
+
+
+# --- One-off actions (combat) ---
+
+
+func test_try_spend_pays_the_full_cost() -> void:
+	var stamina := _make_stamina()
+	assert_true(stamina.try_spend(20.0))
+	assert_eq(stamina.current_stamina, 80.0)
+
+
+func test_try_spend_fails_without_enough_stamina() -> void:
+	var stamina := _make_stamina()
+	stamina.current_stamina = 15.0
+	assert_false(stamina.can_afford(20.0))
+	assert_false(stamina.try_spend(20.0))
+	assert_eq(stamina.current_stamina, 15.0, "nothing spent on failure")
+
+
+func test_try_spend_of_exact_remainder_exhausts() -> void:
+	var stamina := _make_stamina()
+	stamina.current_stamina = 20.0
+	watch_signals(stamina)
+	assert_true(stamina.try_spend(20.0))
+	assert_eq(stamina.current_stamina, 0.0)
+	assert_true(stamina.is_exhausted)
+	assert_signal_emit_count(stamina, "exhausted", 1)
+
+
+func test_try_spend_blocked_while_exhausted() -> void:
+	var stamina := _make_stamina()
+	stamina.current_stamina = 10.0
+	stamina.try_spend(10.0)
+	stamina.current_stamina = 25.0
+	assert_false(stamina.try_spend(5.0), "exhausted until above the threshold")
+
+
+func test_try_spend_restarts_regeneration_delay() -> void:
+	var stamina := _make_stamina()
+	stamina.try_spend(50.0)
+	_simulate(stamina, 0.5)
+	stamina.try_spend(10.0)
+	_simulate(stamina, 0.5)
+	assert_almost_eq(stamina.current_stamina, 40.0, 0.1, "delay restarted by the second spend")
+	_simulate(stamina, 0.5)
+	assert_gt(stamina.current_stamina, 40.0, "regeneration resumed after the delay")
+
+
+func test_try_spend_stops_a_sprint_that_exhausts() -> void:
+	var stamina := _make_stamina()
+	stamina.current_stamina = 10.0
+	stamina.start_sprinting()
+	stamina.try_spend(10.0)
+	assert_false(stamina.is_draining)

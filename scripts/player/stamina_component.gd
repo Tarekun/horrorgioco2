@@ -3,8 +3,11 @@
 ## Exposed as @export variables so designers can tune values without code changes.
 ## The stamina system follows the gameplay spec:
 ## - Regeneration starts after a delay following the last stamina use.
-## - Sprinting drains stamina. At 0 the player is exhausted and can't sprint
-##   until stamina recovers past the exhaustion threshold.
+## - Sprinting drains stamina continuously. At 0 the player is exhausted and
+##   can't sprint or start any action that costs stamina until stamina
+##   recovers past the exhaustion threshold.
+## - One-off actions (attacks, dodges) pay their full cost up front with
+##   try_spend(); an action that can't be afforded doesn't start.
 
 class_name StaminaComponent
 extends Node
@@ -44,10 +47,8 @@ func _process(delta: float) -> void:
 	if is_draining:
 		_idle_time = 0.0
 		current_stamina = maxf(0.0, current_stamina - sprint_drain * delta)
-		if current_stamina <= 0.0 and not is_exhausted:
-			is_exhausted = true
-			is_draining = false
-			exhausted.emit()
+		if current_stamina <= 0.0:
+			_become_exhausted()
 	else:
 		_idle_time += delta
 		if _idle_time >= regeneration_delay:
@@ -62,6 +63,27 @@ func _process(delta: float) -> void:
 ## Returns true if the player can start sprinting.
 func can_sprint() -> bool:
 	return not is_exhausted and current_stamina > 0.0
+
+
+## Returns true if an action costing `cost` could start now: the player isn't
+## exhausted and the full cost is available.
+func can_afford(cost: float) -> bool:
+	return not is_exhausted and current_stamina >= cost
+
+
+## Pays `cost` for a one-off action. Returns false, spending nothing, if the
+## action can't be afforded. Restarts the regeneration delay.
+func try_spend(cost: float) -> bool:
+	if not can_afford(cost):
+		return false
+
+	current_stamina -= cost
+	_idle_time = 0.0
+	if current_stamina <= 0.0:
+		current_stamina = 0.0
+		_become_exhausted()
+	stamina_changed.emit(current_stamina)
+	return true
 
 
 ## Starts sprinting. Returns true if stamina was sufficient.
@@ -83,3 +105,10 @@ func refill() -> void:
 	is_exhausted = false
 	is_draining = false
 	_idle_time = 0.0
+
+
+func _become_exhausted() -> void:
+	is_draining = false
+	if not is_exhausted:
+		is_exhausted = true
+		exhausted.emit()
