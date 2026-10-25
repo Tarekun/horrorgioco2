@@ -87,3 +87,45 @@ func test_follows_player_position() -> void:
 	for i: int in 60:
 		_camera._process(1.0 / 60.0)
 	assert_almost_eq(_camera.position.x, 10.0, 0.05)
+
+
+func test_invert_y_flips_vertical_look() -> void:
+	_camera.invert_y = true
+	_mouse_motion(Vector2(0.0, -100.0))
+	assert_lt(_camera.get_camera_pitch(), 0.0, "mouse up now looks down")
+
+
+func test_follow_is_smoothed_not_instant() -> void:
+	_player.position = Vector3(10.0, 0.0, 0.0)
+	_camera._process(1.0 / 60.0)
+	assert_gt(_camera.position.x, 0.0, "starts moving")
+	assert_lt(_camera.position.x, 10.0, "lags behind the player")
+
+
+func test_follow_uses_global_position() -> void:
+	var holder := Node3D.new()
+	holder.position = Vector3(0.0, 0.0, 50.0)
+	add_child_autofree(holder)
+	var player := PLAYER_SCENE.instantiate() as Player
+	holder.add_child(player)
+	var camera := player.get_node("CameraController") as CameraController
+	for i: int in 120:
+		camera._process(1.0 / 60.0)
+	assert_almost_eq(camera.global_position.z, 50.0, 0.05)
+
+
+func test_spring_arm_shortens_against_a_wall() -> void:
+	# A wall just behind the player (the arm extends along +Z at yaw 0).
+	var wall := StaticBody3D.new()
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(10.0, 10.0, 1.0)
+	shape.shape = box
+	wall.add_child(shape)
+	wall.position = Vector3(0.0, 0.0, 1.5)
+	add_child_autofree(wall)
+
+	for i: int in 5:
+		await get_tree().physics_frame
+	assert_lt(_camera.spring_arm.get_hit_length(), _camera.arm_length - 0.5, "arm pulled in")
+	assert_gt(_camera.spring_arm.get_hit_length(), 0.0)
