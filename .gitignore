@@ -1,0 +1,14 @@
+# Godot 4 cache, imported assets and editor state
+.godot/
+
+# Export output
+/build/
+
+# Python tooling
+__pycache__/
+.venv/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.tmp
