@@ -33,7 +33,8 @@ Each folder has its own README with more detail.
 
 Run `tools/check.sh` to import the project, load every script and scene, run the main scene,
 lint/format-check all GDScript and run the test suite. It needs Godot (set `GODOT` if it isn't on `PATH` as `godot`)
-and gdtoolkit (`pip install -r requirements-dev.txt`). See `AGENTS.md` for details.
+and gdtoolkit (`pip install -r requirements-dev.txt`). See `AGENTS.md` for details and for the
+coding conventions (Godot 4 APIs only, static typing, naming, layout).
 
 ## Input map
 
