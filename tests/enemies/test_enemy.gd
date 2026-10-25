@@ -1,0 +1,111 @@
+## Scene-level tests of the enemy with the real player, on a floor with a navmesh.
+
+extends GutTest
+
+const ENEMY_SCENE: PackedScene = preload("res://scenes/enemies/enemy.tscn")
+const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
+const DT: float = 1.0 / 60.0
+
+var _enemy: Enemy
+var _player: Player
+
+
+func before_each() -> void:
+	var floor_body := StaticBody3D.new()
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(100.0, 1.0, 100.0)
+	shape.shape = box
+	floor_body.add_child(shape)
+	floor_body.position = Vector3(0.0, -0.5, 0.0)
+	add_child_autofree(floor_body)
+
+	var region := NavigationRegion3D.new()
+	var mesh := NavigationMesh.new()
+	mesh.vertices = PackedVector3Array(
+		[Vector3(-40, 0, -40), Vector3(40, 0, -40), Vector3(40, 0, 40), Vector3(-40, 0, 40)]
+	)
+	mesh.add_polygon(PackedInt32Array([0, 1, 2, 3]))
+	region.navigation_mesh = mesh
+	add_child_autofree(region)
+
+	_player = PLAYER_SCENE.instantiate() as Player
+	_player.position = Vector3(0.0, 0.0, 0.0)
+	add_child_autofree(_player)
+	_enemy = _spawn_enemy(Vector3(0.0, 0.0, -6.0))
+	await _frames(3)
+
+
+func after_each() -> void:
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+
+func _spawn_enemy(position: Vector3) -> Enemy:
+	var enemy := ENEMY_SCENE.instantiate() as Enemy
+	enemy.position = position
+	add_child_autofree(enemy)
+	return enemy
+
+
+func _frames(count: int) -> void:
+	for i: int in count:
+		await get_tree().physics_frame
+
+
+func _seconds(seconds: float) -> void:
+	await _frames(int(ceil(seconds / DT)))
+
+
+func test_wiring() -> void:
+	assert_true(_enemy.is_in_group(Enemy.ENEMY_GROUP))
+	assert_true(_player.is_in_group(Enemy.PLAYER_GROUP))
+	assert_not_null(_enemy.navigation_agent)
+	assert_eq(_enemy.attack_hitbox.collision_mask, CombatLayers.PLAYER_HURTBOX)
+	assert_eq(_enemy.hurtbox.collision_layer, CombatLayers.ENEMY_HURTBOX)
+
+
+func test_idles_when_the_player_is_far() -> void:
+	var far_enemy: Enemy = _spawn_enemy(Vector3(0.0, 0.0, -30.0))
+	await _seconds(0.5)
+	assert_eq(far_enemy.get_state(), EnemyBrain.State.IDLE)
+
+
+func test_wander_picks_a_point_within_its_radius() -> void:
+	var spawn: Vector3 = _enemy.global_position
+	for i: int in 10:
+		var point: Vector3 = _enemy.pick_wander_point()
+		assert_lt(point.distance_to(spawn), _enemy.wander_radius * 1.5 + 0.1)
+
+
+func test_chases_the_player_along_the_navmesh() -> void:
+	var start: float = _enemy.global_position.distance_to(_player.global_position)
+	await _seconds(1.0)
+	assert_eq(_enemy.get_state(), EnemyBrain.State.CHASE)
+	assert_lt(_enemy.global_position.distance_to(_player.global_position), start - 1.0)
+
+
+func test_attacks_and_damages_the_player_through_health() -> void:
+	_enemy.attack_windup = 0.2
+	await _seconds(4.0)
+	assert_lte(_player.health_component.current_health, 80.0)
+
+
+func test_a_hit_staggers_the_enemy_and_cancels_the_attack() -> void:
+	_enemy.position = Vector3(0.0, 0.0, -1.0)
+	await _frames(3)
+	assert_eq(_enemy.get_state(), EnemyBrain.State.ATTACK)
+	assert_true(_enemy.is_attacking)
+	_enemy.hurtbox.receive_hit(HitData.create(5.0, _player))
+	await _frames(2)
+	assert_eq(_enemy.get_state(), EnemyBrain.State.STAGGER)
+	assert_false(_enemy.is_attacking)
+	assert_false(_enemy.attack_hitbox.is_active)
+
+
+func test_dies_at_zero_health() -> void:
+	watch_signals(_enemy)
+	_enemy.hurtbox.receive_hit(HitData.create(100.0, _player))
+	await _frames(2)
+	assert_eq(_enemy.get_state(), EnemyBrain.State.DEAD)
+	assert_signal_emitted(_enemy, "died")
+	assert_false(_enemy.is_in_group(Enemy.ENEMY_GROUP))
