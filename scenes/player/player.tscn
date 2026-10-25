@@ -1,26 +1,32 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/player/stamina_component.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/player/stamina_component.gd" id="3"]
 
-[node name="Player" type="CharacterBody3D"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
+radius = 0.35
+height = 1.8
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera_controller", "stamina_component")]
 script = ExtResource("1")
-camera_controller_path = NodePath("CameraController")
-stamina_component_path = NodePath("StaminaComponent")
+camera_controller = NodePath("CameraController")
+stamina_component = NodePath("StaminaComponent")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-
-[node name="CollisionShape3D/shape" type="CapsuleCollisionShape3D" parent="CollisionShape3D"]
-radius = 0.35
-height = 1.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_1")
 
 [node name="StaminaComponent" type="Node" parent="."]
-script = ExtResource("2")
+script = ExtResource("3")
 
-[node name="CameraController" type="Node3D" parent="."]
+[node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("player", "spring_arm")]
+top_level = true
+script = ExtResource("2")
+player = NodePath("..")
+spring_arm = NodePath("SpringArm3D")
 
 [node name="SpringArm3D" type="SpringArm3D" parent="CameraController"]
-arm_length = 2.2
-collide_with_bodies = true
 
 [node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
+fov = 70.0

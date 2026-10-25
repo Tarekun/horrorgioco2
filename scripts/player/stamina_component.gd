@@ -3,8 +3,8 @@
 ## Exposed as @export variables so designers can tune values without code changes.
 ## The stamina system follows the gameplay spec:
 ## - Regeneration starts after a delay following the last stamina use.
-## - Sprinting drains stamina; when exhausted the player can't sprint until
-##   stamina recovers past the exhaustion threshold.
+## - Sprinting drains stamina. At 0 the player is exhausted and can't sprint
+##   until stamina recovers past the exhaustion threshold.
 
 class_name StaminaComponent
 extends Node
@@ -24,52 +24,49 @@ signal exhausted
 ## Stamina drained per second while sprinting.
 @export var sprint_drain: float = 15.0
 
-## Stamina level below which the player is exhausted and cannot sprint.
+## Stamina level the player must get back above after hitting 0 to sprint again.
 @export var exhaustion_threshold: float = 30.0
 
-var current_stamina: float
+var current_stamina: float = 0.0
 var is_draining: bool = false
+var is_exhausted: bool = false
 
-var can_sprint: bool:
-	get:
-		return current_stamina > exhaustion_threshold and not _is_recovering
-
-var _last_use_time: float = 0.0
-var _is_recovering: bool = false
+var _idle_time: float = 0.0
 
 
-func _init() -> void:
-	current_stamina = max_stamina
+func _ready() -> void:
+	refill()
 
 
 func _process(delta: float) -> void:
+	var previous: float = current_stamina
+
 	if is_draining:
-		_last_use_time = get_tree().get_time()
-		current_stamina = max(0.0, current_stamina - sprint_drain * delta)
-		if current_stamina <= 0.0:
+		_idle_time = 0.0
+		current_stamina = maxf(0.0, current_stamina - sprint_drain * delta)
+		if current_stamina <= 0.0 and not is_exhausted:
+			is_exhausted = true
+			is_draining = false
 			exhausted.emit()
 	else:
-		var idle_time: float = get_tree().get_time() - _last_use_time
-		if idle_time >= regeneration_delay and current_stamina < max_stamina:
-			current_stamina = min(max_stamina, current_stamina + regeneration_rate * delta)
-			if current_stamina > exhaustion_threshold and _is_recovering:
-				_is_recovering = false
-		if current_stamina <= 0.0:
-			_is_recovering = true
+		_idle_time += delta
+		if _idle_time >= regeneration_delay:
+			current_stamina = minf(max_stamina, current_stamina + regeneration_rate * delta)
+			if is_exhausted and current_stamina > exhaustion_threshold:
+				is_exhausted = false
 
-	## Emit the signal whenever stamina changes meaningfully.
-	if is_draining or current_stamina < max_stamina:
+	if not is_equal_approx(previous, current_stamina):
 		stamina_changed.emit(current_stamina)
 
 
 ## Returns true if the player can start sprinting.
-func is_sprinting_allowed() -> bool:
-	return can_sprint
+func can_sprint() -> bool:
+	return not is_exhausted and current_stamina > 0.0
 
 
 ## Starts sprinting. Returns true if stamina was sufficient.
 func start_sprinting() -> bool:
-	if not is_sprinting_allowed():
+	if not can_sprint():
 		return false
 	is_draining = true
 	return true
@@ -78,3 +75,11 @@ func start_sprinting() -> bool:
 ## Stops sprinting.
 func stop_sprinting() -> void:
 	is_draining = false
+
+
+## Fills the pool to `max_stamina` and clears exhaustion.
+func refill() -> void:
+	current_stamina = max_stamina
+	is_exhausted = false
+	is_draining = false
+	_idle_time = 0.0
