@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/player/stamina_component.gd" id="3"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player_model.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/player/footsteps.tscn" id="6"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -24,6 +25,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_1")
 
 [node name="Model" parent="." instance=ExtResource("4")]
+
+[node name="Footsteps" parent="." node_paths=PackedStringArray("model") instance=ExtResource("6")]
+model = NodePath("../Model")
 
 [node name="StaminaComponent" type="Node" parent="."]
 script = ExtResource("3")

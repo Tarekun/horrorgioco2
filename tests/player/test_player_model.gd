@@ -57,6 +57,9 @@ func test_every_animation_loops_and_targets_existing_bones() -> void:
 		assert_eq(animation.loop_mode, Animation.LOOP_LINEAR, "%s loops" % animation_name)
 		assert_gt(animation.get_track_count(), 0)
 		for track: int in animation.get_track_count():
+			# Method tracks call back into the model (footsteps); they target no bone.
+			if animation.track_get_type(track) == Animation.TYPE_METHOD:
+				continue
 			var bone: String = str(animation.track_get_path(track).get_concatenated_subnames())
 			assert_ne(_skeleton.find_bone(bone), -1, "%s: %s" % [animation_name, bone])
 
