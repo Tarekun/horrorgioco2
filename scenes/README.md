@@ -22,7 +22,7 @@ Hitboxes sit on their own layer and only mask the opposing hurtbox layer; hurtbo
 
 ## Game flow
 
-`scenes/main.tscn` is the entry point and stays loaded for the whole run. It holds the post-process layer and a `ScreenHost` node, which it registers with the `GameFlow` autoload (`scripts/autoload/game_flow.gd`). GameFlow instances the title screen (`scenes/ui/main_menu.tscn`) or a level inside the host and tracks the state (title, playing, game over). Screens never switch scenes themselves: they call `GameFlow.start_new_game()`, `go_to_title()` or `restart_level()`. The starting level is `GameFlow.START_LEVEL_PATH`.
+`scenes/main.tscn` is the entry point and stays loaded for the whole run. It holds the post-process layer and a `ScreenHost` node, which it registers with the `GameFlow` autoload (`scripts/autoload/game_flow.gd`). GameFlow instances the title screen (`scenes/ui/main_menu.tscn`) or a level inside the host and tracks the state (title, playing, game over). `main.tscn` also holds the `PauseMenu` (`scenes/ui/pause_menu.tscn`), which opens on `pause` while playing, never over a screen that already paused the tree. Screens never switch scenes themselves: they call `GameFlow.start_new_game()`, `go_to_title()` or `restart_level()`. The starting level is `GameFlow.START_LEVEL_PATH`.
 
 ## UI
 
