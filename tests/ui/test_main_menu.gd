@@ -32,13 +32,18 @@ func test_load_is_disabled_until_the_save_slot_screen_exists() -> void:
 	assert_false(_menu.load_button.disabled)
 
 
-func test_load_and_settings_announce_the_request() -> void:
+func test_load_announces_the_request() -> void:
 	watch_signals(_menu)
 	_menu.is_load_available = true
 	_menu.load_button.pressed.emit()
-	_menu.settings_button.pressed.emit()
 	assert_signal_emitted(_menu, "load_game_requested")
-	assert_signal_emitted(_menu, "settings_requested")
+
+
+func test_settings_opens_the_settings_screen_and_closing_returns_focus() -> void:
+	_menu.settings_button.pressed.emit()
+	assert_true(_menu.settings_screen.is_open)
+	_menu.settings_screen.close()
+	assert_true(_menu.settings_button.has_focus())
 
 
 func test_new_game_starts_the_game() -> void:

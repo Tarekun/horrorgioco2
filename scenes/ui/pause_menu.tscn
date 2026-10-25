@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/settings_screen.tscn" id="2"]
 
-[node name="PauseMenu" type="CanvasLayer" node_paths=PackedStringArray("panel", "resume_button", "settings_button", "quit_button")]
+[node name="PauseMenu" type="CanvasLayer" node_paths=PackedStringArray("panel", "resume_button", "settings_button", "quit_button", "settings_screen")]
 process_mode = 3
 layer = 20
 script = ExtResource("1")
@@ -10,6 +11,7 @@ panel = NodePath("Panel")
 resume_button = NodePath("Panel/Menu/ResumeButton")
 settings_button = NodePath("Panel/Menu/SettingsButton")
 quit_button = NodePath("Panel/Menu/QuitButton")
+settings_screen = NodePath("SettingsScreen")
 
 [node name="Panel" type="ColorRect" parent="."]
 anchors_preset = 15
@@ -50,3 +52,5 @@ text = "Settings"
 [node name="QuitButton" type="Button" parent="Panel/Menu"]
 layout_mode = 2
 text = "Quit to title"
+
+[node name="SettingsScreen" parent="." instance=ExtResource("2")]

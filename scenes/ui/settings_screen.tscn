@@ -1,0 +1,100 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/settings_screen.gd" id="1"]
+
+[node name="SettingsScreen" type="CanvasLayer" node_paths=PackedStringArray("panel", "mouse_sensitivity_slider", "stick_sensitivity_slider", "invert_y_check", "volume_rows", "retro_filter_check", "back_button")]
+process_mode = 3
+layer = 25
+script = ExtResource("1")
+panel = NodePath("Panel")
+mouse_sensitivity_slider = NodePath("Panel/Menu/MouseSensitivityRow/Slider")
+stick_sensitivity_slider = NodePath("Panel/Menu/StickSensitivityRow/Slider")
+invert_y_check = NodePath("Panel/Menu/InvertYCheck")
+volume_rows = NodePath("Panel/Menu/VolumeRows")
+retro_filter_check = NodePath("Panel/Menu/RetroFilterCheck")
+back_button = NodePath("Panel/Menu/BackButton")
+
+[node name="Panel" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.025, 0.96)
+
+[node name="Menu" type="VBoxContainer" parent="Panel"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -250.0
+offset_right = 220.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Panel/Menu"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="ControlsLabel" type="Label" parent="Panel/Menu"]
+layout_mode = 2
+text = "Controls"
+
+[node name="MouseSensitivityRow" type="HBoxContainer" parent="Panel/Menu"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/Menu/MouseSensitivityRow"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Mouse sensitivity"
+
+[node name="Slider" type="HSlider" parent="Panel/Menu/MouseSensitivityRow"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+step = 0.01
+
+[node name="StickSensitivityRow" type="HBoxContainer" parent="Panel/Menu"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/Menu/StickSensitivityRow"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Stick sensitivity"
+
+[node name="Slider" type="HSlider" parent="Panel/Menu/StickSensitivityRow"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+step = 5.0
+
+[node name="InvertYCheck" type="CheckBox" parent="Panel/Menu"]
+layout_mode = 2
+text = "Invert Y"
+
+[node name="AudioLabel" type="Label" parent="Panel/Menu"]
+layout_mode = 2
+text = "Audio"
+
+[node name="VolumeRows" type="VBoxContainer" parent="Panel/Menu"]
+layout_mode = 2
+
+[node name="GraphicsLabel" type="Label" parent="Panel/Menu"]
+layout_mode = 2
+text = "Graphics"
+
+[node name="RetroFilterCheck" type="CheckBox" parent="Panel/Menu"]
+layout_mode = 2
+text = "Retro filter"
+
+[node name="BackButton" type="Button" parent="Panel/Menu"]
+layout_mode = 2
+text = "Back"

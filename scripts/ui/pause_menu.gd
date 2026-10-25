@@ -10,15 +10,13 @@
 class_name PauseMenu
 extends CanvasLayer
 
-## Emitted when Settings is pressed; the settings screen (#86) listens.
-signal settings_requested
-
 ## The container shown and hidden with the menu.
 @export var panel: Control
 
 @export var resume_button: Button
 @export var settings_button: Button
 @export var quit_button: Button
+@export var settings_screen: SettingsScreen
 
 var is_open: bool = false
 
@@ -28,7 +26,8 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	panel.visible = false
 	resume_button.pressed.connect(close)
-	settings_button.pressed.connect(settings_requested.emit)
+	settings_button.pressed.connect(settings_screen.open)
+	settings_screen.closed.connect(settings_button.grab_focus)
 	quit_button.pressed.connect(GameFlow.go_to_title)
 	GameFlow.state_changed.connect(_on_state_changed)
 

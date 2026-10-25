@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/settings_screen.tscn" id="2"]
 
-[node name="MainMenu" type="Control" node_paths=PackedStringArray("new_game_button", "load_button", "settings_button", "quit_button")]
+[node name="MainMenu" type="Control" node_paths=PackedStringArray("new_game_button", "load_button", "settings_button", "quit_button", "settings_screen")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,6 +15,7 @@ new_game_button = NodePath("Menu/NewGameButton")
 load_button = NodePath("Menu/LoadButton")
 settings_button = NodePath("Menu/SettingsButton")
 quit_button = NodePath("Menu/QuitButton")
+settings_screen = NodePath("SettingsScreen")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -60,3 +62,5 @@ text = "Settings"
 [node name="QuitButton" type="Button" parent="Menu"]
 layout_mode = 2
 text = "Quit"
+
+[node name="SettingsScreen" parent="." instance=ExtResource("2")]
