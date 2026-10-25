@@ -17,5 +17,8 @@ The script runs these steps and exits non-zero if any fails, listing the failed 
 2. **Load scripts and scenes** – `tools/check_scripts.gd` loads every `.gd` and `.tscn` file and fails on any parse or load error.
 3. **Run main scene** – runs the main scene for one frame with `--quit`.
 4. **gdlint** and **gdformat --check** – lint and formatting on all GDScript files outside `addons/`.
+5. **Tests** – runs the GUT suite in `tests/` headless; fails if any test fails.
 
-Any `ERROR:` or `SCRIPT ERROR:` printed by Godot fails the step, even if Godot exits 0. To fix formatting, run `gdformat` on the reported files.
+In steps 1–3, any `ERROR:` or `SCRIPT ERROR:` printed by Godot fails the step, even if Godot exits 0. To fix formatting, run `gdformat` on the reported files.
+
+To run only the tests: `godot --headless --path . -s res://addons/gut/gut_cmdln.gd` (see `tests/README.md`).

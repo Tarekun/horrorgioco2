@@ -23,7 +23,8 @@ godot --path .                       # run the main scene
 | `scenes/`  | Scenes (`.tscn`); `scenes/main.tscn` is the entry point |
 | `scripts/` | GDScript sources (`.gd`) |
 | `assets/`  | Imported art, audio, fonts and other resources |
-| `tests/`   | Automated tests |
+| `tests/`   | Automated tests (GUT) |
+| `addons/`  | Third-party editor plugins (GUT) – don't edit |
 | `tools/`   | Development tooling such as the check script |
 
 Each folder has its own README with more detail.
@@ -31,7 +32,7 @@ Each folder has its own README with more detail.
 ## Checks
 
 Run `tools/check.sh` to import the project, load every script and scene, run the main scene,
-and lint/format-check all GDScript. It needs Godot (set `GODOT` if it isn't on `PATH` as `godot`)
+lint/format-check all GDScript and run the test suite. It needs Godot (set `GODOT` if it isn't on `PATH` as `godot`)
 and gdtoolkit (`pip install -r requirements-dev.txt`). See `AGENTS.md` for details.
 
 ## Input map
