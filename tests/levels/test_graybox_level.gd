@@ -93,8 +93,49 @@ func test_the_navmesh_is_baked_and_covers_the_player_spawn() -> void:
 	assert_lt(closest.distance_to(spawn), 0.5)
 
 
-func test_street_connects_to_the_corridor_and_rooms() -> void:
+func _door(door_name: String) -> Door:
+	return _level.get_node("Doors/%s" % door_name) as Door
+
+
+func test_has_doors_between_the_rooms() -> void:
+	assert_gte(_level.get_node("Doors").get_child_count(), 6)
+	assert_true(_door("DoorStorageEast").is_locked)
+	assert_true(_door("DoorRoomB").is_locked)
+	assert_false(_door("DoorFront").is_locked)
+
+
+## Opens a door and lets the navigation server pick up its link.
+func _open(door_name: String, from: Vector3) -> void:
+	_door(door_name).open(from)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+
+func test_closed_doors_cut_the_rooms_off_from_the_street() -> void:
 	var spawn: Vector3 = (_level.get_node("PlayerSpawn") as Marker3D).global_position
+	assert_eq(_path_length(spawn, Vector3(3, 0, 4)), -1.0, "lobby")
+	assert_eq(_path_length(spawn, Vector3(0, 0, 0)), -1.0, "corridor")
+
+
+func test_opening_doors_opens_the_path() -> void:
+	var spawn: Vector3 = (_level.get_node("PlayerSpawn") as Marker3D).global_position
+	await _open("DoorFront", Vector3(0, 0, 14))
+	assert_gt(_path_length(spawn, Vector3(3, 0, 4)), 0.0, "lobby")
+	assert_eq(_path_length(spawn, Vector3(0, 0, 0)), -1.0, "corridor is still shut off")
+	await _open("DoorLobby", Vector3(0, 0, 5))
 	assert_gt(_path_length(spawn, Vector3(0, 0, 0)), 0.0, "corridor")
-	assert_gt(_path_length(spawn, Vector3(-8, 0, -6)), 0.0, "room A")
-	assert_gt(_path_length(spawn, Vector3(10, 0, 5)), 0.0, "storage")
+
+
+func test_closing_a_door_shuts_the_path_again() -> void:
+	var spawn: Vector3 = (_level.get_node("PlayerSpawn") as Marker3D).global_position
+	await _open("DoorFront", Vector3(0, 0, 14))
+	_door("DoorFront").close()
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	assert_eq(_path_length(spawn, Vector3(3, 0, 4)), -1.0)
+
+
+func test_locked_doors_never_open() -> void:
+	var door: Door = _door("DoorRoomB")
+	door.open(Vector3(8, 0, 0))
+	assert_false(door.is_open)

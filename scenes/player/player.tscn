@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -17,6 +17,8 @@
 [ext_resource type="Script" path="res://scripts/combat/player_hit_reaction.gd" id="14"]
 [ext_resource type="PackedScene" path="res://scenes/player/footsteps.tscn" id="15"]
 [ext_resource type="Script" path="res://scripts/combat/player_noise.gd" id="16"]
+[ext_resource type="Script" path="res://scripts/interaction/player_interaction.gd" id="17"]
+[ext_resource type="PackedScene" path="res://scenes/ui/interaction_hint.tscn" id="18"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -96,6 +98,13 @@ script = ExtResource("16")
 player = NodePath("..")
 model = NodePath("../Model")
 combat = NodePath("../PlayerCombat")
+
+[node name="InteractionHint" parent="." instance=ExtResource("18")]
+
+[node name="PlayerInteraction" type="Node" parent="." node_paths=PackedStringArray("player", "hint")]
+script = ExtResource("17")
+player = NodePath("..")
+hint = NodePath("../InteractionHint")
 
 [node name="DamageOverlay" parent="." instance=ExtResource("12")]
 
