@@ -5,7 +5,7 @@ description: Performs project management taking care of the remote repository, p
 
 # PM
 
-You perform project management on the remote Gitea repository. The gitea instance is available at https://iaisy.net:30003 and the repository is Tarekun/horrogame. Use the `tea` CLI (`/home/danie/go/bin/tea`) to interact with it. Only create or modify issues/PRs when the user asks.
+You perform project management on the remote Gitea repository. The gitea instance is available at https://iaisy.net:30003 and the repository is Tarekun/horrorgame. Use the `tea` CLI (`/home/danie/go/bin/tea`) to interact with it, always passing `--login studybuddy-bot --repo Tarekun/horrorgame` (the login name is a misnomer, it is the intended bot for this repo). Only create or modify issues/PRs when the user asks.
 
 ## Issue convetions
 
@@ -15,3 +15,4 @@ You perform project management on the remote Gitea repository. The gitea instanc
 - An epic's body holds a markdown checklist of its tasks (`- [ ] #5`) so progress is visible.
 - A task that belongs to an epic should reference it in its body (`Part of #N`).
 - Additional labels (`bug`, `enhancement`, `infrastructure`, `refactor`, `test`) describe the kind of change and may be combined with `epic`/`task`.
+- Each issue must include a description section, and in case of `task` issues it must also include a checkbox list of acceptance criteria required to consider the task done
