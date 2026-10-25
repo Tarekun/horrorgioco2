@@ -86,7 +86,7 @@ Commit the `.uid` and `.import` sidecar files Godot generates next to scripts an
 
 Run `tools/check.sh` before every commit and fix anything it reports. It needs:
 
-- the pinned Godot editor binary (version in `.godot-version`) on `PATH` as `godot`, or set `GODOT=/path/to/godot`;
+- the pinned Godot editor binary (version in `.godot-version`) on `PATH` as `godot`, or set `GODOT=/path/to/godot`. `tools/install_godot.sh` downloads and verifies it, then prints its path (Linux x86_64), e.g. `export GODOT="$(tools/install_godot.sh)"`;
 - gdtoolkit (`pip install -r requirements-dev.txt`), providing `gdlint` and `gdformat`.
 
 The script runs these steps and exits non-zero if any fails, listing the failed steps at the end:
@@ -100,3 +100,7 @@ The script runs these steps and exits non-zero if any fails, listing the failed 
 In steps 1–3, any `ERROR:` or `SCRIPT ERROR:` printed by Godot fails the step, even if Godot exits 0. To fix formatting, run `gdformat` on the reported files.
 
 To run only the tests: `godot --headless --path . -s res://addons/gut/gut_cmdln.gd`. Add `-gselect=<file>` for one file or `-gunit_test_name=<name>` for one test (see `tests/README.md`). New gameplay logic comes with tests.
+
+### CI
+
+`.gitea/workflows/ci.yml` runs `tools/check.sh` on Gitea Actions for every pull request and every push to `main`. It installs the pinned Godot with `tools/install_godot.sh` and gdtoolkit from `requirements-dev.txt`. A PR with a failing check must not be merged. If you change the Godot version, update `.godot-version` and CI picks it up.
