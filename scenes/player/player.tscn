@@ -1,12 +1,14 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/player/stamina_component.gd" id="3"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player_model.tscn" id="4"]
-[ext_resource type="PackedScene" path="res://scenes/player/flashlight.tscn" id="5"]
-[ext_resource type="PackedScene" path="res://scenes/player/footsteps.tscn" id="6"]
+[ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/player/flashlight.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/player/footsteps.tscn" id="8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -15,11 +17,15 @@ height = 1.8
 [sub_resource type="SphereShape3D" id="SphereShape3D_1"]
 radius = 0.2
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera_controller", "stamina_component", "model")]
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera_controller", "stamina_component", "model", "health_component", "hurtbox")]
+collision_layer = 2
+collision_mask = 5
 script = ExtResource("1")
 camera_controller = NodePath("CameraController")
 stamina_component = NodePath("StaminaComponent")
 model = NodePath("Model")
+health_component = NodePath("HealthComponent")
+hurtbox = NodePath("Hurtbox")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
@@ -27,11 +33,24 @@ shape = SubResource("CapsuleShape3D_1")
 
 [node name="Model" parent="." instance=ExtResource("4")]
 
-[node name="Footsteps" parent="." node_paths=PackedStringArray("model") instance=ExtResource("6")]
+[node name="Footsteps" parent="." node_paths=PackedStringArray("model") instance=ExtResource("8")]
 model = NodePath("../Model")
 
 [node name="StaminaComponent" type="Node" parent="."]
 script = ExtResource("3")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("5")
+
+[node name="Hurtbox" type="Area3D" parent="." node_paths=PackedStringArray("health_component")]
+collision_layer = 32
+collision_mask = 0
+script = ExtResource("6")
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_1")
 
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("player", "spring_arm")]
 top_level = true
@@ -45,4 +64,4 @@ shape = SubResource("SphereShape3D_1")
 [node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
 fov = 70.0
 
-[node name="Flashlight" parent="CameraController/SpringArm3D/Camera3D" instance=ExtResource("5")]
+[node name="Flashlight" parent="CameraController/SpringArm3D/Camera3D" instance=ExtResource("7")]

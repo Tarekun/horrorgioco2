@@ -1,0 +1,57 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/training_dummy.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/combat/hitbox.gd" id="4"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.35
+height = 1.8
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_body"]
+radius = 0.35
+height = 1.8
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_attack"]
+size = Vector3(0.8, 1.0, 1.0)
+
+[node name="TrainingDummy" type="CharacterBody3D" node_paths=PackedStringArray("health_component", "hurtbox", "attack_hitbox")]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1")
+health_component = NodePath("HealthComponent")
+hurtbox = NodePath("Hurtbox")
+attack_hitbox = NodePath("AttackHitbox")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+mesh = SubResource("CapsuleMesh_body")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2")
+
+[node name="Hurtbox" type="Area3D" parent="." node_paths=PackedStringArray("health_component")]
+collision_layer = 64
+collision_mask = 0
+script = ExtResource("3")
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="AttackHitbox" type="Area3D" parent="." node_paths=PackedStringArray("attacker")]
+collision_layer = 16
+collision_mask = 32
+script = ExtResource("4")
+damage = 20.0
+attacker = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AttackHitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, -0.9)
+shape = SubResource("BoxShape3D_attack")
