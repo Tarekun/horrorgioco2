@@ -21,14 +21,7 @@ jobs:
           uv venv "$HOME/gdtoolkit"
           uv pip install --python "$HOME/gdtoolkit/bin/python" -r requirements-dev.txt
           echo "$HOME/gdtoolkit/bin" >> "$GITHUB_PATH"
-      - name: Read Godot version
-        id: godot
-        run: echo "version=$(cat .godot-version)" >> "$GITHUB_OUTPUT"
-      # Best effort: if the runner has no cache server, this only logs a warning and Godot is downloaded.
-      - uses: actions/cache@v4
-        with:
-          path: ~/godot
-          key: godot-${{ steps.godot.outputs.version }}-${{ runner.os }}-${{ runner.arch }}
+      # No actions/cache: the runner's cache server times out, and downloading Godot takes a few seconds.
       - name: Install Godot
         run: |
           tools/install_godot.sh "$HOME/godot"
