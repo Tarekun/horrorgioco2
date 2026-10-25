@@ -55,6 +55,9 @@ const WALK_SPEED: float = 1.5
 const RUN_SPEED: float = 3.5
 const SPRINT_SPEED: float = 5.5
 
+## Fractions of a gait cycle at which a foot lands.
+const FOOTSTEP_PHASES: Array[float] = [0.25, 0.75]
+
 ## Frames sampled per animation cycle.
 const KEYS_PER_CYCLE: int = 16
 
@@ -81,6 +84,8 @@ func _init() -> void:
 	tree.tree_root = _build_tree_root()
 	tree.anim_player = NodePath("../AnimationPlayer")
 	tree.active = true
+	# Footstep calls must fire in the same frame the animation reaches them.
+	tree.callback_mode_method = AnimationMixer.ANIMATION_CALLBACK_MODE_METHOD_IMMEDIATE
 	root.add_child(tree)
 	root.animation_tree = tree
 
@@ -230,7 +235,20 @@ func _build_gait(
 			animation.rotation_track_insert_key(
 				tracks["LowerArm" + suffix], time, _pitch(0.3 + arm * 0.6)
 			)
+	_add_footstep_calls(animation, period)
 	return animation
+
+
+## Calls PlayerModel.emit_footstep() when a foot lands: the forward-most leg
+## swing, where the hips are lowest, at a quarter and three quarters of the
+## cycle.
+func _add_footstep_calls(animation: Animation, period: float) -> void:
+	var index := animation.add_track(Animation.TYPE_METHOD)
+	animation.track_set_path(index, NodePath("."))
+	for fraction: float in FOOTSTEP_PHASES:
+		animation.track_insert_key(
+			index, period * fraction, {"method": &"emit_footstep", "args": []}
+		)
 
 
 func _build_tree_root() -> AnimationNodeBlendSpace1D:
