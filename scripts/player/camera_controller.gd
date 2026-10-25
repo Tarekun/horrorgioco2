@@ -9,6 +9,9 @@
 ##
 ## The camera rig is top-level (not a child of the player) so it doesn't
 ## inherit the player's rotation.
+##
+## The mouse is captured while the game runs and released with the `pause`
+## action; a click captures it again.
 
 class_name CameraController
 extends Node3D
@@ -20,12 +23,12 @@ extends Node3D
 @export var shoulder_offset: Vector2 = Vector2(0.5, 1.6)
 
 ## Mouse look sensitivity (degrees per pixel).
-@export var mouse_sensitivity: float = 0.3
+@export var mouse_sensitivity: float = 0.1
 
-## Joystick look sensitivity (degrees per axis unit per second).
-@export var joystick_sensitivity: float = 40.0
+## Joystick look sensitivity (degrees per second at full tilt).
+@export var joystick_sensitivity: float = 120.0
 
-## Camera pitch limits in degrees.
+## Camera pitch limits in degrees. Positive looks up.
 @export var pitch_min: float = -60.0
 @export var pitch_max: float = 50.0
 
@@ -38,41 +41,58 @@ extends Node3D
 ## Camera follow smoothing time in seconds (how quickly the camera catches up).
 @export var follow_smoothing_time: float = 0.1
 
+var _is_mouse_captured: bool = false
 var _camera_pitch: float = 0.0
 var _camera_yaw: float = 0.0
-var _previous_player_position: Vector3 = Vector3.ZERO
 
 
 func _ready() -> void:
-	## Make the camera rig top-level so it doesn't inherit player rotation.
 	top_level = true
 
-	## Enable collision on the spring arm to prevent wall clipping.
 	if spring_arm:
-		spring_arm.collide_with_enemies = false
-		spring_arm.collide_with_areas = false
-		spring_arm.collide_with_bodies = true
-		spring_arm.collide_with_skeletons = false
+		spring_arm.spring_length = arm_length
+		spring_arm.position = Vector3(shoulder_offset.x, shoulder_offset.y, 0.0)
 
-	## Initialise the previous position to avoid a jump on the first frame.
 	if player:
-		_previous_player_position = player.position
+		position = player.position
+		# The arm would otherwise collide with the player's own body.
+		if spring_arm:
+			spring_arm.add_excluded_object(player.get_rid())
+
+	_set_mouse_captured(true)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"pause"):
+		_set_mouse_captured(false)
+	elif event is InputEventMouseButton and event.pressed:
+		_set_mouse_captured(true)
+	elif event is InputEventMouseMotion and _is_mouse_captured:
+		_rotate_camera(-event.relative.x * mouse_sensitivity, -event.relative.y * mouse_sensitivity)
 
 
 func _process(delta: float) -> void:
-	# Orbit the camera with joystick input.
-	_handle_joystick_look(delta)
+	var look: Vector2 = Input.get_vector(&"look_left", &"look_right", &"look_up", &"look_down")
+	if look != Vector2.ZERO:
+		var step: float = joystick_sensitivity * delta
+		_rotate_camera(-look.x * step, -look.y * step)
 
-	# Position the camera to follow the player with smoothing.
 	_follow_player(delta)
 
 
-## Called from Player._unhandled_input() when the mouse is captured.
-func _handle_mouse_motion(event: InputEventMouseMotion) -> void:
-	var delta_yaw: float = -event.relative.x * mouse_sensitivity
-	var delta_pitch: float = event.relative.y * mouse_sensitivity
+## Returns the current camera yaw in radians.
+func get_camera_yaw() -> float:
+	return deg_to_rad(_camera_yaw)
 
-	_camera_yaw += delta_yaw
+
+## Returns the current camera pitch in radians.
+func get_camera_pitch() -> float:
+	return deg_to_rad(_camera_pitch)
+
+
+## Rotates the camera by the given degrees. Positive pitch looks up.
+func _rotate_camera(delta_yaw: float, delta_pitch: float) -> void:
+	_camera_yaw = wrapf(_camera_yaw + delta_yaw, -180.0, 180.0)
 	_camera_pitch = clampf(_camera_pitch + delta_pitch, pitch_min, pitch_max)
 
 	if spring_arm:
@@ -80,32 +100,14 @@ func _handle_mouse_motion(event: InputEventMouseMotion) -> void:
 		spring_arm.rotation.x = deg_to_rad(_camera_pitch)
 
 
-func _handle_joystick_look(delta: float) -> void:
-	var look_x: float = Input.get_vector(&"look_left", &"look_right", &"look_up", &"look_down").x
-
-	if abs(look_x) > 0.0:
-		var delta_yaw: float = look_x * joystick_sensitivity * delta
-		_camera_yaw += delta_yaw
-
-		if spring_arm:
-			spring_arm.rotation.y = deg_to_rad(_camera_yaw)
+func _set_mouse_captured(is_captured: bool) -> void:
+	_is_mouse_captured = is_captured
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if is_captured else Input.MOUSE_MODE_VISIBLE)
 
 
 func _follow_player(delta: float) -> void:
 	if player == null:
 		return
 
-	# Smoothly follow the player position.
-	var target_position: Vector3 = player.position
 	var t: float = 1.0 - exp(-delta / maxf(follow_smoothing_time, 0.001))
-	position = position.lerp(target_position, t)
-	_previous_player_position = target_position
-
-	# Set the shoulder offset on the spring arm.
-	if spring_arm:
-		spring_arm.position = Vector3(shoulder_offset.x, shoulder_offset.y, 0.0)
-
-
-## Returns the current camera yaw in radians.
-func get_camera_yaw() -> float:
-	return deg_to_rad(_camera_yaw)
+	position = position.lerp(player.position, t)
