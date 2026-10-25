@@ -48,6 +48,8 @@ const PARTS: Array = [
 	["UpperLeg_L", "capsule", Vector3(0.08, 0.5, 0.0), Vector3(0.0, -0.23, 0.0), false],
 	["LowerLeg_L", "capsule", Vector3(0.065, 0.46, 0.0), Vector3(0.0, -0.22, 0.0), false],
 	["Foot_L", "box", Vector3(0.1, 0.06, 0.26), Vector3(0.0, 0.03, -0.06), false],
+	# The wooden plank, held in the right hand.
+	["LowerArm_R", "box", Vector3(0.05, 0.75, 0.09), Vector3(0.0, -0.4, 0.0), false],
 ]
 
 ## Speeds (m/s) the locomotion blend space places each clip at.
@@ -55,6 +57,130 @@ const WALK_SPEED: float = 1.5
 const RUN_SPEED: float = 3.5
 const SPRINT_SPEED: float = 5.5
 
+## One-off action clips as [name, length in seconds, keys]. Keys are
+## [time as a fraction of the length, {bone: euler rotation in radians}]. Bones
+## missing from a key stay at rest. Lengths match the default weapon timings
+## (MeleeWeapon); the strike lands at about half the length.
+const ACTIONS: Array = [
+	[
+		&"attack_light_1",
+		0.45,
+		[
+			[0.0, {}],
+			[
+				0.25,
+				{
+					"UpperArm_R": Vector3(2.2, 0, 0),
+					"LowerArm_R": Vector3(0.8, 0, 0),
+					"Chest": Vector3(0, 0.5, 0)
+				}
+			],
+			[
+				0.5,
+				{
+					"UpperArm_R": Vector3(1.0, 0, 0),
+					"LowerArm_R": Vector3(0.1, 0, 0),
+					"Chest": Vector3(0, -0.6, 0)
+				}
+			],
+			[1.0, {}],
+		],
+	],
+	[
+		&"attack_light_2",
+		0.45,
+		[
+			[0.0, {}],
+			[
+				0.25,
+				{
+					"UpperArm_R": Vector3(1.5, 0, 0.0),
+					"LowerArm_R": Vector3(0.6, 0, 0),
+					"Chest": Vector3(0, -0.6, 0)
+				}
+			],
+			[
+				0.5,
+				{
+					"UpperArm_R": Vector3(1.4, 0, 0.0),
+					"LowerArm_R": Vector3(0.1, 0, 0),
+					"Chest": Vector3(0, 0.6, 0)
+				}
+			],
+			[1.0, {}],
+		],
+	],
+	[
+		&"attack_light_3",
+		0.65,
+		[
+			[0.0, {}],
+			[
+				0.3,
+				{
+					"UpperArm_R": Vector3(2.9, 0, 0),
+					"UpperArm_L": Vector3(2.5, 0, 0),
+					"LowerArm_R": Vector3(0.5, 0, 0),
+					"Spine": Vector3(-0.3, 0, 0)
+				}
+			],
+			[
+				0.5,
+				{
+					"UpperArm_R": Vector3(0.5, 0, 0),
+					"UpperArm_L": Vector3(0.5, 0, 0),
+					"LowerArm_R": Vector3(0.1, 0, 0),
+					"Spine": Vector3(0.5, 0, 0)
+				}
+			],
+			[1.0, {}],
+		],
+	],
+	[
+		&"attack_heavy_charge",
+		0.65,
+		[
+			[0.0, {}],
+			[
+				1.0,
+				{
+					"UpperArm_R": Vector3(2.6, 0, 0),
+					"UpperArm_L": Vector3(2.2, 0, 0),
+					"LowerArm_R": Vector3(0.9, 0, 0),
+					"Spine": Vector3(-0.35, 0, 0),
+					"Chest": Vector3(0, 0.4, 0)
+				}
+			],
+		],
+	],
+	[
+		&"attack_heavy_swing",
+		0.8,
+		[
+			[
+				0.0,
+				{
+					"UpperArm_R": Vector3(2.6, 0, 0),
+					"UpperArm_L": Vector3(2.2, 0, 0),
+					"LowerArm_R": Vector3(0.9, 0, 0),
+					"Spine": Vector3(-0.35, 0, 0),
+					"Chest": Vector3(0, 0.4, 0)
+				}
+			],
+			[
+				0.5,
+				{
+					"UpperArm_R": Vector3(0.4, 0, 0),
+					"UpperArm_L": Vector3(0.6, 0, 0),
+					"LowerArm_R": Vector3(0.1, 0, 0),
+					"Spine": Vector3(0.6, 0, 0),
+					"Chest": Vector3(0, -0.5, 0)
+				}
+			],
+			[1.0, {}],
+		],
+	],
+]
 ## Fractions of a gait cycle at which a foot lands.
 const FOOTSTEP_PHASES: Array[float] = [0.25, 0.75]
 
@@ -77,6 +203,8 @@ func _init() -> void:
 	library.add_animation(&"idle", _build_idle())
 	library.add_animation(&"walk", _build_gait(1.0, 0.45, 0.7, 0.04, 0.12, 0.25))
 	library.add_animation(&"run", _build_gait(1.0, 0.85, 1.2, 0.07, 0.3, 0.5))
+	for action: Array in ACTIONS:
+		library.add_animation(action[0] as StringName, _build_action(action))
 	player.add_animation_library(&"", library)
 
 	var tree := AnimationTree.new()
@@ -239,6 +367,45 @@ func _build_gait(
 	return animation
 
 
+## The tree's state machine: the locomotion blend space plus one state per
+## action clip. PlayerModel jumps between them with the playback object.
+func _build_tree_root() -> AnimationNodeStateMachine:
+	var machine := AnimationNodeStateMachine.new()
+	machine.add_node(&"locomotion", _build_locomotion_space(), Vector2(0.0, 0.0))
+	var row := 0
+	for action: Array in ACTIONS:
+		row += 1
+		machine.add_node(
+			action[0] as StringName, _clip(action[0] as StringName), Vector2(300.0, 100.0 * row)
+		)
+	var start := AnimationNodeStateMachineTransition.new()
+	start.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
+	machine.add_transition(&"Start", &"locomotion", start)
+	return machine
+
+
+## A one-shot clip interpolating rotations between its keys.
+func _build_action(action: Array) -> Animation:
+	var length: float = action[1]
+	var keys: Array = action[2]
+	var bones: Dictionary[String, bool] = {}
+	for key: Array in keys:
+		for bone: String in key[1] as Dictionary:
+			bones[bone] = true
+	var animation := Animation.new()
+	animation.length = length
+	animation.loop_mode = Animation.LOOP_NONE
+	for bone: String in bones:
+		var track := _add_rotation_track(animation, bone)
+		for key: Array in keys:
+			var pose: Dictionary = key[1]
+			var euler: Vector3 = pose.get(bone, Vector3.ZERO)
+			animation.rotation_track_insert_key(
+				track, length * (key[0] as float), Quaternion.from_euler(euler)
+			)
+	return animation
+
+
 ## Calls PlayerModel.emit_footstep() when a foot lands: the forward-most leg
 ## swing, where the hips are lowest, at a quarter and three quarters of the
 ## cycle.
@@ -251,7 +418,7 @@ func _add_footstep_calls(animation: Animation, period: float) -> void:
 		)
 
 
-func _build_tree_root() -> AnimationNodeBlendSpace1D:
+func _build_locomotion_space() -> AnimationNodeBlendSpace1D:
 	var space := AnimationNodeBlendSpace1D.new()
 	space.min_space = 0.0
 	space.max_space = SPRINT_SPEED

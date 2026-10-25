@@ -16,7 +16,7 @@ height = 1.8
 [sub_resource type="BoxShape3D" id="BoxShape3D_attack"]
 size = Vector3(0.8, 1.0, 1.0)
 
-[node name="TrainingDummy" type="CharacterBody3D" node_paths=PackedStringArray("health_component", "hurtbox", "attack_hitbox")]
+[node name="TrainingDummy" type="CharacterBody3D" groups=["enemies"] node_paths=PackedStringArray("health_component", "hurtbox", "attack_hitbox")]
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("1")

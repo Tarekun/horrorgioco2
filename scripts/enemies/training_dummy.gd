@@ -23,6 +23,9 @@ signal died
 @export var attack_hitbox: Hitbox
 
 var is_staggered: bool = false
+
+## How many times the dummy has been staggered.
+var stagger_count: int = 0
 var is_attacking: bool = false
 
 var _stagger_left: float = 0.0
@@ -75,10 +78,12 @@ func _on_hit_received(hit: HitData, damage_dealt: float) -> void:
 		_end_attack()
 	is_staggered = true
 	_stagger_left = stagger_duration
+	stagger_count += 1
 	staggered.emit()
 
 
 func _on_died() -> void:
+	remove_from_group(&"enemies")
 	if is_attacking:
 		_end_attack()
 	is_staggered = false

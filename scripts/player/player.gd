@@ -47,6 +47,14 @@ const STEP_PROBE_DISTANCE: float = 0.4
 ## The visible character, animated from the player's ground speed.
 @export var model: PlayerModel
 
+## True while an action (attack, dodge, stagger) drives the body: input
+## movement, sprinting and turning toward the input stop, and the horizontal
+## velocity is `external_velocity` instead.
+var is_movement_locked: bool = false
+
+## Horizontal velocity (x, z) used while `is_movement_locked`. Set it every frame.
+var external_velocity: Vector3 = Vector3.ZERO
+
 var _current_speed: float = 0.0
 var _input_vector: Vector2 = Vector2.ZERO
 var _is_sprinting: bool = false
@@ -76,12 +84,17 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = maxf(velocity.y, 0.0)
 
-	velocity.x = _movement_direction.x * _current_speed
-	velocity.z = _movement_direction.z * _current_speed
+	if is_movement_locked:
+		velocity.x = external_velocity.x
+		velocity.z = external_velocity.z
+	else:
+		velocity.x = _movement_direction.x * _current_speed
+		velocity.z = _movement_direction.z * _current_speed
 
 	_try_step_up(delta)
 	move_and_slide()
-	_update_facing(delta)
+	if not is_movement_locked:
+		_update_facing(delta)
 	_update_model()
 
 
@@ -108,6 +121,11 @@ func get_movement_direction() -> Vector3:
 
 
 func _process_sprint() -> void:
+	if is_movement_locked:
+		_is_sprinting = false
+		if stamina_component:
+			stamina_component.stop_sprinting()
+		return
 	if stamina_component == null:
 		return
 

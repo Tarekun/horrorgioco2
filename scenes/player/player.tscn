@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -7,12 +7,19 @@
 [ext_resource type="PackedScene" path="res://scenes/player/player_model.tscn" id="4"]
 [ext_resource type="Script" path="res://scripts/combat/health_component.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="6"]
-[ext_resource type="PackedScene" path="res://scenes/player/flashlight.tscn" id="7"]
-[ext_resource type="PackedScene" path="res://scenes/player/footsteps.tscn" id="8"]
+[ext_resource type="Script" path="res://scripts/combat/player_combat.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/combat/hitbox.gd" id="8"]
+[ext_resource type="Resource" path="res://assets/data/weapons/wooden_plank.tres" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/player/flashlight.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/player/footsteps.tscn" id="15"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
 height = 1.8
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_swing"]
+resource_local_to_scene = true
+size = Vector3(1.0, 1.4, 1.6)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_1"]
 radius = 0.2
@@ -33,7 +40,7 @@ shape = SubResource("CapsuleShape3D_1")
 
 [node name="Model" parent="." instance=ExtResource("4")]
 
-[node name="Footsteps" parent="." node_paths=PackedStringArray("model") instance=ExtResource("8")]
+[node name="Footsteps" parent="." node_paths=PackedStringArray("model") instance=ExtResource("15")]
 model = NodePath("../Model")
 
 [node name="StaminaComponent" type="Node" parent="."]
@@ -52,6 +59,24 @@ health_component = NodePath("../HealthComponent")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_1")
 
+[node name="MeleeHitbox" type="Area3D" parent="." node_paths=PackedStringArray("attacker")]
+collision_layer = 8
+collision_mask = 64
+script = ExtResource("8")
+attacker = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeleeHitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -1.0)
+shape = SubResource("BoxShape3D_swing")
+
+[node name="PlayerCombat" type="Node" parent="." node_paths=PackedStringArray("player", "stamina_component", "model", "hitbox")]
+script = ExtResource("7")
+weapon = ExtResource("9")
+player = NodePath("..")
+stamina_component = NodePath("../StaminaComponent")
+model = NodePath("../Model")
+hitbox = NodePath("../MeleeHitbox")
+
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("player", "spring_arm")]
 top_level = true
 script = ExtResource("2")
@@ -64,4 +89,4 @@ shape = SubResource("SphereShape3D_1")
 [node name="Camera3D" type="Camera3D" parent="CameraController/SpringArm3D"]
 fov = 70.0
 
-[node name="Flashlight" parent="CameraController/SpringArm3D/Camera3D" instance=ExtResource("7")]
+[node name="Flashlight" parent="CameraController/SpringArm3D/Camera3D" instance=ExtResource("11")]
