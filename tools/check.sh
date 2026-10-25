@@ -71,7 +71,7 @@ run_tests() {
 }
 
 gd_files() {
-	find . \( -path ./.godot -o -path ./.git -o -path ./addons \) -prune -o -name '*.gd' -print | sort
+	find . \( -path ./.godot -o -path ./.git -o -path ./.claude -o -path ./addons \) -prune -o -name '*.gd' -print | sort
 }
 
 require "$GODOT" "Install Godot $(cat .godot-version) or set GODOT to its path."
