@@ -8,6 +8,10 @@
 ## swing that can't be afforded doesn't start. The player stands still while
 ## attacking and turns toward the nearest enemy when a swing starts.
 ##
+## Pressing `attack` near a downed enemy stomps it instead of swinging: the
+## stomp costs no stamina, takes a while and kills the enemy for good partway
+## through, leaving the player exposed (a hit interrupts it).
+##
 ## The state machine is driven by tick(), so tests can step it without input.
 
 class_name PlayerCombat
@@ -19,10 +23,14 @@ signal swing_started(kind: StringName, combo_index: int)
 signal swing_finished
 ## Emitted when a swing damaged a hurtbox.
 signal hit_landed(hurtbox: Hurtbox, damage_dealt: float)
+## Emitted when a stomp starts on a downed enemy.
+signal stomp_started(enemy: Enemy)
+## Emitted when a stomp lands and kills the enemy.
+signal stomp_landed(enemy: Enemy)
 ## Emitted when the attacker freezes on contact.
 signal hitstop_started(duration: float)
 
-enum State { IDLE, PENDING, CHARGING, SWING_LIGHT, SWING_HEAVY }
+enum State { IDLE, PENDING, CHARGING, SWING_LIGHT, SWING_HEAVY, STOMP }
 
 ## Group the soft-targeting looks for enemies in.
 const ENEMY_GROUP: StringName = &"enemies"
@@ -30,6 +38,13 @@ const ENEMY_GROUP: StringName = &"enemies"
 ## Soft-targeting range (metres) and half-angle (degrees).
 @export var soft_target_distance: float = 2.5
 @export var soft_target_angle: float = 60.0
+
+## How close (metres) a downed enemy must be to be stomped.
+@export var stomp_range: float = 1.2
+
+## Seconds a stomp takes, and the fraction of it after which the enemy dies.
+@export var stomp_duration: float = 0.8
+@export_range(0.0, 1.0) var stomp_hit_time: float = 0.5
 
 ## The equipped weapon.
 @export var weapon: MeleeWeapon
@@ -53,6 +68,8 @@ var _combo_index: int = 0
 var _is_next_hit_queued: bool = false
 var _is_window_open: bool = false
 var _hitstop_left: float = 0.0
+var _stomp_target: Enemy
+var _is_stomp_landed: bool = false
 
 
 func _ready() -> void:
@@ -72,7 +89,12 @@ func _physics_process(delta: float) -> void:
 func attack_pressed() -> void:
 	match state:
 		State.IDLE:
-			if is_enabled and stamina_component.can_afford(weapon.light_stamina):
+			if not is_enabled:
+				return
+			var downed: Enemy = find_stompable_enemy()
+			if downed:
+				_start_stomp(downed)
+			elif stamina_component.can_afford(weapon.light_stamina):
 				_held = 0.0
 				_set_state(State.PENDING)
 		State.SWING_LIGHT:
@@ -107,6 +129,24 @@ func tick(delta: float) -> void:
 			_held += delta
 		State.SWING_LIGHT, State.SWING_HEAVY:
 			_advance_swing(delta)
+		State.STOMP:
+			_advance_stomp(delta)
+
+
+## The nearest downed enemy within stomp range, or null.
+func find_stompable_enemy() -> Enemy:
+	var nearest: Enemy = null
+	var nearest_distance: float = stomp_range
+	for node: Node in get_tree().get_nodes_in_group(Enemy.DOWNED_GROUP):
+		var enemy := node as Enemy
+		if enemy == null:
+			continue
+		var offset: Vector3 = enemy.global_position - player.global_position
+		offset.y = 0.0
+		if offset.length() <= nearest_distance:
+			nearest = enemy
+			nearest_distance = offset.length()
+	return nearest
 
 
 ## True while the player is attacking and can't move.
@@ -136,6 +176,7 @@ func interrupt() -> void:
 	_close_window()
 	_is_next_hit_queued = false
 	_hitstop_left = 0.0
+	_stomp_target = null
 	model.set_frozen(false)
 	_set_state(State.IDLE)
 	model.return_to_locomotion()
@@ -199,6 +240,34 @@ func _advance_swing(delta: float) -> void:
 			_start_light(_combo_index + 1)
 		else:
 			_end_swing()
+
+
+func _start_stomp(enemy: Enemy) -> void:
+	_stomp_target = enemy
+	_is_stomp_landed = false
+	_swing_time = 0.0
+	_swing_duration = stomp_duration
+	_set_state(State.STOMP)
+	var to_enemy: Vector3 = enemy.global_position - player.global_position
+	to_enemy.y = 0.0
+	if not to_enemy.is_zero_approx():
+		player.rotation.y = atan2(-to_enemy.x, -to_enemy.z)
+	# No stomp clip yet: the heavy swing's downward strike stands in for it.
+	model.play_action(&"attack_heavy_swing")
+	stomp_started.emit(enemy)
+
+
+func _advance_stomp(delta: float) -> void:
+	_swing_time += delta
+	if not _is_stomp_landed and _swing_time >= _swing_duration * stomp_hit_time:
+		_is_stomp_landed = true
+		# The enemy may have got up in the meantime.
+		if is_instance_valid(_stomp_target) and _stomp_target.stomp():
+			stomp_landed.emit(_stomp_target)
+	if _swing_time >= _swing_duration:
+		_stomp_target = null
+		_set_state(State.IDLE)
+		model.return_to_locomotion()
 
 
 func _end_swing() -> void:

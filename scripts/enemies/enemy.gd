@@ -1,11 +1,15 @@
 ## A standard enemy: wanders, notices the player, chases along the navmesh and
-## attacks with a melee hitbox.
+## attacks with a melee hitbox. When it goes down it must be stomped.
 ##
 ## EnemyBrain decides the state; this node carries it out. Movement follows the
 ## NavigationAgent3D over the level's navigation mesh. An attack winds up, opens
 ## the hitbox for a short window and then recovers, and its damage goes through
 ## the player's Hurtbox and HealthComponent. Hits stagger the enemy, which
 ## cancels an attack in progress.
+##
+## At zero health, or hit by a knockdown blow, the enemy falls and joins the
+## downed group. After a few seconds it gets up with some health, unless the
+## player stomps it first: stomp() kills it for good and it stays as a corpse.
 
 class_name Enemy
 extends CharacterBody3D
@@ -14,11 +18,18 @@ extends CharacterBody3D
 signal state_changed(old_state: EnemyBrain.State, new_state: EnemyBrain.State)
 ## Emitted when a swing starts.
 signal attack_started
-## Emitted when the enemy dies.
+## Emitted when the enemy falls down, from zero health or a heavy blow.
+signal downed
+## Emitted when a downed enemy gets back up.
+signal got_up
+## Emitted when the enemy dies for good (stomped).
 signal died
 
 ## Group enemies join, used by soft targeting and level logic.
 const ENEMY_GROUP: StringName = &"enemies"
+
+## Group of the enemies that are down and can be stomped.
+const DOWNED_GROUP: StringName = &"downed_enemies"
 
 ## Group the player joins.
 const PLAYER_GROUP: StringName = &"player"
@@ -46,6 +57,11 @@ const PLAYER_GROUP: StringName = &"player"
 @export_group("Timing")
 @export var idle_duration: float = 3.0
 @export var stagger_duration: float = 0.5
+## Seconds a downed enemy stays down, plus or minus the variation.
+@export var downed_duration: float = 8.0
+@export var downed_variation: float = 2.0
+## Fraction of its maximum health an enemy gets back up with.
+@export_range(0.0, 1.0) var get_up_health_ratio: float = 0.4
 
 @export_group("Nodes")
 @export var health_component: HealthComponent
@@ -97,6 +113,24 @@ func get_state() -> EnemyBrain.State:
 	return brain.state
 
 
+## Whether the enemy is lying down, where it can be stomped.
+func is_downed() -> bool:
+	return brain.is_downed()
+
+
+## Whether the enemy is dead for good.
+func is_dead() -> bool:
+	return brain.is_dead()
+
+
+## Finishes a downed enemy off for good. Returns false if it isn't down.
+func stomp() -> bool:
+	if not brain.is_downed():
+		return false
+	brain.kill()
+	return true
+
+
 ## Picks a random point near the spawn that the navmesh can reach. Returns
 ## the spawn position itself when the navigation map is empty.
 func pick_wander_point() -> Vector3:
@@ -144,7 +178,9 @@ func _distance_to(node: Node3D) -> float:
 
 func _run_state(delta: float) -> void:
 	match brain.state:
-		EnemyBrain.State.IDLE, EnemyBrain.State.STAGGER, EnemyBrain.State.DEAD:
+		EnemyBrain.State.IDLE, EnemyBrain.State.STAGGER:
+			_stop()
+		EnemyBrain.State.DOWNED, EnemyBrain.State.DEAD:
 			_stop()
 		EnemyBrain.State.WANDER:
 			_move_along_path(wander_speed, delta)
@@ -221,9 +257,15 @@ func _end_attack() -> void:
 func _on_state_changed(old_state: EnemyBrain.State, new_state: EnemyBrain.State) -> void:
 	if old_state == EnemyBrain.State.ATTACK:
 		_end_attack()
+	if old_state == EnemyBrain.State.DOWNED and new_state != EnemyBrain.State.DEAD:
+		_get_up()
 	match new_state:
 		EnemyBrain.State.ATTACK:
 			_start_attack()
+		EnemyBrain.State.DOWNED:
+			_fall()
+		EnemyBrain.State.DEAD:
+			_become_corpse()
 		EnemyBrain.State.WANDER:
 			navigation_agent.target_position = pick_wander_point()
 			_has_wander_point = true
@@ -233,17 +275,42 @@ func _on_state_changed(old_state: EnemyBrain.State, new_state: EnemyBrain.State)
 
 
 func _on_hit_received(hit: HitData, damage_dealt: float) -> void:
-	if damage_dealt <= 0.0 or not hit.causes_stagger or health_component.is_dead:
+	if damage_dealt <= 0.0 or health_component.is_dead or brain.is_dead():
 		return
 	if hit.attacker:
 		perception.alert_to(hit.attacker.global_position)
-	brain.stagger()
+	if hit.causes_knockdown:
+		brain.knock_down(_roll_downed_duration())
+	elif hit.causes_stagger:
+		brain.stagger()
 
 
 func _on_died() -> void:
-	brain.kill()
+	brain.knock_down(_roll_downed_duration())
+
+
+func _roll_downed_duration() -> float:
+	return maxf(downed_duration + rng.randf_range(-downed_variation, downed_variation), 0.1)
+
+
+func _fall() -> void:
+	add_to_group(DOWNED_GROUP)
+	rotation_degrees.x = -90.0
+	downed.emit()
+
+
+func _get_up() -> void:
+	remove_from_group(DOWNED_GROUP)
+	rotation_degrees.x = 0.0
+	if health_component.is_dead:
+		health_component.revive(health_component.max_health * get_up_health_ratio)
+	got_up.emit()
+
+
+func _become_corpse() -> void:
 	perception.lose_track()
+	remove_from_group(DOWNED_GROUP)
 	remove_from_group(ENEMY_GROUP)
 	hurtbox.set_deferred(&"monitorable", false)
-	rotation_degrees.x = -90.0
+	set_deferred(&"collision_layer", 0)
 	died.emit()
