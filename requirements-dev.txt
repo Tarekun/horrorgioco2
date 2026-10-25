@@ -1,0 +1,2 @@
+# Python tooling for the check script (tools/check.sh)
+gdtoolkit==4.5.0
