@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/health_overlay.gd" id="1"]
+[ext_resource type="Shader" path="res://assets/shaders/health_state.gdshader" id="2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_health"]
+resource_local_to_scene = true
+shader = ExtResource("2")
+shader_parameter/vignette = 0.0
+shader_parameter/desaturation = 0.0
+shader_parameter/vignette_color = Color(0.12, 0, 0, 1)
+
+[node name="HealthOverlay" type="CanvasLayer" node_paths=PackedStringArray("overlay_rect")]
+layer = 9
+script = ExtResource("1")
+overlay_rect = NodePath("Rect")
+
+[node name="Rect" type="ColorRect" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_health")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

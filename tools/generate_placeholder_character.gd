@@ -302,6 +302,7 @@ func _init() -> void:
 	tree.callback_mode_method = AnimationMixer.ANIMATION_CALLBACK_MODE_METHOD_IMMEDIATE
 	root.add_child(tree)
 	root.animation_tree = tree
+	root.limp_pivot = skeleton
 
 	_set_owner_recursive(root, root)
 	var packed := PackedScene.new()
