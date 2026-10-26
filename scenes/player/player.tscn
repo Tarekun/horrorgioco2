@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -19,6 +19,11 @@
 [ext_resource type="Script" path="res://scripts/combat/player_noise.gd" id="16"]
 [ext_resource type="Script" path="res://scripts/interaction/player_interaction.gd" id="17"]
 [ext_resource type="PackedScene" path="res://scenes/ui/interaction_hint.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://scenes/ui/health_overlay.tscn" id="19"]
+[ext_resource type="Script" path="res://scripts/player/player_health_cues.gd" id="20"]
+[ext_resource type="AudioStream" path="res://assets/audio/heartbeat.wav" id="21"]
+[ext_resource type="AudioStream" path="res://assets/audio/breath_heavy.wav" id="22"]
+[ext_resource type="Script" path="res://scripts/player/player_stamina_cues.gd" id="23"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -109,6 +114,41 @@ hint = NodePath("../InteractionHint")
 [node name="DamageOverlay" parent="." instance=ExtResource("12")]
 
 [node name="GameOverScreen" parent="." instance=ExtResource("13")]
+
+[node name="HealthOverlay" parent="." instance=ExtResource("19")]
+
+[node name="PlayerHealthCues" type="Node" parent="." node_paths=PackedStringArray("health_component", "player", "model", "overlay", "heartbeat_player", "breath_player")]
+script = ExtResource("20")
+health_component = NodePath("../HealthComponent")
+player = NodePath("..")
+model = NodePath("../Model")
+overlay = NodePath("../HealthOverlay")
+heartbeat_player = NodePath("Heartbeat")
+breath_player = NodePath("Breath")
+
+[node name="Heartbeat" type="AudioStreamPlayer" parent="PlayerHealthCues"]
+stream = ExtResource("21")
+volume_db = -4.0
+
+[node name="Breath" type="AudioStreamPlayer" parent="PlayerHealthCues"]
+stream = ExtResource("22")
+volume_db = -10.0
+
+[node name="PlayerStaminaCues" type="Node" parent="." node_paths=PackedStringArray("stamina_component", "player", "model", "breathing_player", "gasp_player")]
+script = ExtResource("23")
+stamina_component = NodePath("../StaminaComponent")
+player = NodePath("..")
+model = NodePath("../Model")
+breathing_player = NodePath("Breathing")
+gasp_player = NodePath("Gasp")
+
+[node name="Breathing" type="AudioStreamPlayer" parent="PlayerStaminaCues"]
+stream = ExtResource("22")
+
+[node name="Gasp" type="AudioStreamPlayer" parent="PlayerStaminaCues"]
+stream = ExtResource("22")
+volume_db = -2.0
+pitch_scale = 0.9
 
 [node name="PlayerHitReaction" type="Node" parent="." node_paths=PackedStringArray("player", "health_component", "combat", "dodge", "model", "camera_controller", "damage_overlay", "game_over_screen")]
 script = ExtResource("14")

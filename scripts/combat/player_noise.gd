@@ -7,9 +7,11 @@
 class_name PlayerNoise
 extends Node
 
-## Footstep speeds (m/s) from which a step is a run or a sprint.
+## Footstep speeds (m/s) from which a step is a run or a sprint. The sprint
+## threshold sits below a sprint in Danger health (5.5 x 0.8 = 4.4) and above a
+## normal run (3.5).
 @export var run_speed: float = 2.5
-@export var sprint_speed: float = 4.5
+@export var sprint_speed: float = 4.0
 
 ## Noise radii in metres.
 @export var run_radius: float = NoiseEvent.RUN_FOOTSTEP_RADIUS

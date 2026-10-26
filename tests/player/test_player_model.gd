@@ -204,3 +204,13 @@ func test_freezing_stops_the_animation() -> void:
 	assert_eq(_tree.callback_mode_process, AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL)
 	_model.set_frozen(false)
 	assert_eq(_tree.callback_mode_process, AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_IDLE)
+
+
+func test_limp_offset_dips_and_leans_with_the_cycle() -> void:
+	assert_eq(PlayerModel.limp_offset(1.0, 0.0, 0.05, 0.07), Vector2.ZERO, "no limp at weight 0")
+	var rest := PlayerModel.limp_offset(PI * 1.5, 1.0, 0.05, 0.07)
+	var lean := PlayerModel.limp_offset(PI * 0.5, 1.0, 0.05, 0.07)
+	assert_almost_eq(rest.x, 0.0, 0.0001, "no dip at the top of the stride")
+	assert_almost_eq(lean.x, -0.05, 0.0001, "full dip on the other side")
+	assert_almost_eq(lean.y, 0.07, 0.0001)
+	assert_almost_eq(rest.y, -0.07, 0.0001)

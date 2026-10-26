@@ -50,6 +50,9 @@ const STEP_PROBE_DISTANCE: float = 0.4
 ## The visible character, animated from the player's ground speed.
 @export var model: PlayerModel
 
+## Scales walk, run and sprint speed; the health cues lower it in Danger.
+var speed_multiplier: float = 1.0
+
 ## True while an action (attack, dodge, stagger) drives the body: input
 ## movement, sprinting and turning toward the input stop, and the horizontal
 ## velocity is `external_velocity` instead.
@@ -150,9 +153,12 @@ func _process_sprint() -> void:
 
 
 func _get_current_speed() -> float:
+	var speed: float = run_speed
 	if _input_vector.length() < walk_threshold:
-		return walk_speed
-	return sprint_speed if _is_sprinting else run_speed
+		speed = walk_speed
+	elif _is_sprinting:
+		speed = sprint_speed
+	return speed * speed_multiplier
 
 
 ## Lifts the body over a low obstacle in the way of the horizontal motion.

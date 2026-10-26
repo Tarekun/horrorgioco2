@@ -41,11 +41,12 @@ func _path_length(from: Vector3, to: Vector3) -> float:
 	return length
 
 
-func test_main_scene_is_the_graybox_level() -> void:
+func test_a_new_game_starts_in_the_graybox_level() -> void:
 	assert_eq(ProjectSettings.get_setting("application/run/main_scene"), "res://scenes/main.tscn")
 	var main: Node = MAIN_SCENE.instantiate()
 	add_child_autofree(main)
-	assert_not_null(main.get_node_or_null("GrayboxLevel/Player"))
+	GameFlow.start_new_game()
+	assert_not_null(main.get_node_or_null("ScreenHost/GrayboxLevel/Player"))
 
 
 func test_has_a_foggy_street_and_interior() -> void:
