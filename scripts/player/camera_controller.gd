@@ -10,11 +10,19 @@
 ## The camera rig is top-level (not a child of the player) so it doesn't
 ## inherit the player's rotation.
 ##
+## Sensitivity and invert-Y come from the player's settings (UserSettings) and
+## follow them when they change; the exports below are only the defaults.
+##
 ## The mouse is captured while the game runs and released with the `pause`
-## action; a click captures it again.
+## action; a click captures it again. Every camera is in the `mouse_look` group,
+## so a screen that releases the mouse (the pause menu) can hand it back with
+## `call_group(&"mouse_look", &"capture_mouse")`.
 
 class_name CameraController
 extends Node3D
+
+## Name of the group every camera joins (see the class comment).
+const MOUSE_LOOK_GROUP: StringName = &"mouse_look"
 
 ## Arm length from the shoulder pivot to the camera.
 @export var arm_length: float = 2.2
@@ -54,6 +62,9 @@ var _camera_yaw: float = 0.0
 
 func _ready() -> void:
 	top_level = true
+	add_to_group(MOUSE_LOOK_GROUP)
+	_apply_user_settings()
+	UserSettings.changed.connect(_apply_user_settings)
 
 	if spring_arm:
 		spring_arm.spring_length = arm_length
@@ -109,6 +120,16 @@ static func shake_offset(
 	return Vector2(random_x, random_y) * amplitude * falloff
 
 
+## Captures the mouse so it turns the camera.
+func capture_mouse() -> void:
+	_set_mouse_captured(true)
+
+
+## Whether the mouse is captured and turns the camera.
+func is_mouse_captured() -> bool:
+	return _is_mouse_captured
+
+
 ## Returns the current camera yaw in radians.
 func get_camera_yaw() -> float:
 	return deg_to_rad(_camera_yaw)
@@ -127,6 +148,14 @@ func _rotate_camera(delta_yaw: float, delta_pitch: float) -> void:
 	if spring_arm:
 		spring_arm.rotation.y = deg_to_rad(_camera_yaw)
 		spring_arm.rotation.x = deg_to_rad(_camera_pitch)
+
+
+## Takes the look sensitivities and invert-Y from the player's settings.
+func _apply_user_settings() -> void:
+	var settings: GameSettings = UserSettings.settings
+	mouse_sensitivity = settings.mouse_sensitivity
+	joystick_sensitivity = settings.stick_sensitivity
+	invert_y = settings.is_y_inverted
 
 
 func _set_mouse_captured(is_captured: bool) -> void:
