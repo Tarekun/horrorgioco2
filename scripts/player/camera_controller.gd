@@ -11,10 +11,15 @@
 ## inherit the player's rotation.
 ##
 ## The mouse is captured while the game runs and released with the `pause`
-## action; a click captures it again.
+## action; a click captures it again. Every camera is in the `mouse_look` group,
+## so a screen that releases the mouse (the pause menu) can hand it back with
+## `call_group(&"mouse_look", &"capture_mouse")`.
 
 class_name CameraController
 extends Node3D
+
+## Name of the group every camera joins (see the class comment).
+const MOUSE_LOOK_GROUP: StringName = &"mouse_look"
 
 ## Arm length from the shoulder pivot to the camera.
 @export var arm_length: float = 2.2
@@ -54,6 +59,7 @@ var _camera_yaw: float = 0.0
 
 func _ready() -> void:
 	top_level = true
+	add_to_group(MOUSE_LOOK_GROUP)
 
 	if spring_arm:
 		spring_arm.spring_length = arm_length
@@ -107,6 +113,16 @@ static func shake_offset(
 ) -> Vector2:
 	var falloff: float = clampf(time_left / maxf(duration, 0.001), 0.0, 1.0)
 	return Vector2(random_x, random_y) * amplitude * falloff
+
+
+## Captures the mouse so it turns the camera.
+func capture_mouse() -> void:
+	_set_mouse_captured(true)
+
+
+## Whether the mouse is captured and turns the camera.
+func is_mouse_captured() -> bool:
+	return _is_mouse_captured
 
 
 ## Returns the current camera yaw in radians.
