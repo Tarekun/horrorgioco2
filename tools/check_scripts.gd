@@ -5,7 +5,8 @@ extends SceneTree
 const SKIPPED_DIRS: Array[String] = [".godot", ".git"]
 
 
-func _init() -> void:
+## Runs in _initialize, not _init, so the autoloads exist when scripts that use them compile.
+func _initialize() -> void:
 	var failures: Array[String] = []
 	var checked := 0
 	for path in _find_files("res://"):
