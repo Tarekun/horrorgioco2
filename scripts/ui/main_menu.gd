@@ -1,18 +1,15 @@
 ## The title screen: New game, Load game, Settings and Quit.
 ##
 ## Everything works with keyboard, mouse and gamepad through the engine's UI
-## focus navigation (arrows and d-pad move, accept and click press). Load game
-## and Settings only announce the request; the save slot screen (#91) and the
-## settings screen (#86) listen for it.
+## focus navigation (arrows and d-pad move, accept and click press). Settings
+## opens its own settings screen. Load game only announces the request; the save
+## slot screen (#91) listens for it.
 
 class_name MainMenu
 extends Control
 
 ## Emitted when Load game is pressed.
 signal load_game_requested
-## Emitted when Settings is pressed.
-signal settings_requested
-
 ## Whether there is a save slot screen to open. Load game stays disabled until
 ## the save slot screen (#91) turns this on.
 @export var is_load_available: bool = false:
@@ -24,12 +21,14 @@ signal settings_requested
 @export var load_button: Button
 @export var settings_button: Button
 @export var quit_button: Button
+@export var settings_screen: SettingsScreen
 
 
 func _ready() -> void:
 	new_game_button.pressed.connect(_on_new_game_pressed)
 	load_button.pressed.connect(load_game_requested.emit)
-	settings_button.pressed.connect(settings_requested.emit)
+	settings_button.pressed.connect(settings_screen.open)
+	settings_screen.closed.connect(settings_button.grab_focus)
 	quit_button.pressed.connect(_on_quit_pressed)
 	_update_load_button()
 	new_game_button.grab_focus()

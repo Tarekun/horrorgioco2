@@ -24,6 +24,10 @@ Hitboxes sit on their own layer and only mask the opposing hurtbox layer; hurtbo
 
 `scenes/main.tscn` is the entry point and stays loaded for the whole run. It holds the post-process layer and a `ScreenHost` node, which it registers with the `GameFlow` autoload (`scripts/autoload/game_flow.gd`). GameFlow instances the title screen (`scenes/ui/main_menu.tscn`) or a level inside the host and tracks the state (title, playing, game over). `main.tscn` also holds the `PauseMenu` (`scenes/ui/pause_menu.tscn`), which opens on `pause` while playing, never over a screen that already paused the tree. Screens never switch scenes themselves: they call `GameFlow.start_new_game()`, `go_to_title()` or `restart_level()`. The starting level is `GameFlow.START_LEVEL_PATH`.
 
+## Settings
+
+`GameSettings` (`scripts/settings/`) is the data: mouse and stick sensitivity, invert Y, a linear volume per audio bus and the retro filter toggle, stored in `user://settings.cfg`. The `UserSettings` autoload loads it, applies the volumes (scaling each bus's level from `default_bus_layout.tres`) and emits `changed` on `commit()`. The camera follows it; the retro filter (#100) should read `UserSettings.settings.is_retro_filter_enabled` and connect to `changed`. `scenes/ui/settings_screen.tscn` edits it, and both the main menu and the pause menu hold an instance. Nothing is read or saved on a headless display, so tests and CI never touch a player's file.
+
 ## UI
 
 `scenes/ui/` holds screen-space feedback scenes, instanced by the player scene: `damage_overlay.tscn` (the red edge flash when hit) and `game_over_screen.tscn` (shown on death, pauses the game, retry has GameFlow restart the level).

@@ -36,6 +36,13 @@ func _press(action: StringName) -> void:
 	_menu._unhandled_input(event)
 
 
+func _press_in(node: Node, action: StringName) -> void:
+	var event := InputEventAction.new()
+	event.action = action
+	event.pressed = true
+	node._unhandled_input(event)
+
+
 func test_is_hidden_and_the_game_runs_at_first() -> void:
 	assert_false(_menu.panel.visible)
 	assert_false(get_tree().paused)
@@ -102,11 +109,19 @@ func test_cannot_open_on_the_title_screen() -> void:
 	assert_false(get_tree().paused)
 
 
-func test_settings_announces_the_request() -> void:
-	watch_signals(_menu)
+func test_settings_opens_the_settings_screen() -> void:
 	_menu.open()
 	_menu.settings_button.pressed.emit()
-	assert_signal_emitted(_menu, "settings_requested")
+	assert_true(_menu.settings_screen.is_open)
+
+
+func test_pause_in_the_settings_screen_closes_only_that() -> void:
+	_menu.open()
+	_menu.settings_button.pressed.emit()
+	_press_in(_menu.settings_screen, &"pause")
+	assert_false(_menu.settings_screen.is_open)
+	assert_true(_menu.is_open)
+	assert_true(get_tree().paused)
 
 
 func test_quit_to_title_unpauses_and_closes() -> void:
