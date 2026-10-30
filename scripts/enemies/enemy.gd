@@ -7,6 +7,8 @@
 ## the player's Hurtbox and HealthComponent. Hits stagger the enemy, which
 ## cancels an attack in progress.
 ##
+## Its health and the damage of its hits come from the Scarcity resource.
+##
 ## At zero health, or hit by a knockdown blow, the enemy falls and joins the
 ## downed group. After a few seconds it gets up with some health, unless the
 ## player stomps it first: stomp() kills it for good and it stays as a corpse.
@@ -88,6 +90,9 @@ var _has_wander_point: bool = false
 func _ready() -> void:
 	_spawn_position = global_position
 	rng.randomize()
+	var scarcity: Scarcity = Scarcity.current()
+	health_component.max_health = scarcity.enemy_max_health
+	health_component.current_health = scarcity.enemy_max_health
 	add_to_group(ENEMY_GROUP)
 	brain.idle_duration = idle_duration
 	brain.stagger_duration = stagger_duration
@@ -244,6 +249,7 @@ func _apply_gravity(delta: float) -> void:
 func _start_attack() -> void:
 	is_attacking = true
 	_attack_time = 0.0
+	attack_hitbox.damage = Scarcity.current().roll_enemy_damage(rng)
 	attack_started.emit()
 
 

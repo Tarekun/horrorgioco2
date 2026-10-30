@@ -188,7 +188,7 @@ A standard enemy notices the player by sight or by sound (#27). Values are `@exp
 
 - **Getting hit** (#24): a stagger animation, a red flash at the screen edge, a short camera shake and a rumble.
 - The inventory screen shows the state as a descriptive status readout (for example an ECG line and the words Fine / Caution / Danger), never as a number.
-- **Healing items** are used from the inventory. Since the inventory pauses the game, using one is instant and safe.
+- **Healing items** are used from the inventory. Since the inventory pauses the game, using one is instant and safe. A healing item can't be used at full health: the screen says so and the item is kept.
 
   | Item | Effect |
   |---|---|
@@ -208,7 +208,7 @@ A standard enemy notices the player by sight or by sound (#27). Values are `@exp
   - The damage from all placed ammo should be about **60%** of the total health of the area's enemies. The player can't shoot everything, so melee, stomps and avoidance are expected.
   - Healing should cover about the damage of **4–6 enemy hits** between save spots.
 - The flashlight has unlimited battery. It isn't a resource; its cost is that it gets you noticed (#27).
-- There's one difficulty for now. All scarcity values (pickup amounts, enemy health and damage, the hit-chance clamp) live in one resource so difficulty presets can scale them later.
+- There's one difficulty for now. All scarcity values (pickup amounts, enemy health and damage, the hit-chance clamp) live in one resource, `assets/data/scarcity.tres` (`Scarcity`), so difficulty presets can scale them later. A pickup holds its item's standard amount from that resource, times a bundle count for bigger stashes.
 
 ## Saving
 

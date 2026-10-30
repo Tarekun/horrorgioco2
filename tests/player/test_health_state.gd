@@ -23,3 +23,9 @@ func test_danger_slows_every_speed_to_80_percent() -> void:
 	assert_eq(HealthState.speed_multiplier(HealthState.State.DANGER), 0.8)
 	assert_eq(HealthState.speed_multiplier(HealthState.State.CAUTION), 1.0)
 	assert_eq(HealthState.speed_multiplier(HealthState.State.FINE), 1.0)
+
+
+func test_each_state_has_a_name() -> void:
+	assert_eq(HealthState.state_name(HealthState.State.FINE), "Fine")
+	assert_eq(HealthState.state_name(HealthState.State.CAUTION), "Caution")
+	assert_eq(HealthState.state_name(HealthState.State.DANGER), "Danger")

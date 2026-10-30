@@ -26,7 +26,6 @@ func _settle_at(speed: float) -> void:
 	_model.set_speed(speed)
 	for i: int in 60:
 		_model._process(1.0 / 60.0)
-		_tree.advance(1.0 / 60.0)
 
 
 func _leg_swing() -> float:
@@ -200,10 +199,38 @@ func test_action_moves_the_arm_and_locomotion_still_blends_after() -> void:
 
 
 func test_freezing_stops_the_animation() -> void:
+	_model.play_action(&"attack_light_1")
+	_model._process(0.05)
+	var playback := _tree.get(PlayerModel.PLAYBACK_PARAMETER) as AnimationNodeStateMachinePlayback
+	var position: float = playback.get_current_play_position()
 	_model.set_frozen(true)
-	assert_eq(_tree.callback_mode_process, AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL)
+	assert_true(_model.is_frozen())
+	_model._process(0.1)
+	assert_eq(playback.get_current_play_position(), position)
 	_model.set_frozen(false)
-	assert_eq(_tree.callback_mode_process, AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_IDLE)
+	_model._process(0.1)
+	assert_gt(playback.get_current_play_position(), position)
+
+
+func test_an_action_can_be_stretched_to_a_duration() -> void:
+	_model.play_action(&"attack_light_1", 0.9)
+	assert_almost_eq(_model.get_action_speed(), 0.45 / 0.9, 0.001)
+	_model.return_to_locomotion()
+	assert_eq(_model.get_action_speed(), 1.0)
+	_model.play_action(&"attack_light_1")
+	assert_eq(_model.get_action_speed(), 1.0)
+
+
+func test_freezing_keeps_the_action_playing() -> void:
+	_model.play_action(&"attack_light_1")
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_model.set_frozen(true)
+	await get_tree().process_frame
+	_model.set_frozen(false)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	assert_eq(_model.get_current_state(), &"attack_light_1")
 
 
 func test_limp_offset_dips_and_leans_with_the_cycle() -> void:

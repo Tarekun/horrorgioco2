@@ -1,0 +1,141 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/inventory_screen.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/ecg_line.gd" id="2"]
+
+[node name="InventoryScreen" type="CanvasLayer" node_paths=PackedStringArray("panel", "tab_bar", "item_list", "item_name_label", "description_label", "equip_button", "use_button", "examine_button", "message_label", "ecg_line", "status_label")]
+process_mode = 3
+layer = 15
+script = ExtResource("1")
+panel = NodePath("Panel")
+tab_bar = NodePath("Panel/Margin/Layout/Tabs")
+item_list = NodePath("Panel/Margin/Layout/Body/ItemList")
+item_name_label = NodePath("Panel/Margin/Layout/Body/Details/ItemName")
+description_label = NodePath("Panel/Margin/Layout/Body/Details/Description")
+equip_button = NodePath("Panel/Margin/Layout/Body/Details/Actions/EquipButton")
+use_button = NodePath("Panel/Margin/Layout/Body/Details/Actions/UseButton")
+examine_button = NodePath("Panel/Margin/Layout/Body/Details/Actions/ExamineButton")
+message_label = NodePath("Panel/Margin/Layout/Body/Details/Message")
+ecg_line = NodePath("Panel/Margin/Layout/Header/Status/EcgLine")
+status_label = NodePath("Panel/Margin/Layout/Header/Status/StatusLabel")
+
+[node name="Panel" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.025, 0.92)
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 40
+
+[node name="Layout" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="HBoxContainer" parent="Panel/Margin/Layout"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Panel/Margin/Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 32
+text = "INVENTORY"
+vertical_alignment = 1
+
+[node name="Status" type="VBoxContainer" parent="Panel/Margin/Layout/Header"]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="EcgLine" type="Control" parent="Panel/Margin/Layout/Header/Status"]
+custom_minimum_size = Vector2(240, 56)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2")
+
+[node name="StatusLabel" type="Label" parent="Panel/Margin/Layout/Header/Status"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Fine"
+horizontal_alignment = 1
+
+[node name="Tabs" type="TabBar" parent="Panel/Margin/Layout"]
+layout_mode = 2
+focus_mode = 0
+tab_count = 5
+tab_0/title = "Weapons"
+tab_1/title = "Ammo"
+tab_2/title = "Healing"
+tab_3/title = "Key items"
+tab_4/title = "Documents"
+
+[node name="Body" type="HBoxContainer" parent="Panel/Margin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+
+[node name="ItemList" type="ItemList" parent="Panel/Margin/Layout/Body"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+
+[node name="Details" type="VBoxContainer" parent="Panel/Margin/Layout/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.3
+theme_override_constants/separation = 12
+
+[node name="ItemName" type="Label" parent="Panel/Margin/Layout/Body/Details"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="Description" type="Label" parent="Panel/Margin/Layout/Body/Details"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+size_flags_vertical = 3
+modulate = Color(0.85, 0.85, 0.8, 1)
+autowrap_mode = 3
+
+[node name="Actions" type="HBoxContainer" parent="Panel/Margin/Layout/Body/Details"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="EquipButton" type="Button" parent="Panel/Margin/Layout/Body/Details/Actions"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Equip"
+
+[node name="UseButton" type="Button" parent="Panel/Margin/Layout/Body/Details/Actions"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Use"
+
+[node name="ExamineButton" type="Button" parent="Panel/Margin/Layout/Body/Details/Actions"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Examine"
+
+[node name="Message" type="Label" parent="Panel/Margin/Layout/Body/Details"]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+modulate = Color(0.95, 0.85, 0.6, 1)
+autowrap_mode = 3
+
+[node name="Footer" type="Label" parent="Panel/Margin/Layout"]
+modulate = Color(1, 1, 1, 0.45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "◀ ▶  change tab"
