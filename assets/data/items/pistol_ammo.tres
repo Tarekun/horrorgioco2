@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/items/item_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"pistol_ammo"
+display_name = "Pistol rounds"
+category = 1
+description = "9 mm rounds, loose in a cardboard box gone soft with damp. For the pistol."
