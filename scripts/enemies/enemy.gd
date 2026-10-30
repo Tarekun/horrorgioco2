@@ -139,6 +139,12 @@ func is_dead() -> bool:
 	return brain.is_dead()
 
 
+## Whether the enemy is after the player: alive, on its feet and alert. The
+## player can't save while any enemy is.
+func is_chasing() -> bool:
+	return not brain.is_dead() and not brain.is_downed() and perception.is_alert()
+
+
 ## Finishes a downed enemy off for good. Returns false if it isn't down.
 func stomp() -> bool:
 	if not brain.is_downed():

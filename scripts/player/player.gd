@@ -53,6 +53,9 @@ const STEP_PROBE_DISTANCE: float = 0.4
 ## Uses and equips items; knows the weapon held.
 @export var items: PlayerItems
 
+## The save slot screen save spots open.
+@export var save_screen: SaveScreen
+
 ## What the player carries. Pickups add to it.
 var inventory := Inventory.new()
 
