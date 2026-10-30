@@ -5,6 +5,9 @@
 ## `play_time` counts the seconds of play, while a level runs unpaused. A new
 ## game starts both from zero.
 ##
+## A save spot builds a save with capture() and the save screen writes it with
+## write_slot().
+##
 ## `slots` are in user://saves/. On a headless display they are in a separate
 ## folder, so tests and CI never touch a player's saves.
 
@@ -34,6 +37,24 @@ func _process(delta: float) -> void:
 func reset() -> void:
 	world = WorldState.new()
 	play_time = 0.0
+
+
+## A save of the game as it is now, made at `spot` by `player`.
+func capture(player: Player, spot: SaveSpot) -> SaveData:
+	var save := SaveData.new()
+	save.level_path = spot.get_level_path()
+	save.area_name = spot.area_name
+	save.save_spot_id = spot.spot_id
+	save.play_time = play_time
+	player.write_save(save)
+	save.world = world.copy()
+	return save
+
+
+## Stamps `save` with the time and writes it to `slot`.
+func write_slot(slot: int, save: SaveData) -> Error:
+	save.timestamp = int(Time.get_unix_time_from_system())
+	return slots.write(slot, save)
 
 
 ## Whether play time is running: during play, not while a screen pauses it.
