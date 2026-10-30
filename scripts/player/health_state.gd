@@ -14,6 +14,13 @@ const CAUTION_MIN: float = 30.0
 ## Every movement speed is multiplied by this in Danger.
 const DANGER_SPEED_MULTIPLIER: float = 0.8
 
+## The word the inventory screen's status readout shows for each state.
+const STATE_NAMES: Dictionary[State, String] = {
+	State.FINE: "Fine",
+	State.CAUTION: "Caution",
+	State.DANGER: "Danger",
+}
+
 
 ## The state for `health` points: Fine from 60, Caution from 30, else Danger.
 static func from_health(health: float) -> State:
@@ -27,3 +34,8 @@ static func from_health(health: float) -> State:
 ## The movement speed multiplier of `state`.
 static func speed_multiplier(state: State) -> float:
 	return DANGER_SPEED_MULTIPLIER if state == State.DANGER else 1.0
+
+
+## The word for `state`: Fine, Caution or Danger.
+static func state_name(state: State) -> String:
+	return STATE_NAMES[state]
