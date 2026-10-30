@@ -1,6 +1,7 @@
 ## Checks every model in assets/models/ against the budgets in docs/design/visual-style.md.
-## A model's budget comes from its category, the folder under assets/models/ it sits in, and
-## each model needs a CC0 entry in assets/sources.json (see tools/build_assets.py).
+## A model's budget comes from its category, the folder under assets/models/ it sits in.
+## Each model's own folder is named after its entry in assets/sources.json, which is either
+## a CC0 source or tools/make_kit.py (see tools/build_assets.py).
 
 extends GutTest
 
@@ -89,16 +90,38 @@ func test_textures_import_vram_compressed_with_mipmaps() -> void:
 		model.free()
 
 
-func test_every_model_has_a_cc0_source() -> void:
+func test_shared_materials_are_used() -> void:
+	# A surface named after a shared material must get the .tres on import,
+	# not the flat grey the generator gives it.
+	for path in _model_paths():
+		var model := _instantiate(path)
+		for material in _materials(model):
+			var shared: String = AssetRules.MATERIALS_DIR.path_join(
+				material.resource_name + ".tres"
+			)
+			if ResourceLoader.exists(shared):
+				assert_eq(material.resource_path, shared, path)
+		model.free()
+
+
+func test_every_model_has_a_source() -> void:
 	var sources: Dictionary[String, Dictionary] = AssetRules.sources("models")
 	for path in _model_paths():
-		var name: String = path.get_file().get_basename()
+		var name: String = _entry_name(path)
 		assert_has(sources, name, "%s is not in %s" % [path, AssetRules.SOURCES_PATH])
 		if not sources.has(name):
 			continue
 		var entry: Dictionary = sources[name]
 		assert_eq(entry.get("category"), _category(path), "%s category" % name)
 		assert_eq(AssetRules.source_problem(entry), "", name)
+
+
+func test_every_source_has_been_built() -> void:
+	var built: Dictionary[String, bool] = {}
+	for path in _model_paths():
+		built[_entry_name(path)] = true
+	for name in AssetRules.sources("models"):
+		assert_true(built.has(name), "%s is in the manifest but not in %s" % [name, MODELS_DIR])
 
 
 func _model_paths(dir: String = MODELS_DIR) -> Array[String]:
@@ -113,6 +136,11 @@ func _model_paths(dir: String = MODELS_DIR) -> Array[String]:
 
 func _category(path: String) -> String:
 	return path.trim_prefix(MODELS_DIR).get_slice("/", 0)
+
+
+## The manifest entry a model comes from: the folder it sits in.
+func _entry_name(path: String) -> String:
+	return path.get_base_dir().get_file()
 
 
 func _instantiate(path: String) -> Node:
