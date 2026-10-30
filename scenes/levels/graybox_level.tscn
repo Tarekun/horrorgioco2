@@ -1,4 +1,4 @@
-[gd_scene load_steps=63 format=3]
+[gd_scene load_steps=66 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
 [ext_resource type="Environment" path="res://assets/data/atmosphere_environment.tres" id="2"]
@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/enemy.tscn" id="5"]
 [ext_resource type="NavigationMesh" path="res://assets/data/graybox_navmesh.res" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/levels/door.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/items/pickup.tscn" id="8"]
+[ext_resource type="Resource" path="res://assets/data/items/pistol_ammo.tres" id="9"]
+[ext_resource type="Resource" path="res://assets/data/items/shotgun_shells.tres" id="10"]
 
 [sub_resource type="BoxShape3D" id="Shape_0"]
 size = Vector3(11.3, 3.0, 0.3)
@@ -695,3 +698,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 [node name="DoorRoomB" parent="Doors" instance=ExtResource("7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -2)
 is_locked = true
+
+[node name="Pickups" type="Node3D" parent="."]
+
+[node name="PistolAmmoRoomA" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 0, -6)
+item = ExtResource("9")
+amount = 8
+
+[node name="PistolAmmoOffice" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 0, -7)
+item = ExtResource("9")
+amount = 8
+
+[node name="ShotgunShellsYard" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 15.2)
+item = ExtResource("10")
+amount = 4
