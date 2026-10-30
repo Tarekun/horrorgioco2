@@ -7,8 +7,8 @@
 ## How many it holds isn't set here: it is the item's standard pickup amount in
 ## the Scarcity resource (8 pistol rounds, say), times `bundles`.
 ##
-## Every pickup has a persistent id and reports `collected`, so a save can
-## record which ones are gone; loading calls mark_collected() on them.
+## Every pickup is persistent (see WorldState): it records being collected in
+## SaveSystem.world, and loading a save removes it again with mark_collected().
 
 class_name Pickup
 extends Interactable
@@ -26,7 +26,7 @@ const PICKUP_GROUP: StringName = &"pickups"
 @export_range(1, 10) var bundles: int = 1
 
 ## Stable id for saves. Left empty, it is the pickup's path inside its level
-## (its owner), which holds as long as the level isn't rearranged.
+## (WorldState.default_id()), which holds as long as the level isn't rearranged.
 @export var pickup_id: StringName
 
 @export_group("Glint")
@@ -47,9 +47,10 @@ var _glint_time: float = 0.0
 func _ready() -> void:
 	super._ready()
 	add_to_group(PICKUP_GROUP)
+	add_to_group(WorldState.GROUP)
 	prompt = "Pick up"
 	if pickup_id.is_empty():
-		pickup_id = StringName(str(owner.get_path_to(self)) if owner else str(name))
+		pickup_id = WorldState.default_id(self)
 	if glint:
 		_glint_material = glint.get_active_material(0) as StandardMaterial3D
 		# Desynchronise neighbouring glints.
@@ -72,6 +73,7 @@ func interact(actor: Node3D) -> String:
 	var amount: int = get_amount()
 	player.inventory.add(item, amount)
 	_remove()
+	SaveSystem.world.record(pickup_id, {"is_collected": true})
 	collected.emit(self)
 	return pickup_message(item, amount)
 
@@ -84,6 +86,17 @@ func get_amount() -> int:
 ## Removes a pickup a save records as collected, without giving the item.
 func mark_collected() -> void:
 	_remove()
+
+
+func get_persistent_id() -> StringName:
+	return pickup_id
+
+
+## Takes back a recorded state: a collected pickup is removed.
+func load_state(state: Dictionary) -> void:
+	var saved_collected: Variant = state.get("is_collected")
+	if saved_collected is bool and saved_collected:
+		mark_collected()
 
 
 ## The message shown on picking up `amount` of `item`.

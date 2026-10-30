@@ -4,6 +4,9 @@
 ## collider blocks the doorway for the player, enemies and sight. A locked door
 ## answers with a message and stays shut until unlock() is called.
 ##
+## Doors are persistent (see WorldState): lock() and unlock() record the lock
+## in SaveSystem.world, and loading a save locks or unlocks the door again.
+##
 ## Enemies can't open doors: the navigation link through the doorway is enabled
 ## only while the door is open, so pathing respects closed doors. The level's
 ## navmesh is baked with the doors shut (see tools/bake_graybox_navmesh.gd).
@@ -28,6 +31,9 @@ signal locked_attempted
 @export var open_angle: float = 100.0
 @export var swing_time: float = 0.5
 
+## Stable id for saves. Left empty, it is the door's path inside its level.
+@export var door_id: StringName
+
 ## The hinge the panel rotates on (child).
 @export var hinge: Node3D
 
@@ -41,8 +47,11 @@ var _tween: Tween
 
 func _ready() -> void:
 	super._ready()
+	add_to_group(WorldState.GROUP)
 	prompt = "Open"
 	navigation_link.enabled = false
+	if door_id.is_empty():
+		door_id = WorldState.default_id(self)
 
 
 func get_prompt() -> String:
@@ -87,10 +96,31 @@ func lock() -> void:
 	if is_open:
 		close()
 	is_locked = true
+	_record()
 
 
 func unlock() -> void:
 	is_locked = false
+	_record()
+
+
+func get_persistent_id() -> StringName:
+	return door_id
+
+
+## Takes back a recorded state: locks or unlocks the door.
+func load_state(state: Dictionary) -> void:
+	var saved_lock: Variant = state.get("is_locked")
+	if not saved_lock is bool:
+		return
+	if saved_lock:
+		lock()
+	else:
+		unlock()
+
+
+func _record() -> void:
+	SaveSystem.world.record(door_id, {"is_locked": is_locked})
 
 
 func _swing_to(angle: float) -> void:
