@@ -94,6 +94,46 @@
 			}
 		},
 		{
+			"name": "stair_wall",
+			"category": "environment",
+			"make": {
+				"variants": [
+					"painted_wall",
+					"concrete_wall"
+				]
+			}
+		},
+		{
+			"name": "railing",
+			"category": "environment",
+			"make": {}
+		},
+		{
+			"name": "window_frame",
+			"category": "environment",
+			"make": {}
+		},
+		{
+			"name": "balcony_divider",
+			"category": "environment",
+			"make": {}
+		},
+		{
+			"name": "lift_doors",
+			"category": "environment",
+			"make": {}
+		},
+		{
+			"name": "roller_shutter",
+			"category": "environment",
+			"make": {}
+		},
+		{
+			"name": "ceiling_pipes",
+			"category": "environment",
+			"make": {}
+		},
+		{
 			"name": "bed",
 			"category": "props",
 			"make": {}
@@ -156,6 +196,131 @@
 					"lift",
 					"reception",
 					"private"
+				]
+			}
+		},
+		{
+			"name": "curtain",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "desk",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "wall_cabinet",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "alarm_clock",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "coat_stand",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "room_service_tray",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "key_cabinet",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "key_board",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "linen_cart",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "scaffolding",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "rubble_chute",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "skip",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "sunbed_stack",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "kitchen_counter",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "stove",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "hotplate",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "radio",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "washing_machine",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "hanging_sheet",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "boiler",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "water_tank",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "switchboard",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "wall_button",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "locker",
+			"category": "props",
+			"make": {
+				"variants": [
+					"closed",
+					"ajar"
 				]
 			}
 		},
