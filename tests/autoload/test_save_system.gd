@@ -63,3 +63,38 @@ func test_play_time_stops_outside_play() -> void:
 	SaveSystem.play_time = 10.0
 	await _wait(0.2)
 	assert_eq(SaveSystem.play_time, 10.0)
+
+
+func test_writing_a_save_makes_it_the_last() -> void:
+	var previous_slots: SaveSlots = SaveSystem.slots
+	SaveSystem.slots = SaveSlots.new("user://test_save_system")
+	var save := SaveData.new()
+	save.level_path = "res://scenes/levels/graybox_level.tscn"
+	assert_eq(SaveSystem.write_slot(0, save), OK)
+	assert_eq(SaveSystem.last_save, save)
+	assert_gt(save.timestamp, 0)
+	SaveSystem.slots.delete(0)
+	DirAccess.remove_absolute("user://test_save_system")
+	SaveSystem.slots = previous_slots
+
+
+func test_a_failed_write_isnt_the_last_save() -> void:
+	SaveSystem.write_slot(SaveSlots.SLOT_COUNT, SaveData.new())
+	assert_null(SaveSystem.last_save)
+
+
+func test_loading_a_save_makes_it_the_last_and_copies_its_world() -> void:
+	var save := SaveData.new()
+	save.play_time = 75.0
+	save.world.record(&"door", {"is_locked": false})
+	SaveSystem.begin_from(save)
+	assert_eq(SaveSystem.last_save, save)
+	assert_eq(SaveSystem.play_time, 75.0)
+	SaveSystem.world.record(&"pickup", {"is_collected": true})
+	assert_false(save.world.has_state(&"pickup"))
+
+
+func test_a_new_game_forgets_the_last_save() -> void:
+	SaveSystem.begin_from(SaveData.new())
+	SaveSystem.reset()
+	assert_null(SaveSystem.last_save)

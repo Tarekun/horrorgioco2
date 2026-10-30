@@ -6,7 +6,7 @@
 ## change through the methods below instead of switching scenes themselves.
 ## Loading a save instances its level fresh and has SaveSystem restore it.
 ##
-## Without a host (a level run on its own from the editor) restart_level()
+## Without a host (a level run on its own from the editor) restart_game()
 ## falls back to reloading the current scene.
 
 extends Node
@@ -71,11 +71,12 @@ func load_game(save: SaveData) -> void:
 	_set_state(State.PLAYING)
 
 
-## Restarts the current level from its beginning. Until saves exist (#92), this
-## is what retrying after death does.
-func restart_level() -> void:
+## Starts the game over from the beginning: what game over's Load last save
+## does when nothing was saved yet. Without a host, reloads the current scene.
+func restart_game() -> void:
 	get_tree().paused = false
 	if not is_instance_valid(_host):
+		SaveSystem.reset()
 		get_tree().reload_current_scene()
 		_set_state(State.PLAYING)
 		return
