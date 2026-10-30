@@ -58,6 +58,10 @@ Item definitions are `ItemData` resources in `assets/data/items/`, one per item 
 
 Pickups (`scenes/items/pickup.tscn`) are `Interactable`s placed by hand in a level: set the `item` on each instance. How many it holds comes from the item's standard amount in the `Scarcity` resource (`assets/data/scarcity.tres`), times the pickup's `bundles` for a bigger stash. Enemies take their health and hit damage from the same resource. A faint pulsing glint marks them in the dark. Each has a `pickup_id` for saves (by default its path in the level, which changes if the pickup is renamed or moved to another parent) and emits `collected`; see Saving below. The graybox level keeps its pickups under `Pickups`.
 
+## Examining
+
+Examinables (`Examinable`, `scripts/interaction/examinable.gd`) are `Interactable`s for things the player can look at, with the prompt "Examine". They have no look of their own: add one as a `Node3D` with the script at the object, where the player stands to look at it, and fill in `lines`. Each interaction shows the next line and the last one leads back to the first; a description left unfinished for `restart_after` seconds starts over. Until the dialogue display (#94) exists, the lines appear on the `InteractionHint`, which keeps long messages up long enough to read (`seconds_per_character`).
+
 ## Saving
 
 A save is a `SaveData` (`scripts/saving/save_data.gd`): the level, the save spot used, area name, play time and timestamp, the player's health, inventory, held weapon and flashlight (`Player.write_save()`), and a copy of the world state. `to_dict()` / `from_dict()` turn it into JSON-safe data.
