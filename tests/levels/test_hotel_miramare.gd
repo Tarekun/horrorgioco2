@@ -1,10 +1,15 @@
-## Tests for the hotel graybox's layout: floors, collisions, spawn, doors,
-## navmesh, stairs and lighting, against docs/design/slice.md.
+## Tests for the hotel's layout: floors, collisions, spawn, doors, navmesh,
+## stairs, lighting and budget, against docs/design/slice.md and visual-style.md.
 
 extends "res://tests/levels/hotel_level_test.gd"
 
 const MAIN_SCENE: PackedScene = preload("res://scenes/main.tscn")
 const FLOORS: Array[String] = ["Basement", "GroundFloor", "FirstFloor", "SecondFloor"]
+## Kit pieces nobody walks into: ceilings, window frames in their walls, pipes overhead.
+const KIT_WITHOUT_COLLIDERS: Array[String] = ["ceiling", "window_frame", "ceiling_pipes"]
+## The top of visual-style.md's guideline for the whole scene on screen. The hotel is held
+## to it all at once, so no view can go over.
+const MAX_TRIANGLES: int = 100000
 
 
 func test_a_new_game_starts_in_the_hotel() -> void:
@@ -19,7 +24,8 @@ func test_has_four_floors_and_the_stairs() -> void:
 		var floor_node: Node = _level.get_node("Structure/" + floor_name)
 		assert_gt(floor_node.get_child_count(), 20, floor_name)
 	assert_gt(_level.get_node("Structure/Stairs").get_child_count(), 6)
-	assert_not_null(_level.get_node_or_null("Structure/Lift/LiftCore"))
+	var lift_doors: Array[Node] = _level.get_node("Structure/Lift").find_children("LiftDoors*")
+	assert_eq(lift_doors.size(), 3, "the lift doors on GF, 1F and 2F")
 
 
 func test_the_environment_is_the_shared_one() -> void:
@@ -27,17 +33,34 @@ func test_the_environment_is_the_shared_one() -> void:
 	assert_eq(world_env.environment.resource_path, "res://assets/data/atmosphere_environment.tres")
 
 
-func test_every_mesh_has_a_collider() -> void:
-	var meshes: Array[Node] = []
-	for name: String in ["Structure", "Props"]:
-		meshes.append_array(_level.get_node(name).find_children("*", "MeshInstance3D", true, false))
-	assert_gt(meshes.size(), 200)
-	for node: Node in meshes:
-		var body := node.get_parent() as StaticBody3D
-		assert_not_null(body, "%s is not under a static body" % node.name)
-		if body:
-			assert_eq(body.collision_layer & CombatLayers.WORLD, CombatLayers.WORLD)
-			assert_gt(body.find_children("*", "CollisionShape3D", false, false).size(), 0)
+func test_the_kit_collides() -> void:
+	var pieces: Array[Node3D] = _models("Structure")
+	assert_gt(pieces.size(), 1000)
+	for piece: Node3D in pieces:
+		var kind: String = piece.scene_file_path.get_base_dir().get_file()
+		if kind not in KIT_WITHOUT_COLLIDERS:
+			assert_true(_collides(piece), "%s collides" % piece.get_path())
+
+
+func test_furniture_standing_on_the_floor_collides() -> void:
+	var checked: int = 0
+	for model: Node3D in _models("Props"):
+		var box: AABB = _bounds(model)
+		var on_floor: bool = absf(box.position.y - _floor_of(box.get_center())) < 0.1
+		if on_floor and box.size.y > 0.5 and box.size.x * box.size.z > 0.2:
+			assert_true(_collides(model), "%s collides" % model.get_path())
+			checked += 1
+	assert_gt(checked, 80)
+
+
+func test_the_hotel_stays_within_its_triangle_budget() -> void:
+	var triangles: int = 0
+	for group_name: String in ["Structure", "Props"]:
+		for node: Node in _level.get_node(group_name).find_children("*", "MeshInstance3D"):
+			var mesh: Mesh = (node as MeshInstance3D).mesh
+			for surface in mesh.get_surface_count():
+				triangles += _surface_triangles(mesh.surface_get_arrays(surface))
+	assert_between(triangles, 1, MAX_TRIANGLES)
 
 
 func test_the_player_spawns_in_room_22() -> void:
@@ -131,3 +154,38 @@ func test_the_player_uses_room_22s_door_not_the_ones_below_it() -> void:
 	assert_eq(interaction.focus, _door(&"door_room_22"))
 	interaction.interact()
 	assert_true(_door(&"door_room_22").is_open)
+
+
+## The models placed under a group: the instances of glTF scenes.
+func _models(group_name: String) -> Array[Node3D]:
+	var models: Array[Node3D] = []
+	for node: Node in _level.get_node(group_name).find_children("*", "Node3D"):
+		if node.scene_file_path.ends_with(".gltf"):
+			models.append(node as Node3D)
+	return models
+
+
+## Whether a model has a body on the world layer, as the kit's *-convcolonly nodes give.
+func _collides(model: Node3D) -> bool:
+	for node: Node in model.find_children("*", "StaticBody3D"):
+		var body := node as StaticBody3D
+		if body.collision_layer & CombatLayers.WORLD and body.get_child_count() > 0:
+			return true
+	return false
+
+
+func _bounds(model: Node3D) -> AABB:
+	var box := AABB()
+	var first: bool = true
+	for node: Node in model.find_children("*", "MeshInstance3D"):
+		var mesh := node as MeshInstance3D
+		var part: AABB = mesh.global_transform * mesh.get_aabb()
+		box = part if first else box.merge(part)
+		first = false
+	return box
+
+
+func _surface_triangles(arrays: Array) -> int:
+	var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	return (indices.size() if not indices.is_empty() else vertices.size()) / 3

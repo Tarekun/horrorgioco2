@@ -62,9 +62,13 @@ func before_each() -> void:
 	add_child_autofree(_level)
 	await get_tree().physics_frame
 	await get_tree().physics_frame
-	# Let the navigation map take in the region.
-	_map()
-	await get_tree().physics_frame
+	# Let the navigation map take in the region: it syncs on its own thread, so wait
+	# until it answers with a point near the spawn rather than the empty map's origin.
+	for i in 120:
+		var closest: Vector3 = NavigationServer3D.map_get_closest_point(_map(), _spawn())
+		if closest.distance_to(_spawn()) < 1.0:
+			break
+		await get_tree().physics_frame
 
 
 func after_each() -> void:

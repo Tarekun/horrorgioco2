@@ -8,8 +8,9 @@ ceilings under 0.2 m slabs.
 Doors, props and lights are listed below with the ids from the doc. The
 scene is generated whole: rerunning this overwrites anything edited by hand
 in it. Since #71 the scene has hand-placed enemies, pickups, save spots and
-placeholders, so it is edited directly now, and this script stays as the
-record of how the layout was built.
+placeholders, and since #112 tools/dress_hotel.gd builds its structure,
+props and lights from the kit, so it is edited directly now, and this script
+stays as the record of how the layout was built.
 
 To regenerate a bare layout, from the project root:
 

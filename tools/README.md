@@ -7,7 +7,8 @@ Development tooling, not shipped with the game.
 - `install_blender.sh` – downloads the pinned Blender (version in `.blender-version`, Linux x86_64), verifies its checksum and prints its path; for the asset pipeline below.
 - `check_scripts.gd` – loads every script and scene headless and exits non-zero on any load error; called by `check.sh`.
 - `bake_navmesh.gd` – bakes a level's navmesh from its collision geometry, with the doors shut: `godot --headless --path . -s res://tools/bake_navmesh.gd -- hotel_miramare`.
-- `generate_hotel_graybox.py` – writes `scenes/levels/hotel_miramare.tscn` from the layout in `docs/design/slice.md`. It overwrites the whole scene, and the scene has been populated by hand since #71, so it is kept as the record of how the layout was built rather than run; its docstring has the steps, including the navmesh rebake.
+- `generate_hotel_graybox.py` – writes `scenes/levels/hotel_miramare.tscn` from the layout in `docs/design/slice.md`. It overwrites the whole scene, and the scene has been populated by hand since #71 and dressed since #112, so it is kept as the record of how the layout was built rather than run; its docstring has the steps, including the navmesh rebake.
+- `dress_hotel.gd` – rebuilds the hotel's `Structure`, `Props` and `Lights` from the kit and props, from the layout in its constants, and keeps every other node (doors, enemies, pickups, save spots, documents, navmesh, lightmap): `godot --headless --path . -s res://tools/dress_hotel.gd`. Rerun it after changing the layout or the kit, then rebake the navmesh and the lightmap.
 - `build_assets.py`, `process_model.py` and `process_texture.py` – the asset pipeline, below.
 
 ## Asset pipeline
@@ -47,7 +48,7 @@ It imports glTF, FBX, OBJ or `.blend`; turns and scales the model and puts its o
 - **Shape keys** are dropped from meshes that need decimating, since Blender can't apply a modifier to them.
 - Heavy decimation (over about 90%) breaks thin parts such as chair spokes. Prefer sources already near the budget, and look at the result.
 
-`make_kit.py` builds the hotel's modular kit (floors, ceilings, half walls with door and window openings, door frames, stairs and landings) and the props simple enough to model from boxes and prisms (bed, wardrobe, reception desk, lamps, brass room numbers, signs):
+`make_kit.py` builds the hotel's modular kit (floors, ceilings, half walls with door and window openings, door and window frames, stairs, landings and fittings such as the lift doors and railings) and the props simple enough to model from boxes, prisms and rods (beds, wardrobes, the reception desk, lamps, brass room numbers, signs, lockers, boilers, the builders' skip and the rest of `assets/README.md`'s list):
 
 ```sh
 "$BLENDER" --background --factory-startup --python tools/make_kit.py -- \
