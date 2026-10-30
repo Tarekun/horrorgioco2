@@ -89,7 +89,8 @@ func test_chases_the_player_along_the_navmesh() -> void:
 func test_attacks_and_damages_the_player_through_health() -> void:
 	_enemy.attack_windup = 0.2
 	await _seconds(4.0)
-	assert_lte(_player.health_component.current_health, 80.0)
+	var at_least_one_hit: float = 100.0 - Scarcity.current().enemy_damage_min
+	assert_lte(_player.health_component.current_health, at_least_one_hit)
 
 
 func test_a_hit_staggers_the_enemy_and_cancels_the_attack() -> void:

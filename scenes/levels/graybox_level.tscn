@@ -708,17 +708,14 @@ is_locked = true
 [node name="PistolAmmoRoomA" parent="Pickups" instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 0, -6)
 item = ExtResource("9")
-amount = 8
 
 [node name="PistolAmmoOffice" parent="Pickups" instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -7)
 item = ExtResource("9")
-amount = 8
 
 [node name="ShotgunShellsYard" parent="Pickups" instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 15.2)
 item = ExtResource("10")
-amount = 4
 
 [node name="HealthDrinkLobby" parent="Pickups" instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 5)

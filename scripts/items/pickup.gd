@@ -1,8 +1,11 @@
 ## An item placed in the world, picked up with `interact`.
 ##
 ## Pickups are placed by hand and never respawn. A faint glint pulses over each
-## one so it can be found in the dark. Picking one up adds `amount` of `item` to
-## the player's inventory, shows a short message and removes the pickup.
+## one so it can be found in the dark. Picking one up adds its items to the
+## player's inventory, shows a short message and removes the pickup.
+##
+## How many it holds isn't set here: it is the item's standard pickup amount in
+## the Scarcity resource (8 pistol rounds, say), times `bundles`.
 ##
 ## Every pickup has a persistent id and reports `collected`, so a save can
 ## record which ones are gone; loading calls mark_collected() on them.
@@ -16,9 +19,11 @@ signal collected(pickup: Pickup)
 ## Group every pickup joins, for saving and loading.
 const PICKUP_GROUP: StringName = &"pickups"
 
-## What is picked up, and how many.
+## What is picked up.
 @export var item: ItemData
-@export var amount: int = 1
+
+## How many standard pickups of `item` this one holds (2 for a bigger stash).
+@export_range(1, 10) var bundles: int = 1
 
 ## Stable id for saves. Left empty, it is the pickup's path inside its level
 ## (its owner), which holds as long as the level isn't rearranged.
@@ -64,10 +69,16 @@ func interact(actor: Node3D) -> String:
 	var player := actor as Player
 	if player == null or item == null or is_collected:
 		return ""
+	var amount: int = get_amount()
 	player.inventory.add(item, amount)
 	_remove()
 	collected.emit(self)
 	return pickup_message(item, amount)
+
+
+## How many of `item` it holds, from the scarcity in use.
+func get_amount() -> int:
+	return Scarcity.current().pickup_amount(item) * bundles
 
 
 ## Removes a pickup a save records as collected, without giving the item.
