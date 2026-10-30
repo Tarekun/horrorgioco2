@@ -9,7 +9,7 @@
 ##
 ## Enemies can't open doors: the navigation link through the doorway is enabled
 ## only while the door is open, so pathing respects closed doors. The level's
-## navmesh is baked with the doors shut (see tools/bake_graybox_navmesh.gd).
+## navmesh is baked with the doors shut (see tools/bake_navmesh.gd).
 
 class_name Door
 extends Interactable
