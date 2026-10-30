@@ -7,9 +7,11 @@ ceilings under 0.2 m slabs.
 
 Doors, props and lights are listed below with the ids from the doc. The
 scene is generated whole: rerunning this overwrites anything edited by hand
-in it, so once the level is being populated (#71), edit the scene instead.
+in it. Since #71 the scene has hand-placed enemies, pickups, save spots and
+placeholders, so it is edited directly now, and this script stays as the
+record of how the layout was built.
 
-To regenerate, from the project root:
+To regenerate a bare layout, from the project root:
 
     python3 tools/generate_hotel_graybox.py --no-navmesh
     godot --headless --path . -s res://tools/bake_navmesh.gd -- hotel_miramare
@@ -365,7 +367,7 @@ prop("Basement", "LinenCart", 6.5, 7.4, -6.2, -5.6, 0, 1.0)
 prop("Basement", "LinenCart", 9.0, 9.9, -2.4, -1.8, 0, 1.0)
 for x in [4.8, 7.0, 9.2]:
     prop("Basement", "Sheet", x, x + 1.6, -3.52, -3.48, 0.8, 2.3, "Mat_sheet")
-prop("Basement", "Boilers", 15.4, 16.6, -6.0, -2.0, 0, 2.4, "Mat_metal")
+prop("Basement", "Boilers", 15.0, 16.4, -5.0, -2.0, 0, 2.4, "Mat_metal")
 prop("Basement", "Tank", 16.6, 17.9, -2.0, -1.1, 0, 1.6, "Mat_metal")
 prop("Basement", "SwitchboardBasement", 13.6, 14.8, -6.9, -6.75, 0.8, 2.2, "Mat_metal")
 prop("Basement", "CeilingPipes", 0.2, 29.8, 0.6, 0.75, 2.6, 2.75, "Mat_metal")

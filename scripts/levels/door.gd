@@ -29,6 +29,10 @@ signal unlocked_with_key(key: ItemData)
 ## Whether the door refuses to open.
 @export var is_locked: bool = false
 
+## Starts open (ajar, propped or wedged), swung toward its +Z side as if
+## opened from -Z.
+@export var starts_open: bool = false
+
 ## What the player is told when the door is locked.
 @export var locked_message: String = "It's locked."
 
@@ -60,6 +64,10 @@ func _ready() -> void:
 	navigation_link.enabled = false
 	if door_id.is_empty():
 		door_id = WorldState.default_id(self)
+	if starts_open and not is_locked:
+		is_open = true
+		navigation_link.enabled = true
+		hinge.rotation.y = -deg_to_rad(open_angle)
 
 
 func get_prompt() -> String:

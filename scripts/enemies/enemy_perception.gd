@@ -39,7 +39,7 @@ signal track_lost
 ## Physics layers that block sight.
 @export_flags_3d_physics var obstruction_mask: int = CombatLayers.WORLD
 
-## The enemy this node belongs to; it hears nothing while down or dead.
+## The enemy this node belongs to; it hears nothing while dormant, down or dead.
 @export var enemy: Enemy
 
 ## Whether the target was in sight at the last update.
@@ -83,7 +83,7 @@ func alert_to(position: Vector3) -> void:
 
 ## Hears a noise: alerts the enemy to `position` if it carries this far.
 func hear_noise(position: Vector3, radius: float) -> void:
-	if enemy and (enemy.is_downed() or enemy.is_dead()):
+	if enemy and (enemy.is_dormant or enemy.is_downed() or enemy.is_dead()):
 		return
 	if NoiseEvent.is_audible(global_position, position, radius):
 		alert_to(position)

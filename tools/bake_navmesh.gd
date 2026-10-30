@@ -44,6 +44,11 @@ func _initialize() -> void:
 func _bake(level_path: String, output_path: String) -> bool:
 	var level := (load(level_path) as PackedScene).instantiate() as Node3D
 	root.add_child(level)
+	# Shut the doors that start open, so the navmesh stops at every doorway.
+	# Matched by property: naming Door would compile it, and it needs autoloads.
+	for node: Node in level.find_children("*", "", true, false):
+		if node.get(&"starts_open") == true:
+			(node.get(&"hinge") as Node3D).rotation.y = 0.0
 
 	var navmesh := NavigationMesh.new()
 	navmesh.agent_radius = 0.5

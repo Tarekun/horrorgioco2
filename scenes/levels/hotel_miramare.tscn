@@ -1,4 +1,4 @@
-[gd_scene load_steps=178 format=3]
+[gd_scene load_steps=188 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
 [ext_resource type="Environment" path="res://assets/data/atmosphere_environment.tres" id="2"]
@@ -6,6 +6,16 @@
 [ext_resource type="Script" path="res://scripts/audio/ambience_player.gd" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/levels/door.tscn" id="5"]
 [ext_resource type="NavigationMesh" path="res://assets/data/hotel_miramare_navmesh.res" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/enemy.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/items/pickup.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/levels/save_spot.tscn" id="9"]
+[ext_resource type="Resource" path="res://assets/data/items/health_drink.tres" id="10"]
+[ext_resource type="Resource" path="res://assets/data/items/first_aid_kit.tres" id="11"]
+[ext_resource type="Resource" path="res://assets/data/items/wooden_plank.tres" id="12"]
+[ext_resource type="Resource" path="res://assets/data/items/steel_pipe.tres" id="13"]
+[ext_resource type="Resource" path="res://assets/data/items/key_stairs.tres" id="14"]
+[ext_resource type="Resource" path="res://assets/data/items/key_room_16.tres" id="15"]
+[ext_resource type="Resource" path="res://assets/data/items/key_front_door.tres" id="16"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_wall"]
 albedo_color = Color(0.45, 0.43, 0.4, 1)
@@ -457,10 +467,10 @@ size = Vector3(1.6, 1.5, 0.04)
 size = Vector3(1.6, 1.5, 0.04)
 
 [sub_resource type="BoxShape3D" id="Shape_70"]
-size = Vector3(1.2, 2.4, 4)
+size = Vector3(1.4, 2.4, 3)
 
 [sub_resource type="BoxMesh" id="Mesh_70"]
-size = Vector3(1.2, 2.4, 4)
+size = Vector3(1.4, 2.4, 3)
 
 [sub_resource type="BoxShape3D" id="Shape_71"]
 size = Vector3(1.3, 1.6, 0.9)
@@ -2230,16 +2240,6 @@ surface_material_override/0 = SubResource("Mat_prop")
 [node name="Shape" type="CollisionShape3D" parent="Props/SecondFloor/BathroomCabinet"]
 shape = SubResource("Shape_42")
 
-[node name="BlockadeRoom28" type="StaticBody3D" parent="Props/SecondFloor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 7.6, -1)
-
-[node name="Mesh" type="MeshInstance3D" parent="Props/SecondFloor/BlockadeRoom28"]
-mesh = SubResource("Mesh_43")
-surface_material_override/0 = SubResource("Mat_prop")
-
-[node name="Shape" type="CollisionShape3D" parent="Props/SecondFloor/BlockadeRoom28"]
-shape = SubResource("Shape_43")
-
 [node name="ChairRoom28" type="StaticBody3D" parent="Props/SecondFloor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6.85, -4)
 
@@ -2651,7 +2651,7 @@ surface_material_override/0 = SubResource("Mat_sheet")
 shape = SubResource("Shape_69")
 
 [node name="Boilers" type="StaticBody3D" parent="Props/Basement"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, -2, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.7, -2, -3.5)
 
 [node name="Mesh" type="MeshInstance3D" parent="Props/Basement/Boilers"]
 mesh = SubResource("Mesh_70")
@@ -2873,6 +2873,8 @@ shadow_enabled = true
 
 [node name="DoorRoom21" parent="Doors/SecondFloor" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 6.4, 1)
+starts_open = true
+open_angle = 80.0
 door_id = &"door_room_21"
 
 [node name="DoorRoom22" parent="Doors/SecondFloor" instance=ExtResource("5")]
@@ -2929,6 +2931,7 @@ door_id = &"door_room_14"
 
 [node name="DoorRoom15" parent="Doors/FirstFloor" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 3.2, 1)
+starts_open = true
 door_id = &"door_room_15"
 
 [node name="DoorRoom16" parent="Doors/FirstFloor" instance=ExtResource("5")]
@@ -3007,11 +3010,126 @@ door_id = &"door_pantry"
 
 [node name="DoorStaffRoom" parent="Doors/Basement" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, -3.2, 1)
+starts_open = true
 door_id = &"door_staff_room"
 
 [node name="DoorChangingRoom" parent="Doors/Basement" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, -3.2, -1)
 door_id = &"door_changing_room"
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="EnemyBoilerRoom" parent="Enemies" instance=ExtResource("7")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 17.15, -3.2, -3)
+enemy_id = &"enemy_boiler_room"
+is_dormant = true
+
+[node name="EnemyStaffCorridor" parent="Enemies" instance=ExtResource("7")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 23, -3.2, 0)
+enemy_id = &"enemy_staff_corridor"
+
+[node name="EnemyStaffRoom" parent="Enemies" instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.2, -3.2, 5.6)
+enemy_id = &"enemy_staff_room"
+wander_radius = 1.5
+
+[node name="Pickups" type="Node3D" parent="."]
+
+[node name="PickupDrinkRoom22" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.2, 8.1, -2.3)
+item = ExtResource("10")
+pickup_id = &"pickup_drink_room22"
+
+[node name="BlockadeRoom28" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 7.6, -0.9)
+item = ExtResource("12")
+pickup_id = &"blockade_room_28"
+
+[node name="Plank" type="StaticBody3D" parent="Pickups/BlockadeRoom28"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.1)
+
+[node name="Mesh" type="MeshInstance3D" parent="Pickups/BlockadeRoom28/Plank"]
+mesh = SubResource("Mesh_43")
+surface_material_override/0 = SubResource("Mat_prop")
+
+[node name="Shape" type="CollisionShape3D" parent="Pickups/BlockadeRoom28/Plank"]
+shape = SubResource("Shape_43")
+
+[node name="PickupKeyStairs" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 7.3, -4)
+item = ExtResource("14")
+pickup_id = &"pickup_key_stairs"
+
+[node name="PickupDrinkLinen" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.85, 4.2, -5.7)
+item = ExtResource("10")
+pickup_id = &"pickup_drink_linen"
+
+[node name="PickupPipeSite" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 3.2, 3)
+item = ExtResource("13")
+pickup_id = &"pickup_pipe_site"
+
+[node name="PickupKeyRoom16" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.8, 1.4, 0.72)
+item = ExtResource("15")
+pickup_id = &"pickup_key_room16"
+
+[node name="PickupAidOffice" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.8, 1.8, 2.9)
+item = ExtResource("11")
+pickup_id = &"pickup_aid_office"
+
+[node name="PickupKeyFrontDoor" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.3, -1.9, -3.7)
+item = ExtResource("16")
+pickup_id = &"pickup_key_front_door"
+
+[node name="SaveSpots" type="Node3D" parent="."]
+
+[node name="SaveSpot2FCorridor" parent="SaveSpots" instance=ExtResource("9")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.4, 6.4, 0)
+area_name = "2F corridor"
+spot_id = &"save_2f_corridor"
+
+[node name="SaveSpotLobby" parent="SaveSpots" instance=ExtResource("9")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.8, 0, -6.6)
+area_name = "Lobby"
+spot_id = &"save_gf_lobby"
+
+[node name="SaveSpotBasementStairs" parent="SaveSpots" instance=ExtResource("9")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 5.6, -3.2, 1.9)
+area_name = "Basement stairs"
+spot_id = &"save_basement_stairs"
+
+[node name="Documents" type="Node3D" parent="."]
+
+[node name="DocRegistrationCard" type="Marker3D" parent="Documents"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.4, 7.15, -5.4)
+metadata/document_id = &"doc_registration_card"
+
+[node name="DocLostProperty" type="Marker3D" parent="Documents"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 4.2, -5.7)
+metadata/document_id = &"doc_lost_property"
+
+[node name="DocPorterLog" type="Marker3D" parent="Documents"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0.75, 4.5)
+metadata/document_id = &"doc_porter_log"
+
+[node name="DocPostcard" type="Marker3D" parent="Documents"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 3.7, -4.5)
+metadata/document_id = &"doc_postcard"
+
+[node name="Puzzles" type="Node3D" parent="."]
+
+[node name="PuzzleKeyCabinet" type="Marker3D" parent="Puzzles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 4.4, -4)
+metadata/puzzle_id = &"puzzle_key_cabinet"
+metadata/reward_item = &"key_basement"
+
+[node name="ClockRoom22" type="Marker3D" parent="Puzzles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.65, 7, -5.3)
+metadata/appears_after = &"doc_porter_log"
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = ExtResource("6")

@@ -49,6 +49,14 @@ func _spawn_enemy(position: Vector3) -> Enemy:
 	return enemy
 
 
+func _spawn_dormant(position: Vector3) -> Enemy:
+	var enemy := ENEMY_SCENE.instantiate() as Enemy
+	enemy.position = position
+	enemy.is_dormant = true
+	add_child_autofree(enemy)
+	return enemy
+
+
 func _frames(count: int) -> void:
 	for i: int in count:
 		await get_tree().physics_frame
@@ -70,6 +78,36 @@ func test_idles_when_the_player_is_far() -> void:
 	var far_enemy: Enemy = _spawn_enemy(Vector3(0.0, 0.0, -30.0))
 	await _seconds(0.5)
 	assert_eq(far_enemy.get_state(), EnemyBrain.State.IDLE)
+
+
+func test_a_dormant_enemy_neither_sees_nor_hears_the_player() -> void:
+	var sleeper: Enemy = _spawn_dormant(Vector3(4.0, 0.0, -4.0))
+	var position: Vector3 = sleeper.global_position
+	sleeper.perception.hear_noise(_player.global_position, 20.0)
+	await _seconds(1.0)
+	assert_eq(sleeper.get_state(), EnemyBrain.State.IDLE)
+	assert_false(sleeper.perception.is_alert())
+	assert_false(sleeper.is_chasing())
+	assert_almost_eq(sleeper.global_position.x, position.x, 0.01)
+	assert_almost_eq(sleeper.global_position.z, position.z, 0.01)
+
+
+func test_waking_alerts_a_dormant_enemy_to_the_player() -> void:
+	var sleeper: Enemy = _spawn_dormant(Vector3(4.0, 0.0, -4.0))
+	await _frames(3)
+	sleeper.wake()
+	assert_false(sleeper.is_dormant)
+	assert_true(sleeper.perception.is_alert())
+	await _frames(3)
+	assert_eq(sleeper.get_state(), EnemyBrain.State.CHASE)
+
+
+func test_a_hit_wakes_a_dormant_enemy() -> void:
+	var sleeper: Enemy = _spawn_dormant(Vector3(4.0, 0.0, -4.0))
+	await _frames(3)
+	sleeper.hurtbox.receive_hit(HitData.create(5.0, _player))
+	assert_false(sleeper.is_dormant)
+	assert_true(sleeper.is_chasing())
 
 
 func test_wander_picks_a_point_within_its_radius() -> void:
