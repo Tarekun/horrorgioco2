@@ -4,6 +4,7 @@
 extends GutTest
 
 const MAIN_SCENE: PackedScene = preload("res://scenes/main.tscn")
+const GRAYBOX_SCENE: PackedScene = preload("res://scenes/levels/graybox_level.tscn")
 const PIPE: ItemData = preload("res://assets/data/items/steel_pipe.tres")
 const DIRECTORY: String = "user://test_save_and_load"
 
@@ -15,12 +16,15 @@ func before_each() -> void:
 	_previous_slots = SaveSystem.slots
 	SaveSystem.slots = SaveSlots.new(DIRECTORY)
 	_clear()
+	# These run on the graybox level, which has a save spot and enemies.
+	GameFlow.start_level_scene = GRAYBOX_SCENE
 	_main = MAIN_SCENE.instantiate()
 	add_child_autofree(_main)
 	GameFlow.start_new_game()
 
 
 func after_each() -> void:
+	GameFlow.start_level_scene = load(GameFlow.START_LEVEL_PATH)
 	_clear()
 	DirAccess.remove_absolute(DIRECTORY)
 	SaveSystem.slots = _previous_slots
