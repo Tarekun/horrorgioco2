@@ -24,6 +24,12 @@ enum Category { WEAPON, AMMO, HEALING, KEY_ITEM, DOCUMENT }
 ## Picture shown on the inventory screen (optional).
 @export var icon: Texture2D
 
+@export_group("Healing")
+## Health a healing item restores.
+@export var heal_amount: float = 0.0
+## Restores all health, whatever `heal_amount` says.
+@export var is_full_heal: bool = false
+
 
 ## Whether the inventory screen offers Equip for it: weapons.
 func is_equippable() -> bool:
@@ -33,3 +39,8 @@ func is_equippable() -> bool:
 ## Whether the inventory screen offers Use for it: healing items.
 func is_usable() -> bool:
 	return category == Category.HEALING
+
+
+## Health this item restores to someone with `max_health`.
+func get_healing(max_health: float) -> float:
+	return max_health if is_full_heal else heal_amount

@@ -1,4 +1,4 @@
-[gd_scene load_steps=66 format=3]
+[gd_scene load_steps=68 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
 [ext_resource type="Environment" path="res://assets/data/atmosphere_environment.tres" id="2"]
@@ -10,6 +10,8 @@
 [ext_resource type="PackedScene" path="res://scenes/items/pickup.tscn" id="8"]
 [ext_resource type="Resource" path="res://assets/data/items/pistol_ammo.tres" id="9"]
 [ext_resource type="Resource" path="res://assets/data/items/shotgun_shells.tres" id="10"]
+[ext_resource type="Resource" path="res://assets/data/items/health_drink.tres" id="11"]
+[ext_resource type="Resource" path="res://assets/data/items/first_aid_kit.tres" id="12"]
 
 [sub_resource type="BoxShape3D" id="Shape_0"]
 size = Vector3(11.3, 3.0, 0.3)
@@ -707,7 +709,7 @@ item = ExtResource("9")
 amount = 8
 
 [node name="PistolAmmoOffice" parent="Pickups" instance=ExtResource("8")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 0, -7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -7)
 item = ExtResource("9")
 amount = 8
 
@@ -715,3 +717,11 @@ amount = 8
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 15.2)
 item = ExtResource("10")
 amount = 4
+
+[node name="HealthDrinkLobby" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 5)
+item = ExtResource("11")
+
+[node name="FirstAidKitStorage" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0, 5)
+item = ExtResource("12")

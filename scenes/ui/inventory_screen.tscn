@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/ui/inventory_screen.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/ui/ecg_line.gd" id="2"]
 
-[node name="InventoryScreen" type="CanvasLayer" node_paths=PackedStringArray("panel", "tab_bar", "item_list", "item_name_label", "description_label", "equip_button", "use_button", "examine_button", "ecg_line", "status_label")]
+[node name="InventoryScreen" type="CanvasLayer" node_paths=PackedStringArray("panel", "tab_bar", "item_list", "item_name_label", "description_label", "equip_button", "use_button", "examine_button", "message_label", "ecg_line", "status_label")]
 process_mode = 3
 layer = 15
 script = ExtResource("1")
@@ -15,6 +15,7 @@ description_label = NodePath("Panel/Margin/Layout/Body/Details/Description")
 equip_button = NodePath("Panel/Margin/Layout/Body/Details/Actions/EquipButton")
 use_button = NodePath("Panel/Margin/Layout/Body/Details/Actions/UseButton")
 examine_button = NodePath("Panel/Margin/Layout/Body/Details/Actions/ExamineButton")
+message_label = NodePath("Panel/Margin/Layout/Body/Details/Message")
 ecg_line = NodePath("Panel/Margin/Layout/Header/Status/EcgLine")
 status_label = NodePath("Panel/Margin/Layout/Header/Status/StatusLabel")
 
@@ -126,6 +127,12 @@ text = "Use"
 custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 text = "Examine"
+
+[node name="Message" type="Label" parent="Panel/Margin/Layout/Body/Details"]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+modulate = Color(0.95, 0.85, 0.6, 1)
+autowrap_mode = 3
 
 [node name="Footer" type="Label" parent="Panel/Margin/Layout"]
 modulate = Color(1, 1, 1, 0.45)

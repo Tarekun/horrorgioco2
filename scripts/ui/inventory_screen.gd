@@ -47,6 +47,9 @@ signal use_requested(item: ItemData)
 @export var use_button: Button
 @export var examine_button: Button
 
+## A short reply to an action ("You don't need that right now.").
+@export var message_label: Label
+
 @export_group("Status")
 @export var ecg_line: EcgLine
 @export var status_label: Label
@@ -122,6 +125,7 @@ func open() -> void:
 	panel.visible = true
 	get_tree().paused = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	message_label.text = ""
 	refresh()
 	_update_status()
 	item_list.grab_focus()
@@ -190,6 +194,11 @@ func examine_selected() -> void:
 		description_label.text = item.description
 
 
+## Shows a short reply to an action until another item is selected.
+func show_message(text: String) -> void:
+	message_label.text = text
+
+
 ## Rebuilds the list for the current tab, keeping the selection on the same
 ## item, or on the same row if that item is gone.
 func refresh() -> void:
@@ -226,6 +235,7 @@ func _is_in_actions() -> bool:
 func _show_details(item: ItemData) -> void:
 	if item != _shown_item:
 		description_label.text = ""
+		message_label.text = ""
 	_shown_item = item
 	item_name_label.text = item.display_name if item else ""
 	equip_button.disabled = item == null or not item.is_equippable()
