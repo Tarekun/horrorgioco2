@@ -208,3 +208,26 @@ func test_on_the_title_screen_the_game_isnt_paused() -> void:
 	assert_false(get_tree().paused)
 	_screen.close()
 	assert_false(get_tree().paused)
+
+
+func test_the_switch_only_shows_at_a_save_spot() -> void:
+	_screen.open_to_save(_make_save("Lobby"))
+	assert_true(_screen.switch_button.visible)
+	assert_eq(_screen.switch_button.text, "Load a save")
+	_screen.close()
+	_screen.open_to_load()
+	assert_false(_screen.switch_button.visible)
+
+
+func test_the_switch_turns_to_loading_and_back() -> void:
+	_slots.write(2, _make_save("Office"))
+	_screen.open_to_save(_make_save("Lobby"))
+	_screen.switch_button.pressed.emit()
+	assert_eq(_screen.mode, SaveScreen.Mode.LOAD)
+	assert_eq(_screen.title_label.text, "Load game")
+	assert_eq(_screen.switch_button.text, "Save here")
+	assert_true(_screen.get_slot_button(0).disabled)
+	assert_true(_screen.get_slot_button(2).has_focus())
+	_screen.switch_mode()
+	assert_eq(_screen.mode, SaveScreen.Mode.SAVE)
+	assert_false(_screen.get_slot_button(0).disabled)

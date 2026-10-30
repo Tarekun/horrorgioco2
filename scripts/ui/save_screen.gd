@@ -5,6 +5,7 @@
 ## asking first when the slot already holds something. In load mode, which the
 ## main menu and the game over screen open, choosing a slot with a loadable
 ## save emits `load_requested`; empty, damaged and old slots can't be chosen.
+## Opened at a save spot, the switch button turns to load mode and back.
 ##
 ## During play, opening the screen pauses the game and closing it resumes and
 ## captures the mouse again. Over a screen that already paused the game (game
@@ -38,6 +39,9 @@ const OVERWRITE_QUESTION: String = "Save over slot %d?"
 
 ## A short reply ("Saved.").
 @export var message_label: Label
+
+## Turns between saving and loading; shown only when opened to save.
+@export var switch_button: Button
 @export var back_button: Button
 
 @export_group("Overwrite")
@@ -66,6 +70,7 @@ func _ready() -> void:
 	confirm_panel.visible = false
 	_build_slot_buttons()
 	back_button.pressed.connect(close)
+	switch_button.pressed.connect(switch_mode)
 	confirm_button.pressed.connect(confirm_overwrite)
 	cancel_button.pressed.connect(cancel_overwrite)
 	# Keep the focus on the question while it is up.
@@ -96,6 +101,17 @@ func open_to_save(save: SaveData) -> void:
 func open_to_load() -> void:
 	_save = null
 	_open(Mode.LOAD)
+
+
+## Turns from saving to loading or back. Only a screen opened to save can.
+func switch_mode() -> void:
+	if not is_open or _save == null or is_confirming():
+		return
+	mode = Mode.LOAD if mode == Mode.SAVE else Mode.SAVE
+	message_label.text = ""
+	_show_mode()
+	refresh()
+	_focus_first_slot()
 
 
 ## Hides the screen, resuming the game if opening it paused it.
@@ -171,7 +187,8 @@ func _open(new_mode: Mode) -> void:
 	mode = new_mode
 	is_open = true
 	panel.visible = true
-	title_label.text = "Save game" if mode == Mode.SAVE else "Load game"
+	switch_button.visible = _save != null
+	_show_mode()
 	message_label.text = ""
 	if GameFlow.state == GameFlow.State.PLAYING and not get_tree().paused:
 		_has_paused = true
@@ -179,6 +196,11 @@ func _open(new_mode: Mode) -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	refresh()
 	_focus_first_slot()
+
+
+func _show_mode() -> void:
+	title_label.text = "Save game" if mode == Mode.SAVE else "Load game"
+	switch_button.text = "Load a save" if mode == Mode.SAVE else "Save here"
 
 
 func _hide() -> void:
