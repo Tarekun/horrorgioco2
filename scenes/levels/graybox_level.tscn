@@ -1,4 +1,4 @@
-[gd_scene load_steps=68 format=3]
+[gd_scene load_steps=70 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
 [ext_resource type="Environment" path="res://assets/data/atmosphere_environment.tres" id="2"]
@@ -12,6 +12,8 @@
 [ext_resource type="Resource" path="res://assets/data/items/shotgun_shells.tres" id="10"]
 [ext_resource type="Resource" path="res://assets/data/items/health_drink.tres" id="11"]
 [ext_resource type="Resource" path="res://assets/data/items/first_aid_kit.tres" id="12"]
+[ext_resource type="Resource" path="res://assets/data/items/steel_pipe.tres" id="13"]
+[ext_resource type="Resource" path="res://assets/data/items/fire_axe.tres" id="14"]
 
 [sub_resource type="BoxShape3D" id="Shape_0"]
 size = Vector3(11.3, 3.0, 0.3)
@@ -725,3 +727,11 @@ item = ExtResource("11")
 [node name="FirstAidKitStorage" parent="Pickups" instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0, 5)
 item = ExtResource("12")
+
+[node name="SteelPipeLobby" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 5)
+item = ExtResource("13")
+
+[node name="FireAxeOffice" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0, -7)
+item = ExtResource("14")

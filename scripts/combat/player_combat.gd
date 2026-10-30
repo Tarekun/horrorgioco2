@@ -29,6 +29,8 @@ signal stomp_started(enemy: Enemy)
 signal stomp_landed(enemy: Enemy)
 ## Emitted when the attacker freezes on contact.
 signal hitstop_started(duration: float)
+## Emitted when another weapon is equipped.
+signal weapon_changed(new_weapon: MeleeWeapon)
 
 enum State { IDLE, PENDING, CHARGING, SWING_LIGHT, SWING_HEAVY, STOMP }
 
@@ -168,6 +170,16 @@ func is_in_recovery() -> bool:
 	return is_swinging and _swing_time >= _swing_duration * weapon.active_end
 
 
+## Holds `new_weapon` from now on, ending any attack in progress.
+func equip(new_weapon: MeleeWeapon) -> void:
+	if new_weapon == null or new_weapon == weapon:
+		return
+	interrupt()
+	weapon = new_weapon
+	_apply_weapon_reach()
+	weapon_changed.emit(weapon)
+
+
 ## Stops whatever is in progress: no more hits, the player is free to move.
 func interrupt() -> void:
 	if state == State.IDLE:
@@ -203,7 +215,7 @@ func _start_light(index: int) -> void:
 	hitbox.damage_multiplier = 1.0
 	hitbox.causes_knockdown = false
 	_begin_swing(State.SWING_LIGHT, weapon.light_duration(index))
-	model.play_action(StringName("attack_light_%d" % (index + 1)))
+	model.play_action(StringName("attack_light_%d" % (index + 1)), weapon.light_duration(index))
 	swing_started.emit(&"light", index)
 
 
@@ -213,7 +225,7 @@ func _start_heavy() -> void:
 	hitbox.causes_knockdown = weapon.is_fully_charged(_held)
 	_combo_index = 0
 	_begin_swing(State.SWING_HEAVY, weapon.heavy_duration)
-	model.play_action(&"attack_heavy_swing")
+	model.play_action(&"attack_heavy_swing", weapon.heavy_duration)
 	swing_started.emit(&"heavy", 0)
 
 
@@ -253,7 +265,7 @@ func _start_stomp(enemy: Enemy) -> void:
 	if not to_enemy.is_zero_approx():
 		player.rotation.y = atan2(-to_enemy.x, -to_enemy.z)
 	# No stomp clip yet: the heavy swing's downward strike stands in for it.
-	model.play_action(&"attack_heavy_swing")
+	model.play_action(&"attack_heavy_swing", stomp_duration)
 	stomp_started.emit(enemy)
 
 

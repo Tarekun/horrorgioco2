@@ -1,6 +1,7 @@
 ## Stats of a melee weapon. Melee weapons never break. Defaults are the wooden
-## plank from the gameplay spec; the swing timings match the placeholder
-## animation clips and must be kept in step with them.
+## plank from the gameplay spec, the fast weapon: its swing timings equal the
+## placeholder clips' lengths. Slower weapons set longer timings, and the clips
+## are stretched to match.
 
 class_name MeleeWeapon
 extends Resource
