@@ -11,7 +11,6 @@ func before_each() -> void:
 	await super.before_each()
 	_reaction = _player.get_node("PlayerHitReaction") as PlayerHitReaction
 	_dodge = _player.get_node("PlayerDodge") as PlayerDodge
-	_reaction.game_over_screen.is_reload_on_retry = false
 	_dummy.position = Vector3(20.0, 0.0, 0.0)
 	await _physics_frames(2)
 
@@ -35,7 +34,7 @@ func test_wiring() -> void:
 	assert_not_null(_reaction.damage_overlay)
 	assert_not_null(_reaction.game_over_screen)
 	assert_not_null(_reaction.damage_overlay.flash_rect)
-	assert_not_null(_reaction.game_over_screen.retry_button)
+	assert_not_null(_reaction.game_over_screen.load_last_button)
 	assert_not_null(_reaction.game_over_screen.panel)
 
 
@@ -151,14 +150,3 @@ func test_game_over_screen_appears_after_the_delay_and_pauses() -> void:
 	assert_true(screen.is_showing)
 	assert_true(screen.panel.visible)
 	assert_true(get_tree().paused)
-
-
-func test_retry_unpauses_and_requests_a_reload() -> void:
-	var screen: GameOverScreen = _reaction.game_over_screen
-	watch_signals(screen)
-	screen.show_screen()
-	assert_true(get_tree().paused)
-	screen.retry_button.pressed.emit()
-	assert_false(get_tree().paused)
-	assert_signal_emitted(screen, "retry_requested")
-	assert_false(screen.panel.visible)

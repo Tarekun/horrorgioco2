@@ -50,6 +50,12 @@ const STEP_PROBE_DISTANCE: float = 0.4
 ## The visible character, animated from the player's ground speed.
 @export var model: PlayerModel
 
+## Uses and equips items; knows the weapon held.
+@export var items: PlayerItems
+
+## The save slot screen save spots open. A save chosen there to load is loaded.
+@export var save_screen: SaveScreen
+
 ## What the player carries. Pickups add to it.
 var inventory := Inventory.new()
 
@@ -73,6 +79,8 @@ var _movement_direction: Vector3 = Vector3.ZERO
 func _ready() -> void:
 	if stamina_component:
 		stamina_component.exhausted.connect(_on_exhausted)
+	if save_screen:
+		save_screen.load_requested.connect(GameFlow.load_game)
 
 
 func _physics_process(delta: float) -> void:
@@ -122,6 +130,37 @@ static func camera_relative_direction(input: Vector2, camera_yaw: float) -> Vect
 ## Whether the player's flashlight is on.
 func is_lit() -> bool:
 	return flashlight != null and flashlight.is_on()
+
+
+## Puts the player's part of a save in `save`: health, inventory, the weapon
+## held and the flashlight.
+func write_save(save: SaveData) -> void:
+	save.player_health = health_component.current_health
+	save.inventory = inventory.to_dict()
+	var weapon: ItemData = items.equipped_weapon if items else null
+	save.equipped_weapon = weapon.id if weapon else &""
+	save.is_flashlight_on = is_lit()
+
+
+## Takes back the player's part of `save`: health, inventory, the weapon held
+## and the flashlight.
+func read_save(save: SaveData) -> void:
+	# Revive sets the health whether or not the player is down.
+	health_component.revive(save.player_health)
+	inventory.from_dict(save.inventory)
+	if items and not save.equipped_weapon.is_empty():
+		items.equip(ItemCatalog.find(save.equipped_weapon))
+	if flashlight:
+		flashlight.set_on(save.is_flashlight_on)
+
+
+## Puts the player at `marker`, facing its way, with the camera behind.
+func place_at(marker: Node3D) -> void:
+	global_position = marker.global_position
+	rotation.y = marker.global_rotation.y
+	velocity = Vector3.ZERO
+	if camera_controller:
+		camera_controller.snap_behind_player()
 
 
 ## Returns the current movement speed.

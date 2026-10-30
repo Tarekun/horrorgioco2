@@ -14,6 +14,10 @@ func before_each() -> void:
 	await get_tree().process_frame
 
 
+func after_each() -> void:
+	SaveSystem.reset()
+
+
 func _settle() -> void:
 	await get_tree().create_timer(0.2).timeout
 
@@ -93,3 +97,43 @@ func test_the_closed_panel_blocks_the_doorway() -> void:
 	assert_eq(panel.collision_layer & CombatLayers.WORLD, CombatLayers.WORLD)
 	var shape := panel.get_child(1) as CollisionShape3D
 	assert_almost_eq((shape.shape as BoxShape3D).size.x, 1.4, 0.01)
+
+
+func test_is_persistent_with_its_path_as_default_id() -> void:
+	assert_true(_door.is_in_group(WorldState.GROUP))
+	assert_eq(_door.get_persistent_id(), WorldState.default_id(_door))
+
+
+func test_an_explicit_id_is_kept() -> void:
+	var door := DOOR_SCENE.instantiate() as Door
+	door.door_id = &"office_door"
+	add_child_autofree(door)
+	assert_eq(door.get_persistent_id(), &"office_door")
+
+
+func test_unlocking_and_locking_are_recorded() -> void:
+	SaveSystem.reset()
+	_door.lock()
+	assert_eq(SaveSystem.world.get_state(_door.door_id), {"is_locked": true})
+	_door.unlock()
+	assert_eq(SaveSystem.world.get_state(_door.door_id), {"is_locked": false})
+
+
+func test_opening_records_nothing() -> void:
+	SaveSystem.reset()
+	_door.open(Vector3(0, 0, 2))
+	assert_false(SaveSystem.world.has_state(_door.door_id))
+
+
+func test_loading_a_state_locks_or_unlocks() -> void:
+	_door.load_state({"is_locked": true})
+	assert_true(_door.is_locked)
+	_door.load_state({"is_locked": false})
+	assert_false(_door.is_locked)
+
+
+func test_loading_an_unknown_state_changes_nothing() -> void:
+	_door.lock()
+	_door.load_state({})
+	_door.load_state({"is_locked": "no"})
+	assert_true(_door.is_locked)
