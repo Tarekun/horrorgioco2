@@ -5,6 +5,10 @@
 ## and feeds it to the locomotion blend space. One-off actions (attacks, dodge,
 ## hit reactions) are further states of the tree's state machine: play_action()
 ## jumps to one and return_to_locomotion() goes back.
+##
+## The model advances the tree itself each frame, so an action can be played
+## faster or slower than its clip (a slow weapon's swing) and the whole
+## animation can freeze (hitstop) without restarting the state machine.
 
 class_name PlayerModel
 extends Node3D
@@ -56,10 +60,13 @@ var _playback: AnimationNodeStateMachinePlayback
 var _limp_target: float = 0.0
 var _limp: float = 0.0
 var _limp_phase: float = 0.0
+var _action_speed: float = 1.0
+var _is_frozen: bool = false
 
 
 func _ready() -> void:
 	if animation_tree:
+		animation_tree.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 		_playback = animation_tree.get(PLAYBACK_PARAMETER) as AnimationNodeStateMachinePlayback
 
 
@@ -68,6 +75,8 @@ func _process(delta: float) -> void:
 	_blend_speed = smoothed_speed(_blend_speed, _target_speed, blend_responsiveness, delta)
 	if animation_tree:
 		animation_tree.set(BLEND_PARAMETER, _blend_speed)
+		if not _is_frozen:
+			animation_tree.advance(delta * _action_speed)
 	_update_limp(delta)
 
 
@@ -107,14 +116,21 @@ func get_blend_speed() -> float:
 	return _blend_speed
 
 
-## Plays a one-off action clip (an attack, say) from its start.
-func play_action(action: StringName) -> void:
-	if _playback:
-		_playback.start(action, true)
+## Plays a one-off action clip (an attack, say) from its start. Given a
+## `duration`, the clip is stretched or squeezed to last that many seconds, so
+## a slow weapon swings slowly; otherwise it plays at its own length.
+func play_action(action: StringName, duration: float = 0.0) -> void:
+	if _playback == null:
+		return
+	_action_speed = 1.0
+	if duration > 0.0 and animation_tree.has_animation(action):
+		_action_speed = animation_tree.get_animation(action).length / duration
+	_playback.start(action, true)
 
 
 ## Goes back to the locomotion blend.
 func return_to_locomotion() -> void:
+	_action_speed = 1.0
 	if _playback:
 		_playback.start(LOCOMOTION_STATE, true)
 
@@ -126,13 +142,17 @@ func get_current_state() -> StringName:
 
 ## Freezes or resumes the animation (hitstop).
 func set_frozen(is_frozen: bool) -> void:
-	if animation_tree == null:
-		return
-	animation_tree.callback_mode_process = (
-		AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
-		if is_frozen
-		else AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_IDLE
-	)
+	_is_frozen = is_frozen
+
+
+func is_frozen() -> bool:
+	return _is_frozen
+
+
+## How fast the tree plays relative to its clips: 1 except while an action is
+## stretched to a duration.
+func get_action_speed() -> float:
+	return _action_speed
 
 
 func _update_limp(delta: float) -> void:

@@ -38,14 +38,12 @@ func _run_at(speed: float, seconds: float) -> void:
 	_model.set_speed(speed)
 	for i: int in 90:
 		_model._process(STEP)
-		_tree.advance(STEP)
 	_step_times.clear()
 	_step_speeds.clear()
 	_clock = 0.0
 	for i: int in int(seconds / STEP):
 		_clock += STEP
 		_model._process(STEP)
-		_tree.advance(STEP)
 
 
 # --- Wiring ---
