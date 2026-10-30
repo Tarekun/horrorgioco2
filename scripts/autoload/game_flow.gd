@@ -4,6 +4,7 @@
 ## layer) and registers its screen host here; the title screen and the levels
 ## are instanced inside that host, one at a time. Menus and screens ask for a
 ## change through the methods below instead of switching scenes themselves.
+## Loading a save instances its level fresh and has SaveSystem restore it.
 ##
 ## Without a host (a level run on its own from the editor) restart_level()
 ## falls back to reloading the current scene.
@@ -48,6 +49,25 @@ func go_to_title() -> void:
 func start_new_game() -> void:
 	SaveSystem.reset()
 	_show_screen(start_level_scene)
+	_set_state(State.PLAYING)
+
+
+## Loads `save`: its level from scratch, put back in the state the save holds,
+## with the player at the save spot used.
+func load_game(save: SaveData) -> void:
+	if not is_instance_valid(_host):
+		push_warning("GameFlow has no screen host; is scenes/main.tscn running?")
+		return
+	if not ResourceLoader.exists(save.level_path):
+		push_warning("GameFlow: the save's level %s doesn't exist." % save.level_path)
+		return
+	var scene := load(save.level_path) as PackedScene
+	if scene == null:
+		push_warning("GameFlow: %s isn't a scene." % save.level_path)
+		return
+	SaveSystem.begin_from(save)
+	_show_screen(scene)
+	SaveSystem.restore(_screen, save)
 	_set_state(State.PLAYING)
 
 

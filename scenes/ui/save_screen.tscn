@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/save_screen.gd" id="1"]
 
-[node name="SaveScreen" type="CanvasLayer" node_paths=PackedStringArray("panel", "title_label", "slot_list", "message_label", "back_button", "confirm_panel", "confirm_label", "confirm_button", "cancel_button")]
+[node name="SaveScreen" type="CanvasLayer" node_paths=PackedStringArray("panel", "title_label", "slot_list", "message_label", "switch_button", "back_button", "confirm_panel", "confirm_label", "confirm_button", "cancel_button")]
 process_mode = 3
 layer = 22
 script = ExtResource("1")
@@ -10,6 +10,7 @@ panel = NodePath("Panel")
 title_label = NodePath("Panel/Menu/Title")
 slot_list = NodePath("Panel/Menu/Slots")
 message_label = NodePath("Panel/Menu/Message")
+switch_button = NodePath("Panel/Menu/SwitchButton")
 back_button = NodePath("Panel/Menu/BackButton")
 confirm_panel = NodePath("Panel/Confirm")
 confirm_label = NodePath("Panel/Confirm/Box/Question")
@@ -52,6 +53,10 @@ theme_override_constants/separation = 6
 [node name="Message" type="Label" parent="Panel/Menu"]
 layout_mode = 2
 horizontal_alignment = 1
+
+[node name="SwitchButton" type="Button" parent="Panel/Menu"]
+layout_mode = 2
+text = "Load a save"
 
 [node name="BackButton" type="Button" parent="Panel/Menu"]
 layout_mode = 2
