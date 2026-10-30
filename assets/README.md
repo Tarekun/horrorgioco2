@@ -25,6 +25,31 @@ Models are CC0 downloads fitted to the budgets in `docs/design/visual-style.md` 
 |---|---|---|---|---|
 | `props/painted_chair` | White painted wooden room chair, 441 triangles, 256 px albedo | [Poly Haven: Painted Wooden Chair 01](https://polyhaven.com/a/painted_wooden_chair_01) | Kuutti Siitonen | CC0 |
 
+## Textures and materials
+
+The hotel's environment textures are CC0 photo textures, chosen from a contact sheet of candidates and fitted by the asset pipeline (`tools/README.md`): downscaled to 256 or 512 px with power-of-two sides, the source's ambient occlusion baked into the colour where it has one, and desaturated to 80% so a material tint can bring them to the palette. Each is `assets/textures/<name>.jpg`, imported VRAM compressed with mipmaps, with its entry in `sources.json` (`tools/build_assets.py <name>` rebuilds it).
+
+Each texture has a shared material in `assets/materials/<name>.tres`: a `StandardMaterial3D` with only the albedo texture, a constant roughness per surface, and trilinear anisotropic filtering, which the retro filter (#100) turns off through the viewport. The tint (`albedo_color`) is white for now. The per-floor colours of the palette in `docs/design/visual-style.md` come with dressing the hotel (#112), as tinted copies of these materials. A tint only darkens, which is why the wallpaper was lifted to a light grey with `--levels`.
+
+| Texture | What | px | Source | Author | License |
+|---|---|---|---|---|---|
+| `terrazzo` | Terrazzo floor: corridors and lobby | 512 | [ambientCG: Terrazzo011](https://ambientcg.com/a/Terrazzo011) | ambientCG | CC0 |
+| `carpet` | Guest room carpet | 512 | [ambientCG: Carpet013](https://ambientcg.com/a/Carpet013) | ambientCG | CC0 |
+| `floor_tiles` | Terracotta floor tiles: kitchen, bathrooms, staff room | 256 | [ambientCG: Tiles027](https://ambientcg.com/a/Tiles027) | ambientCG | CC0 |
+| `concrete_floor` | Basement floor | 512 | [ambientCG: Concrete047A](https://ambientcg.com/a/Concrete047A) | ambientCG | CC0 |
+| `painted_wall` | Painted plaster wall: rooms and corridors | 512 | [ambientCG: Concrete046](https://ambientcg.com/a/Concrete046) | ambientCG | CC0 |
+| `wallpaper` | Damask wallpaper: guest rooms (lifted to light grey for tinting) | 512 | [Poly Haven: floral_jacquard](https://polyhaven.com/a/floral_jacquard) | Rico Cilliers, photographed by colormass | CC0 |
+| `wall_tiles` | Small square wall tiles: kitchen and bathrooms | 256 | [ambientCG: Tiles133A](https://ambientcg.com/a/Tiles133A) | ambientCG | CC0 |
+| `brick` | Bare brick: building sites | 512 | [ambientCG: Bricks085](https://ambientcg.com/a/Bricks085) | ambientCG | CC0 |
+| `stripped_plaster` | Plaster stripped to the brick: building sites | 512 | [ambientCG: PaintedPlaster014](https://ambientcg.com/a/PaintedPlaster014) | ambientCG | CC0 |
+| `concrete_wall` | Basement walls | 512 | [ambientCG: Concrete036](https://ambientcg.com/a/Concrete036) | ambientCG | CC0 |
+| `wood_panelling` | Wood panelling: reception desk and lobby | 256 | [ambientCG: Wood030](https://ambientcg.com/a/Wood030) | ambientCG | CC0 |
+| `door` | Door veneer | 256 | [ambientCG: Wood023](https://ambientcg.com/a/Wood023) | ambientCG | CC0 |
+| `ceiling_plaster` | Stucco ceiling: rooms and corridors | 256 | [ambientCG: Plaster003](https://ambientcg.com/a/Plaster003) | ambientCG | CC0 |
+| `ceiling_tiles` | Suspended ceiling tiles: lobby and dining room | 256 | [ambientCG: OfficeCeiling001](https://ambientcg.com/a/OfficeCeiling001) | ambientCG | CC0 |
+
+The wallpaper's source is 2:3; it is stored at 256×512, so map it 2:3 to keep the damask's proportions.
+
 ## Audio
 
 Audio buses are defined in `default_bus_layout.tres` (`Music`, `Ambience`, `SFX`, `UI`, each sending to `Master`); their names are constants in `scripts/audio/audio_buses.gd`.
