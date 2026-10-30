@@ -6,8 +6,198 @@
 			"source": "https://polyhaven.com/a/painted_wooden_chair_01",
 			"author": "Kuutti Siitonen",
 			"license": "CC0",
-			"fetch": {"polyhaven": "painted_wooden_chair_01"},
-			"process": {"triangles": 450, "texture_size": 256}
+			"fetch": {
+				"polyhaven": "painted_wooden_chair_01"
+			},
+			"process": {
+				"triangles": 450,
+				"texture_size": 256
+			}
+		}
+	],
+	"textures": [
+		{
+			"name": "terrazzo",
+			"source": "https://ambientcg.com/a/Terrazzo011",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Terrazzo011"
+			},
+			"process": {
+				"size": 512,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "carpet",
+			"source": "https://ambientcg.com/a/Carpet013",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Carpet013"
+			},
+			"process": {
+				"size": 512,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "floor_tiles",
+			"source": "https://ambientcg.com/a/Tiles027",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Tiles027"
+			},
+			"process": {
+				"size": 256,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "concrete_floor",
+			"source": "https://ambientcg.com/a/Concrete047A",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Concrete047A"
+			},
+			"process": {
+				"size": 512,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "painted_wall",
+			"source": "https://ambientcg.com/a/Concrete046",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Concrete046"
+			},
+			"process": {
+				"size": 512,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "wallpaper",
+			"source": "https://polyhaven.com/a/floral_jacquard",
+			"author": "Rico Cilliers, photographed by colormass",
+			"license": "CC0",
+			"fetch": {
+				"polyhaven": "floral_jacquard"
+			},
+			"process": {
+				"size": 512,
+				"saturation": 0.8,
+				"levels": "0.55,0.92"
+			}
+		},
+		{
+			"name": "wall_tiles",
+			"source": "https://ambientcg.com/a/Tiles133A",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Tiles133A"
+			},
+			"process": {
+				"size": 256,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "brick",
+			"source": "https://ambientcg.com/a/Bricks085",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Bricks085"
+			},
+			"process": {
+				"size": 512,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "stripped_plaster",
+			"source": "https://ambientcg.com/a/PaintedPlaster014",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "PaintedPlaster014"
+			},
+			"process": {
+				"size": 512,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "concrete_wall",
+			"source": "https://ambientcg.com/a/Concrete036",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Concrete036"
+			},
+			"process": {
+				"size": 512,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "wood_panelling",
+			"source": "https://ambientcg.com/a/Wood030",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Wood030"
+			},
+			"process": {
+				"size": 256,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "door",
+			"source": "https://ambientcg.com/a/Wood023",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Wood023"
+			},
+			"process": {
+				"size": 256,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "ceiling_plaster",
+			"source": "https://ambientcg.com/a/Plaster003",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "Plaster003"
+			},
+			"process": {
+				"size": 256,
+				"saturation": 0.8
+			}
+		},
+		{
+			"name": "ceiling_tiles",
+			"source": "https://ambientcg.com/a/OfficeCeiling001",
+			"author": "ambientCG",
+			"license": "CC0",
+			"fetch": {
+				"ambientcg": "OfficeCeiling001"
+			},
+			"process": {
+				"size": 256,
+				"saturation": 0.8
+			}
 		}
 	]
 }
