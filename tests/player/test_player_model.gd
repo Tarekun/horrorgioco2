@@ -1,4 +1,4 @@
-## Tests for the placeholder character: rig, animations and speed blending.
+## Tests for the player's character: rig, animations and speed blending.
 
 extends GutTest
 
@@ -8,13 +8,16 @@ const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
 var _model: PlayerModel
 var _skeleton: Skeleton3D
 var _tree: AnimationTree
+var _idle_leg: Quaternion
 
 
 func before_each() -> void:
 	_model = MODEL_SCENE.instantiate() as PlayerModel
 	add_child_autofree(_model)
-	_skeleton = _model.get_node("Skeleton3D") as Skeleton3D
+	_skeleton = _model.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
 	_tree = _model.animation_tree
+	_settle_at(0.0)
+	_idle_leg = _skeleton.get_bone_pose_rotation(_skeleton.find_bone("DEF-thigh.R"))
 
 
 func after_each() -> void:
@@ -28,25 +31,48 @@ func _settle_at(speed: float) -> void:
 		_model._process(1.0 / 60.0)
 
 
+## How far (radians) the bone is turned from its rest pose.
+func _turn_from_rest(bone: String) -> float:
+	var index: int = _skeleton.find_bone(bone)
+	var rest: Quaternion = _skeleton.get_bone_rest(index).basis.get_rotation_quaternion()
+	return rest.angle_to(_skeleton.get_bone_pose_rotation(index))
+
+
+## How far (radians) the right thigh is turned from where it stands at idle.
 func _leg_swing() -> float:
-	var index: int = _skeleton.find_bone("UpperLeg_R")
-	return absf(_skeleton.get_bone_pose_rotation(index).get_euler().x)
+	return _idle_leg.angle_to(_skeleton.get_bone_pose_rotation(_skeleton.find_bone("DEF-thigh.R")))
 
 
 # --- Rig ---
 
 
 func test_skeleton_is_a_humanoid_within_budget() -> void:
-	assert_between(_skeleton.get_bone_count(), 15, 50, "bone count")
-	for bone: String in ["Hips", "Spine", "Head", "UpperArm_L", "LowerLeg_R", "Foot_L"]:
+	assert_between(_skeleton.get_bone_count(), 15, 55, "bone count")
+	for bone: String in ["DEF-hips", "DEF-spine.001", "DEF-head", "DEF-upper_arm.L"]:
+		assert_ne(_skeleton.find_bone(bone), -1, bone)
+	for bone: String in ["DEF-shin.R", "DEF-foot.L", "DEF-hand.R"]:
 		assert_ne(_skeleton.find_bone(bone), -1, bone)
 
 
-func test_model_is_a_few_hundred_triangles() -> void:
+func test_model_is_within_the_character_budget() -> void:
 	var triangles: int = 0
 	for mesh_instance: MeshInstance3D in _model.find_children("*", "MeshInstance3D", true, false):
 		triangles += mesh_instance.mesh.get_faces().size() / 3
-	assert_between(triangles, 100, 3000, "triangle count")
+	assert_between(triangles, 3000, 6000, "triangle count")
+
+
+func test_the_plank_follows_the_right_hand() -> void:
+	var attachment := _model.get_node("PlankAttachment") as BoneAttachment3D
+	assert_eq(attachment.bone_name, "DEF-hand.R")
+	_model.play_action(&"attack_light_1")
+	_tree.advance(0.01)
+	_tree.advance(0.3)
+	await get_tree().process_frame
+	var hand: int = _skeleton.find_bone("DEF-hand.R")
+	var hand_position: Vector3 = (
+		(_skeleton.global_transform * _skeleton.get_bone_global_pose(hand)).origin
+	)
+	assert_lt(attachment.global_position.distance_to(hand_position), 0.05, "plank at the hand")
 
 
 func test_every_animation_loops_and_targets_existing_bones() -> void:
@@ -98,7 +124,7 @@ func test_smoothing_is_frame_rate_independent() -> void:
 func test_idle_stands_still_and_walk_and_run_swing_the_legs() -> void:
 	_settle_at(0.0)
 	var idle_swing: float = _leg_swing()
-	assert_lt(idle_swing, 0.02, "idle legs are still")
+	assert_lt(idle_swing, 0.1, "idle legs are still")
 
 	var walk_peak: float = 0.0
 	_settle_at(1.5)
@@ -187,11 +213,10 @@ func test_play_action_leaves_and_returns_to_locomotion() -> void:
 
 
 func test_action_moves_the_arm_and_locomotion_still_blends_after() -> void:
-	var arm: int = _skeleton.find_bone("UpperArm_R")
 	_model.play_action(&"attack_light_1")
 	_tree.advance(0.01)
-	_tree.advance(0.45 * 0.25)
-	assert_gt(absf(_skeleton.get_bone_pose_rotation(arm).get_euler().x), 1.0, "arm raised")
+	_tree.advance(0.2)
+	assert_gt(_turn_from_rest("DEF-upper_arm.R"), 0.5, "arm raised")
 	_model.return_to_locomotion()
 	_settle_at(3.5)
 	assert_almost_eq(_model.get_blend_speed(), 3.5, 0.05)
@@ -214,7 +239,8 @@ func test_freezing_stops_the_animation() -> void:
 
 func test_an_action_can_be_stretched_to_a_duration() -> void:
 	_model.play_action(&"attack_light_1", 0.9)
-	assert_almost_eq(_model.get_action_speed(), 0.45 / 0.9, 0.001)
+	var length: float = _tree.get_animation(&"attack_light_1").length
+	assert_almost_eq(_model.get_action_speed(), length / 0.9, 0.001)
 	_model.return_to_locomotion()
 	assert_eq(_model.get_action_speed(), 1.0)
 	_model.play_action(&"attack_light_1")

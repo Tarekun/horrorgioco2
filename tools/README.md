@@ -31,7 +31,7 @@ To add a model:
 
 ```sh
 "$BLENDER" --background --factory-startup --python tools/process_model.py -- \
-    INPUT.glb OUTPUT.gltf --triangles 450 --texture-size 256 [--rotate 180] [--height 1.8]
+    INPUT.glb OUTPUT.gltf --triangles 450 --texture-size 256 [--rotate 180] [--height 1.8] [--drop OBJECT,...] [--actions CLIP,...]
 ```
 
 It imports glTF, FBX, OBJ or `.blend`; turns and scales the model and puts its origin at the bottom centre; decimates it to `--triangles` (first merging flat areas, then collapsing edges); keeps only the base colour, alpha and emission of each material, with constant roughness and metallic; downscales textures to `--texture-size`; and exports glTF with separate textures and its animations. `--help` lists every option.
@@ -39,5 +39,6 @@ It imports glTF, FBX, OBJ or `.blend`; turns and scales the model and puts its o
 - **Orientation.** The player and enemies turn their -Z towards where they move, so a model must face -Z. Most CC0 characters face +Z: pass `--rotate 180`.
 - **Categories.** The folder under `assets/models/` sets the budget: `characters` (6,000 triangles, 512 px textures), `locals` and `monsters` (4,000, 512), `bosses` (8,000, 512), `props` (500, 256), `hero_props` (1,500, 256) and `environment` (1,500 per piece, 512).
 - **Textures** get an `.import` file that imports them VRAM compressed with mipmaps; the test checks it.
+- **`--drop`** deletes the named objects (a source's helper shapes) and **`--actions`** keeps only the named animations, so a character carries just the clips the game plays.
 - **Shape keys** are dropped from meshes that need decimating, since Blender can't apply a modifier to them.
 - Heavy decimation (over about 90%) breaks thin parts such as chair spokes. Prefer sources already near the budget, and look at the result.
