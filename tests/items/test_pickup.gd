@@ -14,7 +14,7 @@ var _pickup: Pickup
 func before_each() -> void:
 	_player = PLAYER_SCENE.instantiate() as Player
 	add_child_autofree(_player)
-	_pickup = _make_pickup(ROUNDS, 8)
+	_pickup = _make_pickup(ROUNDS)
 	# In front of the player (who faces -Z).
 	_pickup.position = Vector3(0, 0, -1.0)
 	add_child_autofree(_pickup)
@@ -23,12 +23,13 @@ func before_each() -> void:
 
 func after_each() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	Scarcity.use(null)
 
 
-func _make_pickup(item: ItemData, amount: int) -> Pickup:
+func _make_pickup(item: ItemData, bundles: int = 1) -> Pickup:
 	var pickup := PICKUP_SCENE.instantiate() as Pickup
 	pickup.item = item
-	pickup.amount = amount
+	pickup.bundles = bundles
 	return pickup
 
 
@@ -49,6 +50,22 @@ func test_picking_up_removes_the_pickup() -> void:
 	assert_false(_pickup.visible)
 	assert_false(_pickup.is_in_group(Interactable.GROUP))
 	assert_true(_pickup.is_queued_for_deletion())
+
+
+func test_it_holds_the_standard_amount_from_the_scarcity() -> void:
+	assert_eq(_pickup.get_amount(), 8)
+	var stingy := Scarcity.new()
+	stingy.pickup_amounts = {&"pistol_ammo": 5}
+	Scarcity.use(stingy)
+	assert_eq(_pickup.get_amount(), 5)
+	_pickup.interact(_player)
+	assert_eq(_player.inventory.count(ROUNDS), 5)
+
+
+func test_bundles_multiply_the_amount() -> void:
+	var stash := _make_pickup(ROUNDS, 3)
+	add_child_autofree(stash)
+	assert_eq(stash.get_amount(), 24)
 
 
 func test_picking_up_returns_a_message() -> void:
@@ -93,7 +110,7 @@ func test_the_id_defaults_to_the_path_in_its_level() -> void:
 	stash.name = "Stash"
 	level.add_child(stash)
 	stash.owner = level
-	var pickup := _make_pickup(ROUNDS, 8)
+	var pickup := _make_pickup(ROUNDS)
 	pickup.name = "Rounds"
 	stash.add_child(pickup)
 	pickup.owner = level
@@ -102,7 +119,7 @@ func test_the_id_defaults_to_the_path_in_its_level() -> void:
 
 
 func test_an_explicit_id_is_kept() -> void:
-	var pickup := _make_pickup(ROUNDS, 8)
+	var pickup := _make_pickup(ROUNDS)
 	pickup.pickup_id = &"office_rounds"
 	add_child_autofree(pickup)
 	assert_eq(pickup.pickup_id, &"office_rounds")
@@ -138,7 +155,7 @@ func test_the_glint_is_a_faint_unshaded_billboard() -> void:
 
 
 func test_each_pickup_has_its_own_glint() -> void:
-	var other := _make_pickup(ROUNDS, 8)
+	var other := _make_pickup(ROUNDS)
 	add_child_autofree(other)
 	assert_ne(other.glint.get_active_material(0), _pickup.glint.get_active_material(0))
 
@@ -152,7 +169,7 @@ func test_the_level_pickups_have_items_and_unique_ids() -> void:
 		assert_not_null(pickup, "%s is not a pickup" % node.name)
 		if pickup:
 			assert_not_null(pickup.item, "%s has no item" % node.name)
-			assert_gt(pickup.amount, 0, node.name)
+			assert_gt(pickup.get_amount(), 0, node.name)
 			assert_false(ids.has(pickup.pickup_id), "%s reuses an id" % node.name)
 			ids.append(pickup.pickup_id)
 	assert_gt(ids.size(), 0)
