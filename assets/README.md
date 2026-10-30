@@ -17,6 +17,14 @@ The generator also builds the action clips (`attack_light_1` to `3`, `attack_hea
 
 Record the source and license of every imported asset here, as the visual style doc requires.
 
+## Models
+
+Models are CC0 downloads fitted to the budgets in `docs/design/visual-style.md` by the asset pipeline (`tools/README.md`). Each is in `assets/models/<category>/<name>/`, where the category folder sets its budget, and has an entry in `sources.json` with its source, author, license and processing settings, so `tools/build_assets.py <name>` rebuilds it. The raw downloads are not committed.
+
+| Model | What | Source | Author | License |
+|---|---|---|---|---|
+| `props/painted_chair` | White painted wooden room chair, 441 triangles, 256 px albedo | [Poly Haven: Painted Wooden Chair 01](https://polyhaven.com/a/painted_wooden_chair_01) | Kuutti Siitonen | CC0 |
+
 ## Audio
 
 Audio buses are defined in `default_bus_layout.tres` (`Music`, `Ambience`, `SFX`, `UI`, each sending to `Master`); their names are constants in `scripts/audio/audio_buses.gd`.
