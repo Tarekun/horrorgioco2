@@ -54,4 +54,4 @@ func test_a_new_game_starts_in_the_level() -> void:
 	var main: Node = MAIN_SCENE.instantiate()
 	add_child_autofree(main)
 	GameFlow.start_new_game()
-	assert_not_null(main.get_node_or_null("ScreenHost/GrayboxLevel/WorldEnvironment"))
+	assert_not_null(main.get_node_or_null("ScreenHost/HotelMiramare/WorldEnvironment"))

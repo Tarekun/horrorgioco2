@@ -42,6 +42,18 @@ func test_the_prompt_shows_only_while_in_range() -> void:
 	assert_false(_interaction.hint.prompt_label.visible)
 
 
+func test_one_on_the_floor_below_is_ignored() -> void:
+	# A door right under this one, a floor down, is nearer on the ground plane.
+	var below := DOOR_SCENE.instantiate() as Door
+	below.position = Vector3(0, -3.2, -1.0)
+	add_child_autofree(below)
+	_interaction.update_focus()
+	assert_eq(_interaction.focus, _door)
+	_door.position = Vector3(0, 0, -4)
+	_interaction.update_focus()
+	assert_null(_interaction.focus)
+
+
 func test_one_behind_the_player_is_ignored() -> void:
 	_door.position = Vector3(0, 0, 1.2)
 	_interaction.update_focus()

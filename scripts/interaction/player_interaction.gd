@@ -17,6 +17,10 @@ signal focus_changed(interactable: Interactable)
 ## Half angle (degrees) around the player's facing in which one counts as in front.
 @export var interact_angle: float = 80.0
 
+## How far above or below the player (metres) one may be. Keeps a door on the
+## floor below, in the same spot, from being picked.
+@export var interact_height: float = 2.0
+
 @export var player: Player
 @export var hint: InteractionHint
 
@@ -72,6 +76,6 @@ func _pick() -> Interactable:
 			positions.append(interactable.global_position)
 	var forward: Vector3 = -player.global_basis.z
 	var index: int = SoftTargeting.pick(
-		player.global_position, forward, positions, interact_range, interact_angle
+		player.global_position, forward, positions, interact_range, interact_angle, interact_height
 	)
 	return candidates[index] if index >= 0 else null

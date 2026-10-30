@@ -18,8 +18,8 @@ enum State { NONE, TITLE, PLAYING, GAME_OVER }
 
 const TITLE_SCENE_PATH: String = "res://scenes/ui/main_menu.tscn"
 
-## The level a new game starts in. #70 replaces it with the hotel.
-const START_LEVEL_PATH: String = "res://scenes/levels/graybox_level.tscn"
+## The level a new game starts in: the slice's hotel.
+const START_LEVEL_PATH: String = "res://scenes/levels/hotel_miramare.tscn"
 
 ## Scene shown as the title screen. Tests replace it.
 var title_scene: PackedScene = load(TITLE_SCENE_PATH)

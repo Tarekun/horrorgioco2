@@ -104,4 +104,4 @@ func test_the_title_screen_starts_a_new_game() -> void:
 	var menu := main.get_node("ScreenHost").get_child(0) as MainMenu
 	menu.new_game_button.pressed.emit()
 	assert_eq(GameFlow.state, GameFlow.State.PLAYING)
-	assert_not_null(main.get_node_or_null("ScreenHost/GrayboxLevel/Player"))
+	assert_not_null(main.get_node_or_null("ScreenHost/HotelMiramare/Player"))
