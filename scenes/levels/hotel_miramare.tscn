@@ -2902,8 +2902,8 @@ door_id = &"door_room_26"
 [node name="DoorStairs2F" parent="Doors/SecondFloor" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6.4, 1)
 is_locked = true
+key_id = &"key_stairs"
 door_id = &"door_stairs_2f"
-metadata/key_id = &"key_stairs"
 
 [node name="DoorLinenRoom" parent="Doors/FirstFloor" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3.2, -1)
@@ -2934,14 +2934,14 @@ door_id = &"door_room_15"
 [node name="DoorRoom16" parent="Doors/FirstFloor" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 3.2, -1)
 is_locked = true
+key_id = &"key_room_16"
 door_id = &"door_room_16"
-metadata/key_id = &"key_room_16"
 
 [node name="DoorStairs1F" parent="Doors/FirstFloor" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3.2, 1)
 is_locked = true
+key_id = &"key_stairs"
 door_id = &"door_stairs_1f"
-metadata/key_id = &"key_stairs"
 
 [node name="DoorStairsGF" parent="Doors/GroundFloor" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 1)
@@ -2977,15 +2977,15 @@ door_id = &"door_tv_room"
 [node name="DoorFront" parent="Doors/GroundFloor" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, -7)
 is_locked = true
+key_id = &"key_front_door"
 door_id = &"door_front"
-metadata/key_id = &"key_front_door"
 
 [node name="DoorBasement" parent="Doors/Basement" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -3.2, 1)
 is_locked = true
 locked_message = "Chained shut."
+key_id = &"key_basement"
 door_id = &"door_basement"
-metadata/key_id = &"key_basement"
 
 [node name="DoorLaundry" parent="Doors/Basement" instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, -3.2, -1)

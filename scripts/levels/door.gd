@@ -2,7 +2,10 @@
 ##
 ## The panel swings on a hinge, away from the player who opens it. Closed, its
 ## collider blocks the doorway for the player, enemies and sight. A locked door
-## answers with a message and stays shut until unlock() is called.
+## answers with a message and stays shut until unlock() is called. If it has a
+## `key_id`, a player carrying that key item unlocks it by trying it: the door
+## opens and says the key was used. Keys are kept, since one may open several
+## doors.
 ##
 ## Doors are persistent (see WorldState): lock() and unlock() record the lock
 ## in SaveSystem.world, and loading a save locks or unlocks the door again.
@@ -20,12 +23,17 @@ signal opened
 signal closed
 ## Emitted when the player tries a locked door.
 signal locked_attempted
+## Emitted when a player's key unlocks the door.
+signal unlocked_with_key(key: ItemData)
 
 ## Whether the door refuses to open.
 @export var is_locked: bool = false
 
 ## What the player is told when the door is locked.
 @export var locked_message: String = "It's locked."
+
+## Id of the key item (ItemData.id) that unlocks it. Empty: no key does.
+@export var key_id: StringName
 
 ## How far the panel swings open, in degrees, and how long it takes.
 @export var open_angle: float = 100.0
@@ -64,11 +72,18 @@ func interact(actor: Node3D) -> String:
 	if is_open:
 		close()
 		return ""
+	var message: String = ""
 	if is_locked:
-		locked_attempted.emit()
-		return locked_message
+		var player := actor as Player
+		var key: ItemData = find_key(player.inventory, key_id) if player else null
+		if key == null:
+			locked_attempted.emit()
+			return locked_message
+		unlock()
+		unlocked_with_key.emit(key)
+		message = used_key_message(key)
 	open(actor.global_position if actor else global_position + global_basis.z)
-	return ""
+	return message
 
 
 ## Opens the door, swinging away from `from` (the opener's position).
@@ -117,6 +132,22 @@ func load_state(state: Dictionary) -> void:
 		lock()
 	else:
 		unlock()
+
+
+## The item with id `key` in `inventory`, or null if it isn't there (or `key`
+## is empty).
+static func find_key(inventory: Inventory, key: StringName) -> ItemData:
+	if key.is_empty():
+		return null
+	for item: ItemData in inventory.get_items():
+		if item.id == key:
+			return item
+	return null
+
+
+## The message shown on unlocking a door with `key`.
+static func used_key_message(key: ItemData) -> String:
+	return "Used %s." % key.display_name
 
 
 func _record() -> void:
