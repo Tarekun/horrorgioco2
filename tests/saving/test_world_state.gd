@@ -165,3 +165,17 @@ func test_without_an_owner_the_id_is_the_name() -> void:
 	thing.name = "Loose"
 	add_child_autofree(thing)
 	assert_eq(WorldState.default_id(thing), &"Loose")
+
+
+func test_the_level_is_the_outermost_owner() -> void:
+	var level := Node3D.new()
+	var room := Node3D.new()
+	level.add_child(room)
+	room.owner = level
+	var thing := Node3D.new()
+	room.add_child(thing)
+	thing.owner = room
+	add_child_autofree(level)
+	assert_eq(WorldState.level_of(thing), level)
+	assert_eq(WorldState.level_of(room), level)
+	assert_null(WorldState.level_of(level))

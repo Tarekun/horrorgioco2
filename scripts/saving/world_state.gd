@@ -92,12 +92,19 @@ func from_dict(data: Dictionary) -> void:
 ## in, followed up to the outermost one (the level), so the same room scene
 ## placed twice still gives distinct ids. Without an owner, its name.
 static func default_id(node: Node) -> StringName:
-	var level: Node = node.owner
+	var level: Node = level_of(node)
 	if level == null:
 		return StringName(str(node.name))
-	while level.owner != null:
-		level = level.owner
 	return StringName(str(level.get_path_to(node)))
+
+
+## The scene `node` was placed in, followed up to the outermost one: the level
+## it belongs to. Null when it has no owner.
+static func level_of(node: Node) -> Node:
+	var level: Node = node.owner
+	while level != null and level.owner != null:
+		level = level.owner
+	return level
 
 
 ## `vector` as a JSON-safe array.
