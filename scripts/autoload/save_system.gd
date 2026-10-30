@@ -23,6 +23,11 @@ var world := WorldState.new()
 ## Seconds played in the current run.
 var play_time: float = 0.0
 
+## The most recent save written or loaded this session, or null; game over's
+## Load last save loads it. A new game clears it, so dying before saving starts
+## over.
+var last_save: SaveData
+
 ## The save slots. Tests replace it.
 var slots := SaveSlots.new(
 	HEADLESS_DIRECTORY if DisplayServer.get_name() == "headless" else SaveSlots.DEFAULT_DIRECTORY
@@ -38,6 +43,7 @@ func _process(delta: float) -> void:
 func reset() -> void:
 	world = WorldState.new()
 	play_time = 0.0
+	last_save = null
 
 
 ## A save of the game as it is now, made at `spot` by `player`.
@@ -52,16 +58,22 @@ func capture(player: Player, spot: SaveSpot) -> SaveData:
 	return save
 
 
-## Stamps `save` with the time and writes it to `slot`.
+## Stamps `save` with the time and writes it to `slot`. Once written, it is
+## the last save.
 func write_slot(slot: int, save: SaveData) -> Error:
 	save.timestamp = int(Time.get_unix_time_from_system())
-	return slots.write(slot, save)
+	var error: Error = slots.write(slot, save)
+	if error == OK:
+		last_save = save
+	return error
 
 
-## Takes the world state and play time of `save` as the current run's.
+## Takes the world state and play time of `save` as the current run's, and
+## makes it the last save.
 func begin_from(save: SaveData) -> void:
 	world = save.world.copy()
 	play_time = save.play_time
+	last_save = save
 
 
 ## Puts a freshly instanced `level` in the state `save` holds: its persistent

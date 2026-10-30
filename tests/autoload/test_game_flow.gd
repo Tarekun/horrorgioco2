@@ -68,12 +68,12 @@ func test_game_over_is_a_state() -> void:
 	assert_eq(_flow.state, GameFlowScript.State.GAME_OVER)
 
 
-func test_restart_level_starts_a_fresh_level_and_unpauses() -> void:
+func test_restart_game_starts_a_fresh_level_and_unpauses() -> void:
 	_flow.start_new_game()
 	var first: Node = _host.get_child(0)
 	_flow.enter_game_over()
 	get_tree().paused = true
-	_flow.restart_level()
+	_flow.restart_game()
 	assert_eq(_screens(), ["Level"])
 	assert_ne(_host.get_child(0), first)
 	assert_eq(_flow.state, GameFlowScript.State.PLAYING)
