@@ -42,6 +42,6 @@ Doors (`scenes/levels/door.tscn`) are `Interactable`s opened with `interact` (`P
 
 ## Items
 
-Item definitions are `ItemData` resources in `assets/data/items/`, one per item and named after its `id` (`pistol_ammo.tres` has the id `pistol_ammo`). Saves store ids; `ItemCatalog` turns them back into items. The player's `Inventory` (`Player.inventory`) stacks every item without limit.
+Item definitions are `ItemData` resources in `assets/data/items/`, one per item and named after its `id` (`pistol_ammo.tres` has the id `pistol_ammo`). Saves store ids; `ItemCatalog` turns them back into items. The player's `Inventory` (`Player.inventory`) stacks every item without limit. `PlayerItems` on the player carries out the inventory screen's Use (healing) and Equip (weapons). A weapon item points at its `MeleeWeapon` in `assets/data/weapons/`, and weapons stay in the inventory whether held or not. The player starts holding the wooden plank.
 
 Pickups (`scenes/items/pickup.tscn`) are `Interactable`s placed by hand in a level: set the `item` and `amount` on each instance. A faint pulsing glint marks them in the dark. Each has a `pickup_id` for saves (by default its path in the level, which changes if the pickup is renamed or moved to another parent) and emits `collected`; `mark_collected()` removes one when loading a save. The graybox level keeps its pickups under `Pickups`.

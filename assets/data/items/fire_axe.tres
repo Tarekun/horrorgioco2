@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/items/item_data.gd" id="1"]
+[ext_resource type="Resource" path="res://assets/data/weapons/fire_axe.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"fire_axe"
+display_name = "Fire axe"
+category = 0
+description = "A red fire axe from a hotel corridor's glass case. Slow, with a short combo, but every swing hits hard."
+weapon = ExtResource("2")

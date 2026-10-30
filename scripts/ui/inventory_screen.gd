@@ -56,6 +56,9 @@ signal use_requested(item: ItemData)
 
 var is_open: bool = false
 
+## The weapon held, marked in the list; Equip is off for it.
+var equipped_item: ItemData
+
 ## The item the details panel shows, to tell a new selection from a refresh.
 var _shown_item: ItemData
 
@@ -194,6 +197,12 @@ func examine_selected() -> void:
 		description_label.text = item.description
 
 
+## Marks `item` as the weapon held.
+func set_equipped(item: ItemData) -> void:
+	equipped_item = item
+	refresh()
+
+
 ## Shows a short reply to an action until another item is selected.
 func show_message(text: String) -> void:
 	message_label.text = text
@@ -207,7 +216,8 @@ func refresh() -> void:
 	var previous_row: int = selected[0] if not selected.is_empty() else 0
 	item_list.clear()
 	for item: ItemData in player.inventory.get_items_in(get_category()):
-		var row: int = item_list.add_item(item_label(item, player.inventory.count(item)), item.icon)
+		var label: String = item_label(item, player.inventory.count(item), item == equipped_item)
+		var row: int = item_list.add_item(label, item.icon)
 		item_list.set_item_metadata(row, item)
 	if item_list.item_count == 0:
 		_show_details(null)
@@ -217,11 +227,14 @@ func refresh() -> void:
 	item_list.ensure_current_is_visible()
 
 
-## The list's text for `count` of `item`.
-static func item_label(item: ItemData, count: int) -> String:
+## The list's text for `count` of `item`, marked if it is the weapon held.
+static func item_label(item: ItemData, count: int, is_equipped: bool = false) -> String:
+	var label: String = item.display_name
 	if count > 1:
-		return "%s ×%d" % [item.display_name, count]
-	return item.display_name
+		label = "%s ×%d" % [label, count]
+	if is_equipped:
+		label += "  (equipped)"
+	return label
 
 
 func _action_buttons() -> Array[Button]:
@@ -238,7 +251,7 @@ func _show_details(item: ItemData) -> void:
 		message_label.text = ""
 	_shown_item = item
 	item_name_label.text = item.display_name if item else ""
-	equip_button.disabled = item == null or not item.is_equippable()
+	equip_button.disabled = item == null or not item.is_equippable() or item == equipped_item
 	use_button.disabled = item == null or not item.is_usable()
 	examine_button.disabled = item == null
 	# A button that just became unusable gives the focus back to the list.

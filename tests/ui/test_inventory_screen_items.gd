@@ -92,11 +92,12 @@ func test_left_and_right_move_between_the_actions_instead() -> void:
 
 
 func test_the_first_item_is_selected_with_its_details() -> void:
-	_player.inventory.add(_weapon)
+	_player.inventory.add(ROUNDS, 8)
+	_player.inventory.add(SHELLS, 4)
 	_screen.open()
-	_screen.select_tab(ItemData.Category.WEAPON)
-	assert_eq(_screen.get_selected_item(), _weapon)
-	assert_eq(_screen.item_name_label.text, "Test Bat")
+	_screen.select_tab(ItemData.Category.AMMO)
+	assert_eq(_screen.get_selected_item(), ROUNDS)
+	assert_eq(_screen.item_name_label.text, "Pistol rounds")
 	assert_eq(_screen.description_label.text, "")
 
 
@@ -116,6 +117,7 @@ func test_actions_depend_on_the_category() -> void:
 	_player.inventory.add(ROUNDS, 8)
 	_screen.open()
 	_screen.select_tab(ItemData.Category.WEAPON)
+	_screen.select_item(_weapon)
 	assert_false(_screen.equip_button.disabled)
 	assert_true(_screen.use_button.disabled)
 	_screen.select_tab(ItemData.Category.HEALING)
@@ -144,6 +146,7 @@ func test_equip_asks_for_the_weapon() -> void:
 	_screen.open()
 	watch_signals(_screen)
 	_screen.select_tab(ItemData.Category.WEAPON)
+	_screen.select_item(_weapon)
 	_screen.equip_button.pressed.emit()
 	assert_signal_emitted_with_parameters(_screen, "equip_requested", [_weapon])
 

@@ -24,6 +24,10 @@ enum Category { WEAPON, AMMO, HEALING, KEY_ITEM, DOCUMENT }
 ## Picture shown on the inventory screen (optional).
 @export var icon: Texture2D
 
+@export_group("Weapon")
+## The melee weapon a weapon item equips.
+@export var weapon: MeleeWeapon
+
 @export_group("Healing")
 ## Health a healing item restores.
 @export var heal_amount: float = 0.0

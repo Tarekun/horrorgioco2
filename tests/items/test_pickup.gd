@@ -84,7 +84,7 @@ func test_mark_collected_removes_it_without_giving_the_item() -> void:
 	assert_true(_pickup.is_collected)
 	assert_true(_pickup.is_queued_for_deletion())
 	assert_signal_not_emitted(_pickup, "collected")
-	assert_true(_player.inventory.is_empty())
+	assert_false(_player.inventory.has(ROUNDS))
 
 
 func test_the_id_defaults_to_the_path_in_its_level() -> void:
