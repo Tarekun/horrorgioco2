@@ -232,3 +232,15 @@ func test_the_lighting_follows_the_floors() -> void:
 	assert_eq(lights.get_node("GroundFloor").get_child_count(), 1, "GF: the desk lamp")
 	var boiler_room := lights.get_node("Basement/BoilerRoom") as Node3D
 	assert_false(boiler_room.visible, "boiler room off until the power")
+
+
+func test_the_player_uses_room_22s_door_not_the_ones_below_it() -> void:
+	# Rooms 12, the TV room and the changing room have doors in the same spot.
+	var player := _level.get_node("Player") as Player
+	player.global_position = Vector3(27, SECOND_Y + 0.1, -1.8)
+	player.rotation.y = PI
+	var interaction := player.get_node("PlayerInteraction") as PlayerInteraction
+	interaction.update_focus()
+	assert_eq(interaction.focus, _door(&"door_room_22"))
+	interaction.interact()
+	assert_true(_door(&"door_room_22").is_open)

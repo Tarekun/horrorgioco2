@@ -44,6 +44,13 @@ func test_height_is_ignored() -> void:
 	assert_eq(_pick(Vector3.FORWARD, positions), 0)
 
 
+func test_a_height_limit_skips_candidates_above_or_below() -> void:
+	var positions: Array[Vector3] = [Vector3(0, -3.2, -0.5), Vector3(0, 0.2, -1.0)]
+	assert_eq(SoftTargeting.pick(Vector3.ZERO, Vector3.FORWARD, positions, 2.5, 60.0, 2.0), 1)
+	var only_below: Array[Vector3] = [Vector3(0, -3.2, -0.5)]
+	assert_eq(SoftTargeting.pick(Vector3.ZERO, Vector3.FORWARD, only_below, 2.5, 60.0, 2.0), -1)
+
+
 func test_no_candidates_or_no_direction() -> void:
 	var none: Array[Vector3] = []
 	assert_eq(_pick(Vector3.FORWARD, none), -1)
