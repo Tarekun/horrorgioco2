@@ -19,11 +19,52 @@ Record the source and license of every imported asset here, as the visual style 
 
 ## Models
 
-Models are CC0 downloads fitted to the budgets in `docs/design/visual-style.md` by the asset pipeline (`tools/README.md`). Each is in `assets/models/<category>/<name>/`, where the category folder sets its budget, and has an entry in `sources.json` with its source, author, license and processing settings, so `tools/build_assets.py <name>` rebuilds it. The raw downloads are not committed.
+Each model is in `assets/models/<category>/<name>/`, where the category folder sets its budget in `docs/design/visual-style.md`, and has an entry `<name>` in `sources.json`, so `tools/build_assets.py <name>` rebuilds it (see `tools/README.md`). Downloaded models are CC0, fitted to budget by the asset pipeline, and their raw downloads are not committed. The hotel kit and the simplest props are made by `tools/make_kit.py`: original work for this project, under the project's license, with nothing to attribute.
+
+`scenes/levels/kit_showcase.tscn` lays out a corridor, a guest room, the lobby, a dining room and a basement store from the kit and props, under the game's fog and flashlight. Run it (F6 in the editor) to look at them in game.
+
+### Hotel kit
+
+The kit sits on a **2 m grid**, 3 m from floor to ceiling and 3.2 m from floor to floor, like the graybox. Every piece has collision.
+
+- **Floors and ceilings** are 2 × 2 m with the origin at their centre: put a floor on each cell and a ceiling 3 m above it.
+- **Walls are half walls**, 0.1 m thick and finished on one face, with the origin at the bottom centre of the back. Turn each to face the room it belongs to, on the grid line: a wall between two rooms is two pieces back to back, so each side gets its own material.
+- **`wall_door`** leaves a 1.6 × 2.5 m opening; a `door_frame` centred on the grid line lines it down to the 1.4 × 2.4 m of `scenes/levels/door.tscn`. **`wall_window`** has a 1.2 × 1.4 m opening 0.9 m up.
+- **`stairs`** is one 2.8 m wide flight rising half a storey (1.6 m over 2.6 m) towards -Z from the foot of its first riser, walked on as a smooth ramp; **`stair_landing`** is the 2.9 × 1.6 m slab between flights, with the origin at the centre of its top. Two flights and two landings side by side fill the graybox's 6 m stairwell.
+- **Variants.** Each piece comes in one glTF per material, `<piece>_<material>.gltf`, using the shared materials in `assets/materials/`. UVs are in metres, so textures line up across pieces; each material's `uv1_scale` sets how many metres one repeat covers (a divisor of 2 m).
+
+| Piece | Materials |
+|---|---|
+| `floor` | `terrazzo`, `carpet`, `floor_tiles`, `concrete_floor` |
+| `ceiling` | `ceiling_plaster`, `ceiling_tiles`, `concrete_wall` |
+| `wall`, `wall_door`, `wall_window` | `wallpaper`, `painted_wall`, `wall_tiles`, `brick`, `stripped_plaster`, `concrete_wall`, `wood_panelling` |
+| `door_frame` | `door` |
+| `stairs`, `stair_landing` | `terrazzo`, `concrete_floor` |
+
+### Props
+
+Props face +Z (their front towards the viewer in Godot's default view), with the origin at the bottom centre, except where noted. Furniture has a box collider.
 
 | Model | What | Source | Author | License |
 |---|---|---|---|---|
-| `props/painted_chair` | White painted wooden room chair, 441 triangles, 256 px albedo | [Poly Haven: Painted Wooden Chair 01](https://polyhaven.com/a/painted_wooden_chair_01) | Kuutti Siitonen | CC0 |
+| `props/bed` | Single bed, 0.9 × 2 m, with linen and a blanket; headboard at -Z | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/wardrobe` | Two-door wardrobe, 1 m wide, 2 m tall | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/reception_desk` | The porter's desk: a U 3 m wide and 2.2 m deep, open at the back (-Z), so the porter is out of reach | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/desk_lamp` | The porter's green banker's lamp | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/bedside_lamp` | Bedside lamp with a fabric shade | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/ceiling_lamp` | Opal glass ceiling lamp, hanging from its origin at the ceiling | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/room_number` | Brass door numbers for rooms 11–16 and 21–28 (`room_number_22`), origin at their back | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/sign` | Signs, origin at their centre: `out_of_order` (FUORI SERVIZIO) and `do_not_disturb` (NON DISTURBARE) hang from a cord; `stairs`, `lift`, `reception` and `private` are wall plates | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/painted_chair` | White painted wooden room chair | [Poly Haven: Painted Wooden Chair 01](https://polyhaven.com/a/painted_wooden_chair_01) | Kuutti Siitonen | CC0 |
+| `props/nightstand` | Painted wooden nightstand | [Poly Haven: Painted Wooden Nightstand](https://polyhaven.com/a/painted_wooden_nightstand) | Kirill Sannikov | CC0 |
+| `props/dining_table` | Long painted wooden table, 2.4 m | [Poly Haven: Painted Wooden Table](https://polyhaven.com/a/painted_wooden_table) | Kirill Sannikov | CC0 |
+| `props/cupboard` | Tall painted wooden cupboard: linen room, kitchen | [Poly Haven: Painted Wooden Cabinet 02](https://polyhaven.com/a/painted_wooden_cabinet_02) | Kirill Sannikov | CC0 |
+| `props/shelves` | Small painted wooden shelves | [Poly Haven: Painted Wooden Shelves](https://polyhaven.com/a/painted_wooden_shelves) | Kirill Sannikov | CC0 |
+| `props/sofa` | Fabric sofa: TV room, lobby | [Poly Haven: Sofa 02](https://polyhaven.com/a/sofa_02) | Kirill Sannikov | CC0 |
+| `props/armchair` | Mid-century lounge chair: lobby | [Poly Haven: Mid Century Lounge Chair](https://polyhaven.com/a/mid_century_lounge_chair) | Kuutti Siitonen | CC0 |
+| `props/television` | Old CRT television: room 24, TV room | [Poly Haven: Television 02](https://polyhaven.com/a/television_02) | Benny Weimer | CC0 |
+| `props/wall_clock` | Round wall clock, no collider: the clock wall, room 22's clock | [Poly Haven: Wall Clock](https://polyhaven.com/a/wall_clock) | PierreB3D | CC0 |
+| `props/steel_shelves` | Steel frame shelves: basement stores | [Poly Haven: Steel Frame Shelves 01](https://polyhaven.com/a/steel_frame_shelves_01) | James Ray Cock | CC0 |
 
 ## Textures and materials
 
