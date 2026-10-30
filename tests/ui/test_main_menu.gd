@@ -22,21 +22,20 @@ func test_new_game_starts_focused_for_keyboard_and_gamepad() -> void:
 
 
 func test_buttons_are_reachable_with_focus_navigation() -> void:
-	for button: Button in [_menu.new_game_button, _menu.settings_button, _menu.quit_button]:
+	var buttons: Array[Button] = [
+		_menu.new_game_button, _menu.load_button, _menu.settings_button, _menu.quit_button
+	]
+	for button: Button in buttons:
 		assert_eq(button.focus_mode, Control.FOCUS_ALL, "%s can't take focus" % button.text)
 
 
-func test_load_is_disabled_until_the_save_slot_screen_exists() -> void:
-	assert_true(_menu.load_button.disabled)
-	_menu.is_load_available = true
+func test_load_opens_the_save_slot_screen_in_load_mode() -> void:
 	assert_false(_menu.load_button.disabled)
-
-
-func test_load_announces_the_request() -> void:
-	watch_signals(_menu)
-	_menu.is_load_available = true
 	_menu.load_button.pressed.emit()
-	assert_signal_emitted(_menu, "load_game_requested")
+	assert_true(_menu.save_screen.is_open)
+	assert_eq(_menu.save_screen.mode, SaveScreen.Mode.LOAD)
+	_menu.save_screen.close()
+	assert_true(_menu.load_button.has_focus())
 
 
 func test_settings_opens_the_settings_screen_and_closing_returns_focus() -> void:

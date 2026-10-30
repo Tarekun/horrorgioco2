@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=3]
+[gd_scene load_steps=71 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
 [ext_resource type="Environment" path="res://assets/data/atmosphere_environment.tres" id="2"]
@@ -14,6 +14,7 @@
 [ext_resource type="Resource" path="res://assets/data/items/first_aid_kit.tres" id="12"]
 [ext_resource type="Resource" path="res://assets/data/items/steel_pipe.tres" id="13"]
 [ext_resource type="Resource" path="res://assets/data/items/fire_axe.tres" id="14"]
+[ext_resource type="PackedScene" path="res://scenes/levels/save_spot.tscn" id="15"]
 
 [sub_resource type="BoxShape3D" id="Shape_0"]
 size = Vector3(11.3, 3.0, 0.3)
@@ -702,6 +703,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 [node name="DoorRoomB" parent="Doors" instance=ExtResource("7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -2)
 is_locked = true
+
+[node name="SaveSpots" type="Node3D" parent="."]
+
+[node name="SaveSpotLobby" parent="SaveSpots" instance=ExtResource("15")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.3, 0, 5)
+area_name = "Lobby"
 
 [node name="Pickups" type="Node3D" parent="."]
 
