@@ -37,3 +37,9 @@ Hitboxes sit on their own layer and only mask the opposing hurtbox layer; hurtbo
 `scenes/levels/graybox_level.tscn` is the game's main level: a lobby, a corridor, side rooms and an office in one building, and a foggy street and yard around it, all built from boxes. Its navmesh is baked into `assets/data/graybox_navmesh.res`; after changing the walls, rebake it with `godot --headless --path . -s res://tools/bake_graybox_navmesh.gd`. The player starts at `PlayerSpawn` on the street and enemies live under `Enemies`.
 
 Doors (`scenes/levels/door.tscn`) are `Interactable`s opened with `interact` (`PlayerInteraction` on the player, with the `InteractionHint` text at the bottom of the screen). A door's `NavigationLink3D` is on only while it's open, so enemies don't path through closed doors. The graybox navmesh is baked with the doors shut, so rebake after moving one.
+
+## Items
+
+Item definitions are `ItemData` resources in `assets/data/items/`, one per item and named after its `id` (`pistol_ammo.tres` has the id `pistol_ammo`). Saves store ids; `ItemCatalog` turns them back into items. The player's `Inventory` (`Player.inventory`) stacks every item without limit.
+
+Pickups (`scenes/items/pickup.tscn`) are `Interactable`s placed by hand in a level: set the `item` and `amount` on each instance. A faint pulsing glint marks them in the dark. Each has a `pickup_id` for saves (by default its path in the level, which changes if the pickup is renamed or moved to another parent) and emits `collected`; `mark_collected()` removes one when loading a save. The graybox level keeps its pickups under `Pickups`.

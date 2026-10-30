@@ -50,6 +50,9 @@ const STEP_PROBE_DISTANCE: float = 0.4
 ## The visible character, animated from the player's ground speed.
 @export var model: PlayerModel
 
+## What the player carries. Pickups add to it.
+var inventory := Inventory.new()
+
 ## Scales walk, run and sprint speed; the health cues lower it in Danger.
 var speed_multiplier: float = 1.0
 
