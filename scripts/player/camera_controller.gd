@@ -120,6 +120,17 @@ static func shake_offset(
 	return Vector2(random_x, random_y) * amplitude * falloff
 
 
+## Jumps straight to the player and looks the way it faces, level. For when
+## the player is put somewhere new, such as at a save spot on loading.
+func snap_behind_player() -> void:
+	if player == null:
+		return
+	global_position = player.global_position
+	_camera_yaw = 0.0
+	_camera_pitch = 0.0
+	_rotate_camera(rad_to_deg(player.global_rotation.y), 0.0)
+
+
 ## Captures the mouse so it turns the camera.
 func capture_mouse() -> void:
 	_set_mouse_captured(true)
