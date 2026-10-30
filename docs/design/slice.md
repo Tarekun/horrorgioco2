@@ -1,39 +1,43 @@
 # Vertical slice: Hotel Miramare
 
-The reference for building the slice: layout, beats, tension, items, save spots, documents and the puzzle. Story and pillars live in [premise.md](premise.md), rules and numbers in [gameplay.md](gameplay.md), the look in [visual-style.md](visual-style.md).
+The reference for building the slice: layout, beats, tension, encounters, items, save spots, documents and the puzzle. Story and pillars live in [premise.md](premise.md), rules and numbers in [gameplay.md](gameplay.md), the look in [visual-style.md](visual-style.md).
 
 Names marked *working* are placeholders, as in premise.md. Ids in `code` are the ones the implementation uses (item ids for #73, persistent ids for #89).
 
 ## Summary
 
 - **Starts** at a new game with Luca waking in room 22, their old room. **Ends** when he unlocks the front door himself and steps out onto the seafront in the fog.
-- **The whole hotel, three floors:** **2F**, where their room is, lit and empty; **1F**, dark; and **GF**, with the dining room, kitchen and the lobby. There's nothing above 2F.
+- **The whole hotel:** three floors and a basement. **2F**, where their room is, lit and empty; **1F**, dark; **GF**, with the dining room, kitchen and the lobby; and the **basement**, the hotel's service level, dark and chained shut. There's nothing above 2F.
 - **The loop:**
   - pull the plank off a doorless room on 2F to get a weapon and the stairs key;
   - go down to the dark 1F; the stairs don't go further, because the GF door is blocked;
   - slide down a builders' rubble chute from a building site on 1F to GF, and move the obstacle blocking the stairs;
   - the porter won't open the front door; the clue to the key cabinet sends Luca back up;
-  - he solves the cabinet on 1F, comes back down, finds the porter gone and lets himself out.
-- **No enemies.** The slice is all tension that never pays off: sounds, lights and things out of place, and nothing ever attacks. That also makes a night porter calmly on duty plausible. Enemies come later with a basement section; its door is already in the slice, chained.
-- **Two save spots**, about 30 minutes of play on a first run.
+  - the cabinet on 1F gives the basement key;
+  - in the basement he brings the power back: the lights reveal the first enemy, the lift starts working, and upstairs the porter is gone;
+  - past two more enemies, the porter's locker holds the front door key; he goes back up to an empty lobby and lets himself out.
+- **Enemies only in the basement.** Above ground the slice is all tension that never pays off: sounds, lights and things out of place, and nothing ever attacks. That also makes a night porter calmly on duty plausible. The basement is where it pays off: three enemies in two encounters, melee only.
+- **Three save spots**, about 40 minutes of play on a first run.
 
-What's not in the slice: enemies and combat encounters, firearms, the prologue (the rave night), the crossovers with part 2, the fire axe (a midgame weapon), other locals, any other location.
+What's not in the slice: firearms, the prologue (the rave night), the crossovers with part 2, the fire axe (a midgame weapon), other locals, any other location, and the lift's later role (see [the lift](#the-lift)).
 
 ## The hotel
 
-A family hotel on the seafront, built in the 1960s and redone in the 80s: terrazzo floors, wood-panelled reception, pastel tiles, brass room numbers. It has three floors: GF (ground floor), 1F (first floor) and 2F (second floor). **The hotel is closed**: the season is over, there are no guests, and the porter says so. The sunbeds and umbrellas from its beach concession are stacked inside for the winter.
+A family hotel on the seafront, built in the 1960s and redone in the 80s: terrazzo floors, wood-panelled reception, pastel tiles, brass room numbers. It has three floors, GF (ground floor), 1F (first floor) and 2F (second floor), and a basement below GF. **The hotel is closed**: the season is over, there are no guests, and the porter says so. The sunbeds and umbrellas from its beach concession are stacked inside for the winter.
 
-- **One staircase**, at the west end of the corridor on every floor, behind a door. The middle of each floor is a lift hall with a lift that doesn't work.
+- **One staircase**, at the west end of the corridor on every floor, behind a door. It goes down to the basement. The middle of each floor is a lift hall with a lift that doesn't work until the power comes back ([the power](#the-power)).
 - **Two rooms are building sites**: room 15 on 1F and the room right below it on GF, joined by a yellow rubble chute. Nothing else in the hotel is being worked on, and nothing says why these two are.
+- **The basement** is the service level: laundry, boiler room, stores and the staff quarters. Guests never went down there.
 
 **Lighting by floor:**
 - **2F:** all the lamps are on, warm and steady. It looks open for business, and it's empty.
 - **1F:** every lamp is off. The flashlight is the only light.
 - **GF:** dark, except the porter's desk lamp in the lobby.
+- **Basement:** no power at all. Once it's back, only the boiler room is lit; the rest stays dark.
 
 Outside the windows it's a dusk that doesn't match any clock. Every clock in the hotel shows a different time, except one (see [the puzzle](#the-puzzle-the-key-cabinet)).
 
-Dimensions below are approximate, for the graybox (#70). Every floor has the same footprint, about 30 × 14 m, with 6 × 6 m rooms, a 2 m corridor and 3 m ceilings. The staircase, the lift and the two building sites line up across the floors.
+Dimensions below are approximate, for the graybox (#70). Every level has the same footprint, about 30 × 14 m, with 6 × 6 m rooms, a 2 m corridor and 3 m ceilings. The staircase, the lift and the two building sites line up across the floors.
 
 ## Floor plans
 
@@ -65,7 +69,7 @@ North is the sea. Codes are explained in the [legend](#legend) below the plans.
 - **Room 22** is the corner room facing the sea, with a small balcony. Frosted dividers close it off from the neighbours' balconies.
 - **Room 28** has no door, only an empty frame with a plank nailed across it at chest height ([the blockade](#the-blockade)). Inside: the stairs key (K1) on a chair in the middle of the empty room, facing the window.
 - **The stairs door** at the west end is locked; K1 opens it.
-- **Lift hall**: the lift's doors are shut, with an *out of order* sign.
+- **Lift hall**: the lift's doors are shut, with an *out of order* sign, until the power comes back.
 - **Room 24** never opens. A TV is on behind the door, playing the slowed Italo-disco song from the rave.
 - **Room 26** is the one room on the floor with its lamp off. A room-service tray sits outside its door.
 - **Room 21** is open, as if a guest just stepped out. Rooms 23 and 25 are locked, with no key in the slice.
@@ -106,7 +110,7 @@ North is the sea. Codes are explained in the [legend](#legend) below the plans.
                    north: the seafront (lungomare), fog
  0m          6m          12m         18m         24m         30m
  ┌───────────────────────────────────┬──────────────▒▒▒──────┐
- │DINING ROOM                        │LOBBY     front door K3│
+ │DINING ROOM                        │LOBBY     front door K4│
  │tables set for the last dinner,    │lift doors  clock wall │
  │chairs pushed back                 │           key board K2│
  │                                    glass doors     S2     │
@@ -131,7 +135,40 @@ North is the sea. Codes are explained in the [legend](#legend) below the plans.
 - **The desk** is at least 2 m deep, so the porter is out of melee reach from the lobby side (longest reach 1.9 m). Nobody can hit him, and nothing explains why.
 - **Back office**: reached from the lobby through the door behind the desk.
 - **TV room**: an optional side room with a radio playing the song.
-- **Below GF** the stairs go on down to the basement door, chained shut. It's the hook for the basement section with the monsters, designed later; in the slice it never opens. It can be reached from 1F before GF is, since only the GF door is blocked.
+- **Below GF** the stairs go on down to the basement door, chained shut until K3. It can be seen from 1F before GF is reached, since only the GF door is blocked.
+
+### Basement (dark)
+
+```
+                   north: under the seafront
+ 0m          6m          12m         18m         24m         30m
+ ┌───────────────────────┬───────────┬───────────┬───────────┐
+ │LAUNDRY                │BOILER ROOM│LIFT       │CHANGING   │
+ │washing machines,      │switchboard│MACHINERY  │ROOM       │
+ │linen carts,           │           │(solid,    │porter's   │
+ │sheets on lines        │E1 behind  │heard, not │locker: K4 │
+ │                       │the boilers│seen)      │           │
+ ├─────────   ───────────┼────   ────┼───────────┼────   ────┤
+ │ corridor (dark)           button  ┃ staff corridor  E2    │
+ ├────▒▒▒────┼────▒▒▒────┼────▒▒▒────┼───────────┼────   ────┤
+ │STAIRS     │STORAGE    │PANTRY     │plumbing   │STAFF ROOM │
+ │ ↑ GF      │locked     │locked     │(solid)    │E3,        │
+ │ S3        │           │           │           │door open  │
+ │           │           │           │           │           │
+ │           │           │           │           │           │
+ └───────────┴───────────┴───────────┴───────────┴───────────┘
+                    south: under the street
+```
+
+- **The stairs** end at a landing with the third save spot (S3) and the basement door, chained shut. K3 opens the padlock. It's a heavy fire door that swings shut by itself, and enemies can't open doors, so the landing is always safe.
+- **Corridor**: dark, low, pipes along the ceiling. Halfway along, a **roller shutter** (`┃`) closes it off from the staff quarters, with a wall button beside it ([the roller shutter](#the-roller-shutter)).
+- **Laundry**: washing machines, linen carts, sheets hung on lines across the room. Open, with nothing to take. It's the room to back off into during the first fight.
+- **Boiler room**: two old boilers and, on the wall facing the door, the hotel's main switchboard ([the power](#the-power)). E1 stands in the gap behind the boilers, out of sight from the door and the switchboard.
+- **Lift machinery**: under the lift hall, walled off. It's only heard: silent before the power, groaning and ticking after.
+- **Staff corridor**: the far side of the shutter. E2 wanders here.
+- **Staff room**: a table, chairs, a hotplate. Its door stands open; E3 waits inside.
+- **Changing room**: two rows of staff lockers. The porter's is ajar, with his coat on the hanger and the front door key (K4) on the hook.
+- **Storage and pantry** are locked, with no key in the slice.
 
 ### Legend
 
@@ -141,10 +178,12 @@ North is the sea. Codes are explained in the [legend](#legend) below the plans.
 | `▒▒▒` | Locked door (key shown next to it or in the table below) |
 | `=W=` | Doorless doorway with a plank across it: [the blockade](#the-blockade) |
 | `≡≡≡` | Door blocked by an obstacle on the corridor side: [the obstacle](#the-obstacle) |
+| `┃` | Roller shutter across the corridor: [the roller shutter](#the-roller-shutter) |
 | ↑ ↓ | Stairs up or down |
-| S1, S2 | Save spots |
-| K1–K3 | Key items |
+| S1–S3 | Save spots |
+| K1–K4 | Key items |
 | D1–D4 | Documents |
+| E1–E3 | Enemies ([Encounters](#encounters)) |
 | P1 | The puzzle: the key cabinet (1F linen room) and its code (the clock in room 22) |
 | W | Melee weapon: the plank at room 28, the steel pipe in room 15 |
 | h, H | Health drink, first aid kit |
@@ -170,14 +209,21 @@ North is the sea. Codes are explained in the [legend](#legend) below the plans.
 | `door_room_16` | Room 16, 1F | locked | `key_room_16` (K2) |
 | `door_stairs_1f` | Stairs, 1F | locked | `key_stairs` (K1) |
 | `door_stairs_gf` | Stairs, GF | blocked from the corridor side | moving `obstacle_sunbeds` ([the obstacle](#the-obstacle)) |
-| `door_basement` | Stairs, below GF | locked ("Chained shut.") | nothing in the slice |
 | `door_building_site_gf` | Building site ↔ corridor, GF | unlocked | |
 | `door_kitchen` | Kitchen ↔ corridor, GF | unlocked | |
 | `door_dining_corridor` | Dining room ↔ corridor, GF | unlocked | |
 | `door_dining_lobby` | Dining room ↔ lobby (glass, double), GF | unlocked | |
 | `door_office_lobby` | Back office ↔ lobby, behind the desk | unlocked | |
 | `door_tv_room` | TV room ↔ lobby | unlocked | |
-| `door_front` | Lobby ↔ seafront | locked | `key_front_door` (K3), ends the slice |
+| `door_front` | Lobby ↔ seafront | locked | `key_front_door` (K4), ends the slice |
+| `door_basement` | Stairs ↔ basement corridor | locked ("Chained shut."), self-closing | `key_basement` (K3) |
+| `door_laundry` | Laundry, basement | unlocked | |
+| `door_boiler_room` | Boiler room, basement | unlocked | |
+| `door_storage` | Storage, basement | locked | nothing |
+| `door_pantry` | Pantry, basement | locked | nothing |
+| `shutter_staff` | Basement corridor | down | its button, once the power is back ([the roller shutter](#the-roller-shutter)) |
+| `door_staff_room` | Staff room, basement | unlocked, wedged open | |
+| `door_changing_room` | Changing room, basement | unlocked | |
 
 Locked doors with no key answer "It's locked." unless the table gives another line.
 
@@ -186,7 +232,9 @@ Locked doors with no key answer "It's locked." unless the table gives another li
 2. K1 opens the stairs on 2F and 1F.
 3. The chute takes Luca from 1F to GF, and the obstacle then opens the stairs on GF.
 4. P1 needs the code from room 22, and solving it gives K3.
-5. K3 ends the slice.
+5. K3 opens the basement.
+6. The switchboard brings the power back, which opens the shutter's way.
+7. K4 is in the porter's locker, and it ends the slice.
 
 K2 and room 16 are optional.
 
@@ -216,6 +264,31 @@ On GF a tall stack of sunbeds on a wheeled storage rack stands against the stair
 - **From the corridor**, the stack is an interactable: *"Push the sunbeds aside."* It rolls clear (a short animation), and `door_stairs_gf` works as a normal unlocked door from then on.
 - Saved like an unlocked door.
 
+### The power
+
+The basement has no power when Luca arrives. The main switchboard in the boiler room (`switchboard_basement`) brings it back: a big lever, prompt *"Throw the main switch."* It's a one-time action, and it does four things at once:
+
+1. **The boiler room's lights** stutter on, and E1 is standing behind the boilers. It turns to Luca: the first fight starts ([Encounters](#encounters)).
+2. **The shutter's button** works from now on.
+3. **The lift** works from now on: in the basement the machinery groans awake behind the wall ([the lift](#the-lift)).
+4. **The porter is gone.** Luca is in the basement and doesn't see it. Next time he's in the lobby, the desk is empty: the lamp on, the radio playing, the chair empty. He doesn't have the front door key yet.
+
+Nothing else changes: 1F and GF stay dark, and 2F stays lit. Saved as one flag, `power_restored`, which the four effects read.
+
+### The roller shutter
+
+A metal roller shutter (`shutter_staff`) closes the basement corridor off from the staff quarters, with a button on the wall beside it.
+
+- **Before the power:** *"Nothing happens."* The prompt stays, so the player knows it matters.
+- **After the power:** it rolls up in about 3 s, loud enough to wake the far side. It makes a noise event of **12 m** *(working)*, which covers the whole staff area, so E2 and E3 both come (the second fight).
+- It stays up. Saved as up or down.
+
+### The lift
+
+Out of order on every floor until the power comes back. From then on it works between **GF, 1F and 2F**: call button, doors, a short ride (the doors close, a hum, they open on the other floor). It doesn't go down to the basement.
+
+In the slice it adds little: by then the stairs are open everywhere, and the way out is on GF. It's there because the lift has a bigger role later, as a way to somewhere that opens a different ending. That role isn't designed here. The floor indicator showing 3 (see [Examinables](#examinables)) is the only hint, and it stays unexplained.
+
 ## Beat sheet
 
 Times are rough for a first run.
@@ -233,13 +306,18 @@ Times are rough for a first run.
 | 9 | **The back office** | Back office | The porter's log (D3) on the desk: its last entry points to the cabinet upstairs and to the clock in twenty-two. A first aid kit. | #97 | 2 min |
 | 10 | **Back up** | Stairs, 2F | Through the unblocked stairs, past the dark 1F, to 2F. Optional: room 16 with K2 (D4). 2F is just as it was: lit, still empty. | | 2 min |
 | 11 | **The clock** | Room 22 | On the nightstand, in the empty spot, there's now a flip clock, stopped at **04:47** *(working)*: the code. | #82 | 1 min |
-| 12 | **The cabinet** | 1F linen room | The code opens the cabinet: the hotel's spare keys on hooks, and the front door key (K3). | #82 | 2 min |
-| 13 | **The empty desk** | Stairs, lobby | Back down to the lobby. The porter is gone: the lamp still on, the radio still playing, his chair empty. Nothing says where he went. K3 opens the front door. | #98 | 2 min |
-| 14 | **The seafront** | Outside | Short cutscene: Luca steps out into the fog. Across the road, the beach and endless rows of folded umbrellas; the song from the beach club, very far away. Fade to black, end card, back to the main menu. | new task | 1 min |
+| 12 | **The cabinet** | 1F linen room | The code opens the cabinet: the hotel's spare keys on hooks, and one on its own with a handwritten tag, *Basement* (K3). | #82 | 2 min |
+| 13 | **Down** | Stairs, basement landing | All the way down the stairs, past GF, to the chained door. Third save spot (S3). K3 opens the padlock, the chain drops, and the door swings shut behind him. | #71 | 1 min |
+| 14 | **The basement** | Corridor, laundry | Low, dark, pipes overhead. Sheets hanging in the laundry. The roller shutter's button does nothing. The boiler room door is open. | #70 | 2 min |
+| 15 | **The power** | Boiler room | He throws the main switch. The lights stutter on, and something is standing behind the boilers. It turns. **First fight**, one on one, in the light. Behind the wall, the lift machinery groans awake. Upstairs, unseen, the porter leaves the desk ([the power](#the-power)). | new task, #71 | 3 min |
+| 16 | **The shutter** | Basement corridor, staff corridor | Now the button works. The shutter rolls up loudly, into the dark of the staff quarters, and two of them come at the noise. **Second fight**, two at once, in the dark. | new task, #71 | 3 min |
+| 17 | **The locker** | Changing room | The porter's locker stands ajar: his coat on the hanger, the front door key (K4) on the hook. | #71 | 1 min |
+| 18 | **The empty desk** | Stairs, lobby | Back up to the lobby. The porter is gone: the lamp still on, the radio still playing, his chair empty. The lift's call button is lit; riding it is optional. K4 opens the front door. | #98 | 2 min |
+| 19 | **The seafront** | Outside | Short cutscene: Luca steps out into the fog. Across the road, the beach and endless rows of folded umbrellas; the song from the beach club, very far away. Fade to black, end card, back to the main menu. | new task | 1 min |
 
 ## Tension
 
-There are no enemies in the slice. Its fear comes from tension that is built and never released: sounds, lights and things out of place. None of these events leads to a threat, and none is ever explained. No jump scare reveals anything; the payoff is that there isn't one.
+Above ground there are no enemies. The fear there comes from tension that is built and never released: sounds, lights and things out of place. None of these events leads to a threat, and none is ever explained. No jump scare reveals anything; the payoff is that there isn't one, until the basement.
 
 Each event is a one-shot scripted trigger. They aren't saved: replaying one after loading a save is fine.
 
@@ -253,10 +331,11 @@ Each event is a one-shot scripted trigger. They aren't saved: replaying one afte
 | `tension_flicker` | 2F stairs door | Stepping onto the stairs the first time | Every lamp on 2F flickers once behind him, then stays on. |
 | `tension_footsteps` | 1F corridor | First time in the 1F corridor | Unhurried footsteps cross the floor above, then stop. Back upstairs, nobody. |
 | `tension_wardrobe` | Room 13 | Entering the room | The wardrobe door creaks open. Empty hangers swing. |
-| `tension_basement` | Stairs, below GF | Looking down the last flight | The chained basement door. A cold draught from under it, and a faint sound like the sea. |
+| `tension_basement` | Stairs, below GF | Looking down the last flight, before K3 | The chained basement door. A cold draught from under it, and a faint sound like the sea. |
 | `tension_pot` | Kitchen | Entering the kitchen | A pot simmering on a lit stove. Nobody. |
+| `tension_sheets` | Basement laundry | Entering the laundry | In the flashlight, a shape stands behind one of the hanging sheets. It's a linen cart. The last false alarm before a real one. |
 
-On the return trip (beat 10) the floors stay as the player left them: lit and empty upstairs, dark and empty below. No new events.
+On the return trips (beats 10 and 18) the floors stay as the player left them: lit and empty upstairs, dark and empty below. No new events. After the power, the only changes upstairs are the empty desk and the working lift.
 
 ## The night porter
 
@@ -270,25 +349,59 @@ The first surreal local (#98). He stands behind the reception desk, never moves 
   - *"We keep twenty-two for you. Every year."*
   - He says nothing, and turns the radio up a little.
 - **Asked about the cabinet**: after D3 has been read, the next line is *"I never forget a code."*
-- **Gone**: as soon as the cabinet is open, the porter is no longer in the lobby. His lamp stays on and his radio keeps playing.
+- **The basement** *(optional)*: if Luca talks to him while carrying K3, the next line is *"The basement is staff only, signor Luca."* He doesn't stop him. The route from the cabinet to the basement doesn't pass the lobby, so many players won't hear it.
+- **Gone**: as soon as the power is back ([the power](#the-power)), the porter is no longer in the lobby. His lamp stays on and his radio keeps playing.
 
 Luca never answers.
 
 ## The puzzle: the key cabinet
 
-The slice's puzzle (#82, id `puzzle_key_cabinet`): the housekeeping key cabinet in the 1F linen room, locked with a 4-wheel combination lock. Solving it means leaving the lobby area: the clue is downstairs, the code is on 2F and the cabinet is on 1F. The details may still be rediscussed; this is the current version.
+The slice's puzzle (#82, id `puzzle_key_cabinet`): the housekeeping key cabinet in the 1F linen room, locked with a 4-wheel combination lock. Solving it means leaving the lobby area: the clue is downstairs, the code is on 2F and the cabinet is on 1F.
 
 - **The clue.** The porter's log (D3) ends with: *"Changed the code on the key cabinet upstairs. Same as the clock in twenty-two, so I won't forget."*
 - **The answer.** The flip clock on room 22's nightstand, stopped at 04:47 *(working)*, so the code is **0447**. The clock isn't there when Luca wakes, only the spot where it stood; it appears once D3 has been read. So the trip back up is required, even for players who searched room 22 thoroughly.
 - **The UI.** Four wheels, each 0–9. Up/down changes a digit, left/right moves between wheels. There's no penalty for wrong tries. The cabinet opens as soon as the wheels read the code.
-- **The reward.** `key_front_door` (K3). Opening the cabinet also removes the porter from the lobby.
+- **The reward.** `key_basement` (K3).
 - **Saved state.** Solved or not.
 
 The time on the clock is a working value. It is the only clock in the hotel that isn't simply wrong, and the slice never says what the time means (see [Two readings](#two-readings)). Keep it in data so the writers can change it.
 
 ## Encounters
 
-None. The slice has no enemies, for now. Monsters arrive with a basement section designed later, behind `door_basement`. Its encounters, firearms and ammo budget will be designed together, following gameplay.md.
+All in the basement: three standard enemies (#111's placeholder monster, 100 health, values from gameplay.md) in two encounters. Melee only: the player has the plank and the steel pipe, and there's no ammo in the slice.
+
+| Code | Id | Where | Starts | Encounter |
+|---|---|---|---|---|
+| E1 | `enemy_boiler_room` | Boiler room, behind the boilers | dormant until the power | The lights |
+| E2 | `enemy_staff_corridor` | Staff corridor | WANDER, inside the staff quarters | The shutter |
+| E3 | `enemy_staff_room` | Staff room, door wedged open | IDLE | The shutter |
+
+### The lights (E1)
+
+The first fight, and the one that teaches fighting: one on one, in a lit room.
+
+- **Before the power** E1 is **dormant**: it stands still in the gap behind the boilers and doesn't see or hear. The gap can't be seen from the door or the switchboard, so the flashlight doesn't give it away.
+- **Throwing the switch** lights the room and wakes E1, already alerted to Luca, about 4 m away.
+- **Room to move:** the boiler room opens onto the corridor, and the laundry is across it.
+- **Expected fight:** about 8 hits with the pipe or 11 with the plank. A fully charged heavy knocks it down and a stomp finishes it, which is easy to read in the light.
+- **On load:** once `power_restored` is saved, E1 starts awake at its placed position, like any other enemy.
+
+### The shutter (E2, E3)
+
+The second fight: two at once, in the dark.
+
+- **The shutter's noise** reaches both: E2 from the staff corridor, E3 from the staff room. They come at the opening together.
+- **The opening is a 2 m bottleneck**, and the lit boiler room is a few steps back. Holding there, in the light, is the smart answer; fighting in the staff quarters means the flashlight, which gets him seen from 18 m.
+- **Two at once** is where knockdowns matter: a charged heavy floors one for about 8 s, long enough to fight the other, then stomp.
+- **No sneaking past:** the noise always wakes them, and the changing room is at the far end. Retreat is always possible (see below).
+
+### Retreat and saving
+
+The basement door closes behind Luca and enemies can't open doors, so going back up the stairs always breaks a chase. After 6 s without a sighting they lose track and S3 works again. That makes S3 a save spot "before a major encounter" where the player can't be trapped (gameplay.md). Dead enemies stay dead and leave corpses; living ones come back at their placed positions with full health when a save is loaded.
+
+### Damage
+
+A first-time player should take 2–5 hits across both fights, 15–25 each. The healing they carry in covers that ([Healing](#healing)).
 
 ## Items
 
@@ -303,20 +416,17 @@ All placed by hand; nothing respawns. Pickup ids are persistent ids; item ids ar
 | `pickup_pipe_site` | `steel_pipe` | 1 | Room 15, among the scaffolding |
 | `pickup_key_room16` | `key_room_16` | 1 | Lobby, key board pigeonhole 16 |
 | `pickup_aid_office` | `first_aid_kit` | 1 | Back office, wall cabinet |
+| `pickup_key_front_door` | `key_front_door` | 1 | Basement changing room, the porter's locker |
 
-`key_front_door` is the puzzle's reward, not a pickup. Documents are listed [below](#documents).
+`key_basement` is the puzzle's reward, not a pickup. Documents are listed [below](#documents).
 
 ### Healing
 
-With no enemies, nothing in the slice hurts the player, and healing can't be used at full health (#76). The budget rule (4–6 enemy hits between save spots) has nothing to cover. The slice still places a small stock, so pickups and the inventory have something real in them:
-
-- **2 health drinks and 1 first aid kit**, 130 health, about 6.5 hits.
-
-It all carries into the basement. When the basement is designed, its first stretch counts this stock toward its own budget.
+Nothing above ground hurts the player, so the whole healing stock is there for the basement: **2 health drinks and 1 first aid kit**, 130 health, about 6.5 hits of 20. That's the gameplay.md budget for the stretch from S3 to the end (healing for 4–6 enemy hits between save spots), at its generous end because these are the player's first fights. All three are on or next to the critical path, so a player reaches S3 with the full stock. No healing is placed in the basement.
 
 ### Weapons
 
-The wooden plank (room 28's blockade) and the steel pipe (room 15), both from the gameplay spec. There's nothing to fight, but the player carries them into the basement. The fire axe is midgame, so it isn't placed.
+The wooden plank (room 28's blockade) and the steel pipe (room 15), both from the gameplay spec. The pipe is the better weapon for the basement: more damage and reach for a little more stamina. The fire axe is midgame, so it isn't placed. There are no firearms, so the ammo budget doesn't apply.
 
 ## Save spots
 
@@ -324,8 +434,9 @@ The wooden plank (room 28's blockade) and the steel pipe (room 15), both from th
 |---|---|---|
 | `save_2f_corridor` (S1) | 2F, west end of the corridor, by the stairs door | The last lit place before the dark. |
 | `save_gf_lobby` (S2) | GF, lobby, near the glass doors | Before the puzzle and the return trip. |
+| `save_basement_stairs` (S3) | Basement landing, outside the basement door | Before the encounters. Enemies can't reach it. |
 
-Their look is placeholder (#91) until the art work. With no enemies, the "can't save while chased" refusal never fires. S1 → S2 is about 12 minutes on a first run and S2 → end about 11, inside the 15-minute guideline.
+Their look is placeholder (#91) until the art work. On a first run, S1 → S2 is about 12 minutes, S2 → S3 about 8, and S3 → end about 12, inside the 15-minute guideline.
 
 ## Documents
 
@@ -344,7 +455,8 @@ Written in #97. Each one hints and never explains: the suicide plan is never sta
 |---|---|---|---|---|
 | K1 | `key_stairs` | Stairs key | Room 28, on the chair | `door_stairs_2f`, `door_stairs_1f` |
 | K2 | `key_room_16` | Room 16 key | Lobby, key board | `door_room_16` |
-| K3 | `key_front_door` | Front door key | Key cabinet (P1) | `door_front` |
+| K3 | `key_basement` | Basement key | Key cabinet (P1) | `door_basement` |
+| K4 | `key_front_door` | Front door key | Basement, the porter's locker | `door_front` |
 
 ## Examinables
 
@@ -356,16 +468,20 @@ Things to look at (#79). Each has one or two lines, and none is explained.
 | Room 22 | Wristband | The beach club's, from the closing party. |
 | Room 22 | Nightstand | Before D3 is read: a clean spot in the dust where something stood. |
 | Room 22 | Beds | Two singles pushed together, one side slept in. |
-| Lift halls, lobby | Lift | *Out of order.* The floor indicator shows 3, a floor the hotel doesn't have. |
+| Lift halls, lobby | Lift, before the power | *Out of order.* The floor indicator shows 3, a floor the hotel doesn't have. |
+| Lift halls, lobby | Lift, after the power | It works. The indicator shows where it is. |
 | 2F | Room 24's door | "Do not disturb." The TV behind it. |
 | Room 28 | Chair | Set in the middle of the empty room, facing the window. |
 | Room 12 | Beds | The same beds as 22, stripped, the mattresses rolled up. |
 | Room 15, GF building site | Building work | Only these two rooms. No sign of who's doing it, or why. |
-| Stairs, below GF | Basement door | Chained shut. Cold air underneath. |
+| Stairs, below GF | Basement door | Before K3: chained shut, cold air underneath. |
 | Dining room | A table | Set for the closing dinner. The food is still warm. |
 | Lobby | Clock wall | Five cities, five times, none of them right. |
 | Lobby | Key board | Every key on its hook except 22's. |
-| Lobby, after the cabinet | The desk | The lamp on, the radio playing, the chair empty. |
+| Basement corridor | Roller shutter | Before the power: the button does nothing. |
+| Boiler room | Switchboard | Every breaker down, as if someone threw them all. |
+| Changing room | The porter's locker | His coat on the hanger. The name card on the door is blank. |
+| Lobby, after the power | The desk | The lamp on, the radio playing, the chair empty. |
 
 ## Two readings
 
@@ -388,26 +504,35 @@ Every clue has at least two readings, and the slice confirms none (premise.md, t
 | The clock appears on the nightstand | He missed it the first time | Someone put it back |
 | The clock stopped at 04:47 | A cheap clock that died at some point | A time that means something to him |
 | The porter can't be reached across the desk | It's just a deep desk | He isn't there to be reached |
-| The porter is gone when Luca has the key | His shift ended | He was only there to keep him in |
+| Monsters behind a chained door, under a hotel the porter calmly runs | The drug: the fear upstairs finally takes a shape | The chain was there to keep them in |
+| The porter is gone once the power is back, before Luca has the key | He went to see what woke the building | He was only there to keep him in |
+| The front door key in the porter's locker, with his coat | He left it for the morning shift | He never left, or was never there |
 
 ## What the slice needs beyond existing issues
 
 - **The blockade** (room 28): an interactable that gives the plank and clears the doorway. Close to a pickup (#74), plus the collision removal.
 - **The chute** (room 15): an interactable that plays a short sequence (#95) and moves the player to the skip on GF.
 - **The obstacle** (GF): an interactable that rolls the sunbeds clear and frees `door_stairs_gf`.
-- **The porter leaving** when the cabinet opens, and his front door refusal (#98).
-- **The ending cutscene** (beat 14): #96 covers only the opening. It can reuse #95's cutscene support.
+- **The power** (basement): the switchboard interactable and the `power_restored` flag, with its effects: the boiler room lights and waking E1, the shutter, the lift, and the porter leaving.
+- **The roller shutter**: blocks the corridor until it's powered and raised; raising it makes a noise event (#27).
+- **The lift**: call buttons, doors and a short ride between GF, 1F and 2F once the power is back.
+- **A dormant enemy start** for E1: no perception until an event wakes it (#27, #71).
+- **A self-closing door** for `door_basement`. It has to close fast enough that a chasing enemy can't slip through.
+- **The porter** (#98): the front door refusal, the staff-only line, and leaving when the power comes back.
+- **The ending cutscene** (beat 19): #96 covers only the opening. It can reuse #95's cutscene support.
 - **Tension events**: one-shot triggers that play a sound, move a door or flicker lights ([Tension](#tension)). No task covers them yet.
-- **Lighting per floor**: 2F lit, 1F dark, GF dark except the porter's lamp. For the graybox (#70) and the art pass (#37).
+- **Lighting per floor**: 2F lit, 1F dark, GF dark except the porter's lamp, the basement dark until the boiler room lights. For the graybox (#70) and the art pass (#37).
 - **Double doors** (dining room ↔ lobby): two `Door`s side by side, or one wider door scene.
 - **Scripted world changes:** the clock appearing in room 22 and the porter's line progression. Both are saved state for #89.
 
 ### Saved world state
 
-On top of what gameplay.md lists (pickups, doors, documents read), the slice saves:
+On top of what gameplay.md lists (pickups, doors, documents read, dead enemies), the slice saves:
 
 - the blockade taken and the obstacle moved;
-- `puzzle_key_cabinet` (solved), which also means the porter is gone;
+- `puzzle_key_cabinet` (solved);
+- `power_restored`, which also means E1 awake, the porter gone and the lift working;
+- the shutter up;
 - whether the clock has appeared in room 22;
 - the porter's line index.
 
