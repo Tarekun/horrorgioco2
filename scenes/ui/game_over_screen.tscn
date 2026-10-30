@@ -1,13 +1,17 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/game_over_screen.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/save_screen.tscn" id="2"]
 
-[node name="GameOverScreen" type="CanvasLayer" node_paths=PackedStringArray("panel", "retry_button")]
+[node name="GameOverScreen" type="CanvasLayer" node_paths=PackedStringArray("panel", "load_last_button", "load_game_button", "quit_button", "save_screen")]
 process_mode = 3
 layer = 20
 script = ExtResource("1")
 panel = NodePath("Panel")
-retry_button = NodePath("Panel/Menu/RetryButton")
+load_last_button = NodePath("Panel/Menu/LoadLastButton")
+load_game_button = NodePath("Panel/Menu/LoadGameButton")
+quit_button = NodePath("Panel/Menu/QuitButton")
+save_screen = NodePath("SaveScreen")
 
 [node name="Panel" type="ColorRect" parent="."]
 anchors_preset = 15
@@ -23,13 +27,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -60.0
-offset_right = 100.0
-offset_bottom = 60.0
+offset_left = -120.0
+offset_top = -110.0
+offset_right = 120.0
+offset_bottom = 110.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 24
+theme_override_constants/separation = 16
 
 [node name="Title" type="Label" parent="Panel/Menu"]
 layout_mode = 2
@@ -38,6 +42,16 @@ theme_override_font_sizes/font_size = 40
 text = "YOU DIED"
 horizontal_alignment = 1
 
-[node name="RetryButton" type="Button" parent="Panel/Menu"]
+[node name="LoadLastButton" type="Button" parent="Panel/Menu"]
 layout_mode = 2
-text = "Retry"
+text = "Load last save"
+
+[node name="LoadGameButton" type="Button" parent="Panel/Menu"]
+layout_mode = 2
+text = "Load game…"
+
+[node name="QuitButton" type="Button" parent="Panel/Menu"]
+layout_mode = 2
+text = "Quit to title"
+
+[node name="SaveScreen" parent="." instance=ExtResource("2")]

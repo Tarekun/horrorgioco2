@@ -22,7 +22,7 @@ Hitboxes sit on their own layer and only mask the opposing hurtbox layer; hurtbo
 
 ## Game flow
 
-`scenes/main.tscn` is the entry point and stays loaded for the whole run. It holds the post-process layer and a `ScreenHost` node, which it registers with the `GameFlow` autoload (`scripts/autoload/game_flow.gd`). GameFlow instances the title screen (`scenes/ui/main_menu.tscn`) or a level inside the host and tracks the state (title, playing, game over). `main.tscn` also holds the `PauseMenu` (`scenes/ui/pause_menu.tscn`), which opens on `pause` while playing, never over a screen that already paused the tree. Screens never switch scenes themselves: they call `GameFlow.start_new_game()`, `load_game(save)`, `go_to_title()` or `restart_level()`. The starting level is `GameFlow.START_LEVEL_PATH`.
+`scenes/main.tscn` is the entry point and stays loaded for the whole run. It holds the post-process layer and a `ScreenHost` node, which it registers with the `GameFlow` autoload (`scripts/autoload/game_flow.gd`). GameFlow instances the title screen (`scenes/ui/main_menu.tscn`) or a level inside the host and tracks the state (title, playing, game over). `main.tscn` also holds the `PauseMenu` (`scenes/ui/pause_menu.tscn`), which opens on `pause` while playing, never over a screen that already paused the tree. Screens never switch scenes themselves: they call `GameFlow.start_new_game()`, `load_game(save)`, `go_to_title()` or `restart_game()`. The starting level is `GameFlow.START_LEVEL_PATH`.
 
 ## Settings
 
@@ -30,7 +30,7 @@ Hitboxes sit on their own layer and only mask the opposing hurtbox layer; hurtbo
 
 ## UI
 
-`scenes/ui/` holds screen-space feedback scenes, instanced by the player scene: `damage_overlay.tscn` (the red edge flash when hit), `health_overlay.tscn` (the vignette and desaturation of the Caution and Danger health states, driven by `PlayerHealthCues`; `PlayerStaminaCues` does the breathing and the winded animation for stamina, which has no on-screen cue) and `game_over_screen.tscn` (shown on death, pauses the game, retry has GameFlow restart the level).
+`scenes/ui/` holds screen-space feedback scenes, instanced by the player scene: `damage_overlay.tscn` (the red edge flash when hit), `health_overlay.tscn` (the vignette and desaturation of the Caution and Danger health states, driven by `PlayerHealthCues`; `PlayerStaminaCues` does the breathing and the winded animation for stamina, which has no on-screen cue) and `game_over_screen.tscn` (shown on death, pauses the game, and offers Load last save, Load game… and Quit to title).
 
 `inventory_screen.tscn` (`InventoryScreen`, also on the player) opens with `inventory` (I / Back) and pauses the game. Its tabs follow `ItemData.Category`; Equip and Use only emit `equip_requested` / `use_requested`, which the player's other nodes act on. Its status readout (an `EcgLine` and the word Fine, Caution or Danger) is the only place the health state appears outside the cues, and never as a number.
 
@@ -59,3 +59,5 @@ Saves live in 8 slots (`SaveSlots`, `scripts/saving/save_slots.gd`), one JSON fi
 Save spots (`scenes/levels/save_spot.tscn`, `SaveSpot`) are `Interactable`s with a placeholder desk look. Set `area_name` on each one; it names the slot. Using one opens the player's save screen with `SaveSystem.capture()`, a save made at that spot, unless an enemy `is_chasing()` (alive, on its feet and alert), in which case it shows a refusal on the hint. Each has a `spot_id` (by default its path in the level) and a `SpawnPoint` child, where loading puts the player. The level a save loads is the scene file of the spot's level. The graybox level keeps its save spots under `SaveSpots`. After placing one, rebake the navmesh, because its desk is solid.
 
 Loading (`GameFlow.load_game(save)`) gives `SaveSystem` the save's world state and play time, instances the save's level fresh, and calls `SaveSystem.restore()` on it. That runs `WorldState.apply()` on the level (collected pickups vanish, doors lock or unlock, dead enemies lie where they fell), gives the player the saved health, inventory, weapon and flashlight (`Player.read_save()`), and puts the player at the save spot's `SpawnPoint` with the camera behind (`Player.place_at()`). Enemies alive in the save are simply the level's own, at their placed positions with full health.
+
+On death, game over's **Load last save** loads `SaveSystem.last_save`: the most recent save written or loaded this session. A new game clears it, so with no save yet it starts the game over (`GameFlow.restart_game()`). **Load game…** opens its own save screen in load mode, and **Quit to title** goes back to the main menu.
