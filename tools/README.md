@@ -9,6 +9,7 @@ Development tooling, not shipped with the game.
 - `bake_navmesh.gd` – bakes a level's navmesh from its collision geometry, with the doors shut: `godot --headless --path . -s res://tools/bake_navmesh.gd -- hotel_miramare`.
 - `generate_hotel_graybox.py` – writes `scenes/levels/hotel_miramare.tscn` from the layout in `docs/design/slice.md`. It overwrites the whole scene, and the scene has been populated by hand since #71 and dressed since #112, so it is kept as the record of how the layout was built rather than run; its docstring has the steps, including the navmesh rebake.
 - `dress_hotel.gd` – rebuilds the hotel's `Structure`, `Props` and `Lights` from the kit and props, from the layout in its constants, and keeps every other node (doors, enemies, pickups, save spots, documents, navmesh, lightmap): `godot --headless --path . -s res://tools/dress_hotel.gd`. Rerun it after changing the layout or the kit, then rebake the navmesh and the lightmap.
+- `bake_lightmaps.sh` – bakes a level's `LightmapGI` and saves it next to the scene: `tools/bake_lightmaps.sh scenes/levels/hotel_miramare.tscn`. Godot bakes lightmaps only in the editor, on the GPU, so it opens the editor (it needs a display) with the plugin in `bake_lightmaps/` enabled for that run through an `override.cfg`, presses Bake Lightmaps, saves and quits. In the editor you can do the same by hand: select the `LightmapGI` node and press **Bake Lightmaps** in the 3D toolbar.
 - `build_assets.py`, `process_model.py` and `process_texture.py` – the asset pipeline, below.
 
 ## Asset pipeline
