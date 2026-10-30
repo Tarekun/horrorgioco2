@@ -707,7 +707,7 @@ is_locked = true
 [node name="SaveSpots" type="Node3D" parent="."]
 
 [node name="SaveSpotLobby" parent="SaveSpots" instance=ExtResource("15")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.3, 0, 5)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 4.3, 0, 5)
 area_name = "Lobby"
 
 [node name="Pickups" type="Node3D" parent="."]
