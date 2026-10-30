@@ -140,3 +140,24 @@ func test_locked_doors_never_open() -> void:
 	var door: Door = _door("DoorRoomB")
 	door.open(Vector3(8, 0, 0))
 	assert_false(door.is_open)
+
+
+func test_save_spots_face_the_open_room() -> void:
+	# Nothing solid between a spot's spawn point and the spot, above its desk.
+	var space: PhysicsDirectSpaceState3D = _level.get_world_3d().direct_space_state
+	for node: Node in _level.get_node("SaveSpots").get_children():
+		var spot := node as SaveSpot
+		var lift := Vector3.UP * 1.5
+		var query := PhysicsRayQueryParameters3D.create(
+			spot.spawn_point.global_position + lift, spot.global_position + lift, CombatLayers.WORLD
+		)
+		var hit: Dictionary = space.intersect_ray(query)
+		assert_true(hit.is_empty(), "%s faces %s" % [spot.name, hit.get("collider")])
+
+
+func test_loading_at_the_lobby_save_spot_leaves_the_player_in_the_lobby() -> void:
+	var spot := _level.get_node("SaveSpots/SaveSpotLobby") as SaveSpot
+	var spawn: Vector3 = spot.spawn_point.global_position
+	var closest: Vector3 = NavigationServer3D.map_get_closest_point(_map(), spawn)
+	assert_lt(closest.distance_to(spawn), 0.5, "the spawn point is off the navmesh")
+	assert_gt(_path_length(spawn, Vector3(3, 0, 4)), 0.0, "the lobby can't be reached")
