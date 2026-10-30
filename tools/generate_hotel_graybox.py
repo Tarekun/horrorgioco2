@@ -456,9 +456,9 @@ for floor, name, door_id, x, z, locked, key, message in DOORS:
         props.append("is_locked = true")
     if message:
         props.append('locked_message = "%s"' % message)
-    props.append('door_id = &"%s"' % door_id)
     if key:
-        props.append('metadata/key_id = &"%s"' % key)
+        props.append('key_id = &"%s"' % key)
+    props.append('door_id = &"%s"' % door_id)
     if name == "DoorStairsGF":
         props.append('metadata/blocked_by = &"obstacle_sunbeds"')
     S.node(name, None, "Doors/" + floor, props, instance="5")

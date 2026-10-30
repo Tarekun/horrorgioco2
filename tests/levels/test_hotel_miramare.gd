@@ -175,7 +175,7 @@ func test_the_doors_are_the_ones_in_the_doc() -> void:
 
 func test_locked_doors_are_marked_with_their_keys() -> void:
 	for door: Door in _doors():
-		var key: StringName = door.get_meta(&"key_id", &"")
+		var key: StringName = door.key_id
 		assert_eq(key, DOOR_KEYS.get(door.door_id, &""), str(door.door_id))
 		if not key.is_empty():
 			assert_true(door.is_locked, "%s is locked" % door.door_id)
