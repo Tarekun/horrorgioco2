@@ -44,8 +44,9 @@ func go_to_title() -> void:
 	_set_state(State.TITLE)
 
 
-## Starts a new game in the starting level.
+## Starts a new game in the starting level, with a fresh world state.
 func start_new_game() -> void:
+	SaveSystem.reset()
 	_show_screen(start_level_scene)
 	_set_state(State.PLAYING)
 

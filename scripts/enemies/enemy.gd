@@ -12,6 +12,11 @@
 ## At zero health, or hit by a knockdown blow, the enemy falls and joins the
 ## downed group. After a few seconds it gets up with some health, unless the
 ## player stomps it first: stomp() kills it for good and it stays as a corpse.
+##
+## Enemies are persistent (see WorldState): dying records the corpse's
+## position in SaveSystem.world, and loading a save lays the corpse there
+## again. Living enemies record nothing, so a load brings them back where they
+## were placed with full health.
 
 class_name Enemy
 extends CharacterBody3D
@@ -35,6 +40,9 @@ const DOWNED_GROUP: StringName = &"downed_enemies"
 
 ## Group the player joins.
 const PLAYER_GROUP: StringName = &"player"
+
+## Stable id for saves. Left empty, it is the enemy's path inside its level.
+@export var enemy_id: StringName
 
 @export_group("Movement")
 @export var wander_speed: float = 1.2
@@ -94,6 +102,9 @@ func _ready() -> void:
 	health_component.max_health = scarcity.enemy_max_health
 	health_component.current_health = scarcity.enemy_max_health
 	add_to_group(ENEMY_GROUP)
+	add_to_group(WorldState.GROUP)
+	if enemy_id.is_empty():
+		enemy_id = WorldState.default_id(self)
 	brain.idle_duration = idle_duration
 	brain.stagger_duration = stagger_duration
 	brain.state_changed.connect(_on_state_changed)
@@ -134,6 +145,20 @@ func stomp() -> bool:
 		return false
 	brain.kill()
 	return true
+
+
+func get_persistent_id() -> StringName:
+	return enemy_id
+
+
+## Takes back a recorded state: a dead enemy becomes a corpse where it lay.
+func load_state(state: Dictionary) -> void:
+	var saved_dead: Variant = state.get("is_dead")
+	if not (saved_dead is bool and saved_dead):
+		return
+	global_position = WorldState.decode_vector(state.get("position"), global_position)
+	rotation = WorldState.decode_vector(state.get("rotation"), rotation)
+	brain.kill()
 
 
 ## Picks a random point near the spawn that the navmesh can reach. Returns
@@ -319,4 +344,10 @@ func _become_corpse() -> void:
 	remove_from_group(ENEMY_GROUP)
 	hurtbox.set_deferred(&"monitorable", false)
 	set_deferred(&"collision_layer", 0)
+	var corpse: Dictionary = {
+		"is_dead": true,
+		"position": WorldState.encode_vector(global_position),
+		"rotation": WorldState.encode_vector(rotation),
+	}
+	SaveSystem.world.record(enemy_id, corpse)
 	died.emit()

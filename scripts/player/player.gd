@@ -50,6 +50,9 @@ const STEP_PROBE_DISTANCE: float = 0.4
 ## The visible character, animated from the player's ground speed.
 @export var model: PlayerModel
 
+## Uses and equips items; knows the weapon held.
+@export var items: PlayerItems
+
 ## What the player carries. Pickups add to it.
 var inventory := Inventory.new()
 
@@ -122,6 +125,16 @@ static func camera_relative_direction(input: Vector2, camera_yaw: float) -> Vect
 ## Whether the player's flashlight is on.
 func is_lit() -> bool:
 	return flashlight != null and flashlight.is_on()
+
+
+## Puts the player's part of a save in `save`: health, inventory, the weapon
+## held and the flashlight.
+func write_save(save: SaveData) -> void:
+	save.player_health = health_component.current_health
+	save.inventory = inventory.to_dict()
+	var weapon: ItemData = items.equipped_weapon if items else null
+	save.equipped_weapon = weapon.id if weapon else &""
+	save.is_flashlight_on = is_lit()
 
 
 ## Returns the current movement speed.

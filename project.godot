@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.7", "Forward Plus")
 
 GameFlow="*res://scripts/autoload/game_flow.gd"
 UserSettings="*res://scripts/autoload/user_settings.gd"
+SaveSystem="*res://scripts/autoload/save_system.gd"
 
 [debug]
 
