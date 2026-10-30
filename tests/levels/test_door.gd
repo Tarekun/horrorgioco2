@@ -59,6 +59,19 @@ func test_the_panel_swings_away_from_the_opener() -> void:
 	assert_gt(panel.global_position.z, 0.5, "swung to +Z when opened from -Z")
 
 
+func test_a_door_can_start_open_toward_plus_z() -> void:
+	var door := DOOR_SCENE.instantiate() as Door
+	door.starts_open = true
+	add_child_autofree(door)
+	assert_true(door.is_open)
+	assert_true(door.navigation_link.enabled)
+	assert_eq(door.get_prompt(), "Close")
+	var panel := door.hinge.get_child(0) as Node3D
+	assert_gt(panel.global_position.z, 0.5)
+	door.close()
+	assert_false(door.navigation_link.enabled)
+
+
 func test_the_link_is_on_only_while_open() -> void:
 	_door.open(Vector3(0, 0, 3))
 	assert_true(_door.navigation_link.enabled)
