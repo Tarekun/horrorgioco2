@@ -23,3 +23,13 @@ enum Category { WEAPON, AMMO, HEALING, KEY_ITEM, DOCUMENT }
 
 ## Picture shown on the inventory screen (optional).
 @export var icon: Texture2D
+
+
+## Whether the inventory screen offers Equip for it: weapons.
+func is_equippable() -> bool:
+	return category == Category.WEAPON
+
+
+## Whether the inventory screen offers Use for it: healing items.
+func is_usable() -> bool:
+	return category == Category.HEALING

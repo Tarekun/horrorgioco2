@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -24,6 +24,7 @@
 [ext_resource type="AudioStream" path="res://assets/audio/heartbeat.wav" id="21"]
 [ext_resource type="AudioStream" path="res://assets/audio/breath_heavy.wav" id="22"]
 [ext_resource type="Script" path="res://scripts/player/player_stamina_cues.gd" id="23"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_screen.tscn" id="24"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -114,6 +115,9 @@ hint = NodePath("../InteractionHint")
 [node name="DamageOverlay" parent="." instance=ExtResource("12")]
 
 [node name="GameOverScreen" parent="." instance=ExtResource("13")]
+
+[node name="InventoryScreen" parent="." node_paths=PackedStringArray("player") instance=ExtResource("24")]
+player = NodePath("..")
 
 [node name="HealthOverlay" parent="." instance=ExtResource("19")]
 

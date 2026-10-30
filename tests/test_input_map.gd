@@ -15,6 +15,7 @@ const ACTIONS: Array[StringName] = [
 	&"interact",
 	&"flashlight",
 	&"pause",
+	&"inventory",
 ]
 
 
@@ -40,3 +41,20 @@ func test_actions_have_gamepad_binding() -> void:
 				return e is InputEventJoypadButton or e is InputEventJoypadMotion
 		)
 		assert_true(bound, "%s has no gamepad binding" % action)
+
+
+func test_inventory_opens_with_i_and_back() -> void:
+	var events := InputMap.action_get_events(&"inventory")
+	var has_i := events.any(
+		func(e: InputEvent) -> bool:
+			return e is InputEventKey and (e as InputEventKey).physical_keycode == KEY_I
+	)
+	var has_back := events.any(
+		func(e: InputEvent) -> bool:
+			return (
+				e is InputEventJoypadButton
+				and (e as InputEventJoypadButton).button_index == JOY_BUTTON_BACK
+			)
+	)
+	assert_true(has_i, "inventory is not on I")
+	assert_true(has_back, "inventory is not on Back")
