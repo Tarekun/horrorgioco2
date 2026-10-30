@@ -13,6 +13,9 @@
 ## downed group. After a few seconds it gets up with some health, unless the
 ## player stomps it first: stomp() kills it for good and it stays as a corpse.
 ##
+## A dormant enemy stands still, blind and deaf, until a level event calls
+## wake() or the player hits it; either way it wakes alerted to the player.
+##
 ## Enemies are persistent (see WorldState): dying records the corpse's
 ## position in SaveSystem.world, and loading a save lays the corpse there
 ## again. Living enemies record nothing, so a load brings them back where they
@@ -43,6 +46,10 @@ const PLAYER_GROUP: StringName = &"player"
 
 ## Stable id for saves. Left empty, it is the enemy's path inside its level.
 @export var enemy_id: StringName
+
+## Starts asleep: stands still and neither sees nor hears until wake() is
+## called or it is hit.
+@export var is_dormant: bool = false
 
 @export_group("Movement")
 @export var wander_speed: float = 1.2
@@ -116,6 +123,10 @@ func _physics_process(delta: float) -> void:
 	_apply_gravity(delta)
 	if _cooldown_left > 0.0:
 		_cooldown_left -= delta
+	if is_dormant:
+		_stop()
+		move_and_slide()
+		return
 
 	perception.update(delta, _get_target())
 	var senses := _gather_senses()
@@ -155,6 +166,16 @@ func stomp() -> bool:
 
 func get_persistent_id() -> StringName:
 	return enemy_id
+
+
+## Wakes a dormant enemy, already alerted to the player.
+func wake() -> void:
+	if not is_dormant:
+		return
+	is_dormant = false
+	var player: Node3D = _get_target()
+	if player:
+		perception.alert_to(player.global_position)
 
 
 ## Takes back a recorded state: a dead enemy becomes a corpse where it lay.
@@ -314,6 +335,7 @@ func _on_state_changed(old_state: EnemyBrain.State, new_state: EnemyBrain.State)
 func _on_hit_received(hit: HitData, damage_dealt: float) -> void:
 	if damage_dealt <= 0.0 or health_component.is_dead or brain.is_dead():
 		return
+	wake()
 	if hit.attacker:
 		perception.alert_to(hit.attacker.global_position)
 	if hit.causes_knockdown:
