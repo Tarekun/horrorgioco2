@@ -15,3 +15,6 @@ Thumbs.db
 
 # Claude Code local state and agent worktrees
 .claude/
+
+# Raw downloads of the asset pipeline (tools/build_assets.py)
+.asset_cache/
