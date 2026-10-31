@@ -8,7 +8,8 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				0,
+				1
 			]
 		}
 	],
@@ -21,6 +22,10 @@
 				0.0007415645522996783,
 				0.030687160789966583
 			]
+		},
+		{
+			"mesh":1,
+			"name":"Collision-convcolonly"
 		}
 	],
 	"materials":[
@@ -48,6 +53,18 @@
 					},
 					"indices":3,
 					"material":0
+				}
+			]
+		},
+		{
+			"name":"Collision-convcolonly",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":4,
+						"NORMAL":5
+					},
+					"indices":6
 				}
 			]
 		}
@@ -99,6 +116,34 @@
 			"componentType":5123,
 			"count":1323,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":4,
+			"componentType":5126,
+			"count":24,
+			"max":[
+				0.21587571501731873,
+				0.9568539261817932,
+				0.26991209387779236
+			],
+			"min":[
+				-0.21587571501731873,
+				0,
+				-0.26995599269866943
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":5,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":6,
+			"componentType":5123,
+			"count":36,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -125,6 +170,24 @@
 			"byteLength":2646,
 			"byteOffset":25280,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":27928,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":28216,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":72,
+			"byteOffset":28504,
+			"target":34963
 		}
 	],
 	"samplers":[
@@ -135,7 +198,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":27928,
+			"byteLength":28576,
 			"uri":"painted_chair.bin"
 		}
 	]
