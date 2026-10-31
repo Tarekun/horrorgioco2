@@ -5,7 +5,6 @@
 extends GutTest
 
 const MODELS_DIR: String = "res://assets/models/"
-const SOURCES_PATH: String = "res://assets/sources.json"
 const MODEL_EXTENSIONS: Array[String] = ["gltf", "glb"]
 
 ## Most triangles a model of each category may have.
@@ -30,9 +29,6 @@ const MAX_TEXTURE_SIZE: Dictionary[String, int] = {
 	"hero_props": 256,
 	"environment": 512,
 }
-
-## Texture import mode for VRAM compression (ResourceImporterTexture's compress/mode).
-const COMPRESS_VRAM: int = 2
 
 
 func test_budget_tables_cover_the_same_categories() -> void:
@@ -70,15 +66,7 @@ func test_materials_are_albedo_only() -> void:
 		var model := _instantiate(path)
 		for material in _materials(model):
 			var name: String = "%s (%s)" % [path, material.resource_name]
-			assert_true(material is StandardMaterial3D, "%s is not a StandardMaterial3D" % name)
-			var standard := material as StandardMaterial3D
-			if standard == null:
-				continue
-			assert_false(standard.normal_enabled, "%s uses a normal map" % name)
-			assert_null(standard.roughness_texture, "%s has a roughness map" % name)
-			assert_null(standard.metallic_texture, "%s has a metallic map" % name)
-			assert_false(standard.ao_enabled, "%s uses an occlusion map" % name)
-			assert_false(standard.heightmap_enabled, "%s uses a height map" % name)
+			assert_eq(AssetRules.material_problem(material), "", name)
 		model.free()
 
 
@@ -96,25 +84,21 @@ func test_textures_import_vram_compressed_with_mipmaps() -> void:
 	for path in _model_paths():
 		var model := _instantiate(path)
 		for texture in _textures(model):
-			var config := ConfigFile.new()
-			var import_path: String = texture.resource_path + ".import"
-			assert_eq(config.load(import_path), OK, "%s is missing" % import_path)
-			assert_eq(config.get_value("params", "compress/mode", 0), COMPRESS_VRAM, import_path)
-			assert_true(config.get_value("params", "mipmaps/generate", false), import_path)
+			var texture_path: String = texture.resource_path
+			assert_eq(AssetRules.import_problem(texture_path), "", texture_path)
 		model.free()
 
 
 func test_every_model_has_a_cc0_source() -> void:
-	var sources: Dictionary[String, Dictionary] = _sources()
+	var sources: Dictionary[String, Dictionary] = AssetRules.sources("models")
 	for path in _model_paths():
 		var name: String = path.get_file().get_basename()
-		assert_has(sources, name, "%s is not in %s" % [path, SOURCES_PATH])
+		assert_has(sources, name, "%s is not in %s" % [path, AssetRules.SOURCES_PATH])
 		if not sources.has(name):
 			continue
 		var entry: Dictionary = sources[name]
 		assert_eq(entry.get("category"), _category(path), "%s category" % name)
-		assert_eq(entry.get("license"), "CC0", "%s license" % name)
-		assert_string_starts_with(str(entry.get("source", "")), "https://", "%s source" % name)
+		assert_eq(AssetRules.source_problem(entry), "", name)
 
 
 func _model_paths(dir: String = MODELS_DIR) -> Array[String]:
@@ -182,13 +166,3 @@ func _textures(root: Node) -> Array[Texture2D]:
 			if texture != null and texture not in textures:
 				textures.append(texture)
 	return textures
-
-
-func _sources() -> Dictionary[String, Dictionary]:
-	var sources: Dictionary[String, Dictionary] = {}
-	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(SOURCES_PATH))
-	assert_true(data is Dictionary, "%s is not a JSON object" % SOURCES_PATH)
-	if data is Dictionary:
-		for entry: Dictionary in (data as Dictionary).get("models", []):
-			sources[str(entry.get("name"))] = entry
-	return sources
