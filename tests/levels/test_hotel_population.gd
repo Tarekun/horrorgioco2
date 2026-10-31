@@ -37,7 +37,7 @@ const SAVE_SPOTS: Dictionary[StringName, float] = {
 const LEVEL_FLAGS: Array[StringName] = [&"power_restored", &"doc_porter_log_read"]
 
 ## Other persistent objects, by their ids in slice.md.
-const MECHANISMS: Array[StringName] = [&"obstacle_sunbeds"]
+const MECHANISMS: Array[StringName] = [&"obstacle_sunbeds", &"shutter_staff"]
 
 const DOCUMENT_IDS: Array[StringName] = [
 	&"doc_registration_card", &"doc_lost_property", &"doc_porter_log", &"doc_postcard"

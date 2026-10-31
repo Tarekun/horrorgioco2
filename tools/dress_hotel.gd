@@ -361,8 +361,8 @@ const FURNITURE: Dictionary[String, Array] = {
 		["boiler", 15.7, 0, -2.7, -90],
 		["water_tank", 17.25, 0, -1.6, 0, "Tank"],
 		["switchboard", 14.2, 0.8, -6.9, 0, "SwitchboardBasement"],
-		# Corridor: pipes along the ceiling, the roller shutter and its button.
-		["roller_shutter", 18, 0, 0, 90, "ShutterStaff"],
+		# Corridor: pipes along the ceiling and the roller shutter's button. The
+		# shutter moves, so it is Mechanisms/ShutterStaff (roller_shutter.tscn).
 		["wall_button", 17.4, 1.1, 0.9, 180, "ShutterButton"],
 		["sign/sign_private", 18.6, 2.0, -0.89, 0],
 		# Changing room: two rows of lockers, the porter's ajar (K4).
