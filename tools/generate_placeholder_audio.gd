@@ -1,5 +1,6 @@
 ## Generates the placeholder audio: footstep variants, a looping ambient drone, a
-## heartbeat and a heavy breath.
+## heartbeat, a heavy breath, the main switch being thrown and the lift
+## machinery groaning awake.
 ##
 ## Everything is synthesized from noise and sine waves with a fixed seed, so the
 ## output is reproducible and has no third-party content. The WAV files are
@@ -15,6 +16,8 @@ const AMBIENCE_SECONDS: float = 16.0
 const AMBIENCE_CROSSFADE_SECONDS: float = 2.0
 const HEARTBEAT_SECONDS: float = 0.9
 const BREATH_SECONDS: float = 2.2
+const SWITCH_SECONDS: float = 0.7
+const GROAN_SECONDS: float = 4.5
 
 
 func _init() -> void:
@@ -27,6 +30,8 @@ func _init() -> void:
 	is_ok = _save("ambience_drone.wav", _ambience(rng), true) and is_ok
 	is_ok = _save("heartbeat.wav", _heartbeat(rng), false) and is_ok
 	is_ok = _save("breath_heavy.wav", _breath(rng), false) and is_ok
+	is_ok = _save("switch_thrown.wav", _switch_thrown(rng), false) and is_ok
+	is_ok = _save("machinery_groan.wav", _machinery_groan(rng), false) and is_ok
 	quit(0 if is_ok else 1)
 
 
@@ -117,6 +122,50 @@ func _breath(rng: RandomNumberGenerator) -> PackedFloat32Array:
 		var inhale: float = sin(PI * clampf(t / 0.7, 0.0, 1.0))
 		var exhale: float = sin(PI * clampf((t - 0.95) / 1.1, 0.0, 1.0)) * 0.8
 		samples[i] = (low - band) * (inhale * inhale + exhale * exhale) * 2.0
+	return samples
+
+
+## A heavy lever slammed home: a sharp metal clack of bright noise and two
+## ringing partials over a low thump, then the relays clicking in.
+func _switch_thrown(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var count: int = int(SWITCH_SECONDS * MIX_RATE)
+	var samples := PackedFloat32Array()
+	samples.resize(count)
+	for i in count:
+		var t: float = float(i) / MIX_RATE
+		var clack: float = rng.randf_range(-1.0, 1.0) * exp(-t * 90.0)
+		var ring: float = (
+			(sin(TAU * 410.0 * t) * 0.6 + sin(TAU * 1130.0 * t) * 0.3) * exp(-t * 14.0)
+		)
+		var thump: float = sin(TAU * 70.0 * t) * exp(-t * 20.0)
+		samples[i] = (clack + ring * 0.5 + thump * 0.8) * minf(t * 2000.0, 1.0)
+	for relay in 3:
+		var start: int = int((0.28 + 0.09 * relay) * MIX_RATE)
+		for i in mini(int(0.03 * MIX_RATE), count - start):
+			var t: float = float(i) / MIX_RATE
+			samples[start + i] += rng.randf_range(-1.0, 1.0) * exp(-t * 250.0) * 0.4
+	return samples
+
+
+## Old machinery starting behind a wall: a low motor tone that winds up in
+## pitch and loudness, a rumble of filtered noise and a slow mechanical tick.
+func _machinery_groan(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var count: int = int(GROAN_SECONDS * MIX_RATE)
+	var samples := PackedFloat32Array()
+	samples.resize(count)
+	var coefficient: float = 1.0 - exp(-TAU * 120.0 / MIX_RATE)
+	var rumble: float = 0.0
+	var phase: float = 0.0
+	for i in count:
+		var t: float = float(i) / MIX_RATE
+		var progress: float = t / GROAN_SECONDS
+		phase += TAU * (28.0 + 30.0 * minf(progress * 1.6, 1.0)) / MIX_RATE
+		rumble += coefficient * (rng.randf_range(-1.0, 1.0) - rumble)
+		var motor: float = sin(phase) * 0.6 + sin(phase * 2.0 + 0.7) * 0.3 + sin(phase * 3.0) * 0.15
+		var swell: float = minf(t * 1.5, 1.0) * minf((GROAN_SECONDS - t) * 1.2, 1.0)
+		var tick_time: float = fmod(t, 0.42)
+		var tick: float = rng.randf_range(-1.0, 1.0) * exp(-tick_time * 180.0) * progress
+		samples[i] = (motor + rumble * 3.0 + tick * 0.5) * swell
 	return samples
 
 
