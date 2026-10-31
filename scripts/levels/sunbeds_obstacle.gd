@@ -5,7 +5,8 @@
 ## along the corridor and emits `moved`, which the level wires to the stairs
 ## door's unlock(). From the stairs side the player only reaches the locked
 ## door, whose message says something heavy is on the other side. Once moved,
-## the stack stays where it rolled and is no longer an interactable.
+## the stack stays where it rolled and is no longer an interactable. It won't
+## roll onto a player standing in its path, behind it.
 ##
 ## It is persistent (see WorldState): moving it records it in SaveSystem.world,
 ## and loading a save puts the stack straight in its moved place. The door
@@ -22,6 +23,9 @@ extends Interactable
 ## Emitted when the stack starts rolling clear (not when a save puts it there).
 signal moved
 
+## Told to a player standing in the stack's path (working text).
+const IN_THE_WAY_MESSAGE: String = "Not from this side."
+
 ## Stable id for saves. Left empty, it is the obstacle's path inside its level.
 @export var obstacle_id: StringName
 
@@ -33,6 +37,11 @@ signal moved
 
 ## How long the roll takes, in seconds.
 @export var roll_time: float = 1.0
+
+## Half the stack's footprint on the floor (x, z), widened by most of a
+## player's width: a player whose centre is inside it anywhere along the path
+## would end up inside the stack.
+@export var footprint_half_size: Vector2 = Vector2(1.3, 0.55)
 
 var is_moved: bool = false
 
@@ -48,11 +57,14 @@ func _ready() -> void:
 	_placed_position = stack.position
 
 
-## Rolls the stack clear and reports it. Returns no message.
+## Rolls the stack clear and reports it. Returns a message only when `actor`
+## stands in its path.
 func interact(actor: Node3D) -> String:
 	interacted.emit(actor)
 	if is_moved:
 		return ""
+	if actor and is_in_the_way(actor.global_position):
+		return IN_THE_WAY_MESSAGE
 	_set_moved()
 	_tween = create_tween()
 	_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -65,6 +77,17 @@ func interact(actor: Node3D) -> String:
 ## Where the stack stands once moved, in the obstacle's space.
 func moved_position() -> Vector3:
 	return _placed_position + roll_offset
+
+
+## Whether `point` (global) is in the stack's path: within the footprint of
+## the stack anywhere between where it stands and where it rolls to.
+func is_in_the_way(point: Vector3) -> bool:
+	var local: Vector3 = to_local(point)
+	var start := Vector2(_placed_position.x, _placed_position.z)
+	var end := Vector2(moved_position().x, moved_position().z)
+	var low: Vector2 = start.min(end) - footprint_half_size
+	var high: Vector2 = start.max(end) + footprint_half_size
+	return local.x > low.x and local.x < high.x and local.z > low.y and local.z < high.y
 
 
 ## Puts the stack in its moved place at once, without rolling or recording it:

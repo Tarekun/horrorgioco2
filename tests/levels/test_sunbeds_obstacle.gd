@@ -64,6 +64,24 @@ func test_pushing_again_does_nothing() -> void:
 	assert_signal_emit_count(_obstacle, "moved", 1)
 
 
+func test_it_wont_roll_onto_someone_in_its_path() -> void:
+	watch_signals(_obstacle)
+	# Behind the stack, where it rolls to.
+	_actor.global_position = _obstacle.to_global(_obstacle.moved_position())
+	assert_true(_obstacle.is_in_the_way(_actor.global_position))
+	assert_eq(_obstacle.interact(_actor), SunbedsObstacle.IN_THE_WAY_MESSAGE)
+	assert_false(_obstacle.is_moved)
+	assert_signal_not_emitted(_obstacle, "moved")
+	assert_false(SaveSystem.world.has_state(&"obstacle_test"))
+
+
+func test_pushing_from_against_its_front_is_not_in_the_way() -> void:
+	# Pressed against the stack's front (it is 0.75 m deep; a player 0.7 m wide).
+	assert_false(_obstacle.is_in_the_way(_obstacle.to_global(Vector3(0, 0, -0.75))))
+	# Beside it, on the side it rolls away from (it rolls toward +X here).
+	assert_false(_obstacle.is_in_the_way(_obstacle.to_global(Vector3(-1.4, 0, 0))))
+
+
 func test_is_persistent() -> void:
 	assert_true(_obstacle.is_in_group(WorldState.GROUP))
 	assert_eq(_obstacle.get_persistent_id(), &"obstacle_test")

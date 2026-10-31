@@ -79,6 +79,16 @@ func test_from_the_corridor_the_sunbeds_are_pushed_aside() -> void:
 	assert_gt(stack.x - 1.0, 0.1, "inside the corridor")
 
 
+func test_from_the_dead_end_behind_the_stack_it_wont_roll() -> void:
+	var obstacle: SunbedsObstacle = _obstacle()
+	# Squeezed past the stack into the corridor's west end, facing it.
+	var focus: Interactable = _stand(Vector3(1.6, GROUND_Y, 0.4), Vector3.RIGHT)
+	assert_eq(focus, obstacle as Interactable)
+	assert_eq(focus.interact(_player()), SunbedsObstacle.IN_THE_WAY_MESSAGE)
+	assert_false(obstacle.is_moved)
+	assert_true(_door(&"door_stairs_gf").is_locked)
+
+
 func test_once_pushed_the_door_works_from_both_sides() -> void:
 	await _push_aside()
 	var door: Door = _door(&"door_stairs_gf")
