@@ -117,6 +117,9 @@
 [ext_resource type="PackedScene" uid="uid://dehys57fu60y5" path="res://assets/models/props/curtain/curtain.gltf" id="102_4npss"]
 [ext_resource type="PackedScene" uid="uid://dpdxm36dboj6m" path="res://assets/models/environment/balcony_divider/balcony_divider.gltf" id="103_87koc"]
 [ext_resource type="LightmapGIData" uid="uid://co2ik4xvqnmhn" path="res://scenes/levels/hotel_miramare.lmbake" id="104_sc03c"]
+[ext_resource type="Script" path="res://scripts/saving/level_flag.gd" id="level_flag_158"]
+[ext_resource type="PackedScene" path="res://scenes/levels/switchboard.tscn" id="switchboard_158"]
+[ext_resource type="AudioStream" path="res://assets/audio/machinery_groan.wav" id="machinery_groan_158"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c7jyt"]
 resource_name = "concrete_floor"
@@ -5730,6 +5733,28 @@ texel_scale = 0.5
 max_texture_size = 4096
 environment_mode = 0
 light_data = ExtResource("104_sc03c")
+
+[node name="LevelFlags" type="Node" parent="."]
+
+[node name="PowerRestored" type="Node" parent="LevelFlags"]
+script = ExtResource("level_flag_158")
+flag_id = &"power_restored"
+
+[node name="Mechanisms" type="Node3D" parent="."]
+
+[node name="SwitchboardBasement" parent="Mechanisms" node_paths=PackedStringArray("power_flag", "lights", "enemy", "machinery_sound") instance=ExtResource("switchboard_158")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.55, -2.2, -6.55)
+power_flag = NodePath("../../LevelFlags/PowerRestored")
+lights = NodePath("../../Lights/Basement/BoilerRoom")
+enemy = NodePath("../../Enemies/EnemyBoilerRoom")
+machinery_sound = NodePath("../LiftMachinery")
+
+[node name="LiftMachinery" type="AudioStreamPlayer3D" parent="Mechanisms"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, -2, -4)
+stream = ExtResource("machinery_groan_158")
+bus = &"SFX"
+unit_size = 4.0
+max_distance = 30.0
 
 [node name="Doors" type="Node3D" parent="." unique_id=698680099]
 
