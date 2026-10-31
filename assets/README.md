@@ -23,16 +23,16 @@ Record the source and license of every imported asset here, as the visual style 
 
 Each model is in `assets/models/<category>/<name>/`, where the category folder sets its budget in `docs/design/visual-style.md`, and has an entry `<name>` in `sources.json`, so `tools/build_assets.py <name>` rebuilds it (see `tools/README.md`). Downloaded models are CC0, fitted to budget by the asset pipeline, and their raw downloads are not committed. The hotel kit and the simplest props are made by `tools/make_kit.py`: original work for this project, under the project's license, with nothing to attribute.
 
-`scenes/levels/kit_showcase.tscn` lays out a corridor, a guest room, the lobby, a dining room and a basement store from the kit and props, under the game's fog and flashlight. Run it (F6 in the editor) to look at them in game.
+`scenes/levels/hotel_miramare.tscn` is built from them by `tools/dress_hotel.gd` (see `tools/README.md`). `scenes/levels/kit_showcase.tscn` lays out a corridor, a guest room, the lobby, a dining room and a basement store, under the game's fog and flashlight: run it (F6 in the editor) to look at the pieces in game.
 
 ### Hotel kit
 
-The kit sits on a **2 m grid**, 3 m from floor to ceiling and 3.2 m from floor to floor, like the graybox. Every piece has collision.
+The kit sits on a **2 m grid**, 3 m from floor to ceiling and 3.2 m from floor to floor, like the graybox. Every piece has collision except ceilings, window frames and the pipes overhead.
 
 - **Floors and ceilings** are 2 × 2 m with the origin at their centre: put a floor on each cell and a ceiling 3 m above it.
-- **Walls are half walls**, 0.1 m thick and finished on one face, with the origin at the bottom centre of the back. Turn each to face the room it belongs to, on the grid line: a wall between two rooms is two pieces back to back, so each side gets its own material.
-- **`wall_door`** leaves a 1.6 × 2.5 m opening; a `door_frame` centred on the grid line lines it down to the 1.4 × 2.4 m of `scenes/levels/door.tscn`. **`wall_window`** has a 1.2 × 1.4 m opening 0.9 m up.
-- **`stairs`** is one 2.8 m wide flight rising half a storey (1.6 m over 2.6 m) towards -Z from the foot of its first riser, walked on as a smooth ramp; **`stair_landing`** is the 2.9 × 1.6 m slab between flights, with the origin at the centre of its top. Two flights and two landings side by side fill the graybox's 6 m stairwell.
+- **Walls are half walls**, 0.1 m thick, a storey (3.2 m) tall and finished on one face, with the origin at the bottom centre of the back. Turn each to face the room it belongs to, on the grid line: a wall between two rooms is two pieces back to back, so each side gets its own material. A wall reaches the floor above, so a stairwell has no gap between storeys; in a room the ceiling hides its top.
+- **`wall_door`** leaves a 1.6 × 2.5 m opening; a `door_frame` centred on the grid line lines it down to the 1.4 × 2.4 m of `scenes/levels/door.tscn`. **`wall_window`** has a 1.2 × 1.4 m opening 0.9 m up, which a `window_frame` on the grid line fills with dark glass.
+- **`stairs`** is one 2.8 m wide flight rising half a storey (1.6 m over 2.6 m) towards -Z from the foot of its first riser, walked on as a smooth ramp; **`stair_landing`** is the 2.9 × 1.7 m slab between flights, with the origin at the centre of its top, and **`stair_wall`** the 2.6 m wall between the two flights, finished on both sides. Two flights and two landings side by side fill the graybox's 6 m stairwell.
 - **Variants.** Each piece comes in one glTF per material, `<piece>_<material>.gltf`, using the shared materials in `assets/materials/`. UVs are in metres, so textures line up across pieces; each material's `uv1_scale` sets how many metres one repeat covers (a divisor of 2 m).
 
 | Piece | Materials |
@@ -42,10 +42,22 @@ The kit sits on a **2 m grid**, 3 m from floor to ceiling and 3.2 m from floor t
 | `wall`, `wall_door`, `wall_window` | `wallpaper`, `painted_wall`, `wall_tiles`, `brick`, `stripped_plaster`, `concrete_wall`, `wood_panelling` |
 | `door_frame` | `door` |
 | `stairs`, `stair_landing` | `terrazzo`, `concrete_floor` |
+| `stair_wall` | `painted_wall`, `concrete_wall` |
+
+The fittings come in one variant each, in flat colours:
+
+| Fitting | What |
+|---|---|
+| `railing` | 1 m of steel balustrade along X, centred; railings join end to end |
+| `window_frame` | Wooden frame and dark glass for `wall_window`'s opening; origin at the bottom centre of the opening |
+| `balcony_divider` | Frosted glass screen between balconies, 1.9 m wide and 2 m high |
+| `lift_doors` | Steel lift doors in their frame, with the call button; on the face of the shaft's wall |
+| `roller_shutter` | Steel roller shutter across a corridor, 2 m wide and 3 m high, down |
+| `ceiling_pipes` | Two pipes and a conduit along 2 m of ceiling (X), hanging from the origin |
 
 ### Props
 
-Props face +Z (their front towards the viewer in Godot's default view), with the origin at the bottom centre, except where noted. Furniture has a box collider.
+Props face +Z (their front towards the viewer in Godot's default view), with the origin at the bottom centre; those hung on a wall have it at the bottom centre of their back. Furniture has a box collider.
 
 | Model | What | Source | Author | License |
 |---|---|---|---|---|
@@ -59,6 +71,30 @@ Props face +Z (their front towards the viewer in Godot's default view), with the
 | `props/ceiling_lamp` | Opal glass ceiling lamp, hanging from its origin at the ceiling | Made by `tools/make_kit.py` | This project | Project's own |
 | `props/room_number` | Brass door numbers for rooms 11–16 and 21–28 (`room_number_22`), origin at their back | Made by `tools/make_kit.py` | This project | Project's own |
 | `props/sign` | Signs, origin at their centre: `out_of_order` (FUORI SERVIZIO) and `do_not_disturb` (NON DISTURBARE) hang from a cord; `stairs`, `lift`, `reception` and `private` are wall plates | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/desk` | Writing desk, 1.4 m wide, drawers on the right: room 22, the back office | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/wall_cabinet` | Small white wall cabinet, hung on a wall: bathrooms, the back office | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/alarm_clock` | Wind-up alarm clock: room 22's clock (P1) | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/coat_stand` | Bentwood coat stand with a coat on it: room 26 | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/room_service_tray` | Tray with a covered plate, a glass and a napkin: outside room 26 | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/key_cabinet` | Housekeeping key cabinet with a combination lock, hung on a wall (P1) | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/key_board` | Board of room keys behind the reception desk, some missing; hung on a wall | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/linen_cart` | Housekeeping trolley with linen on top, 1 m high | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/scaffolding` | One bay of builders' scaffolding, 2.5 m long, decked at 2.4 m | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/rubble_chute` | One 1 m segment of a yellow rubble chute; segments hook into each other | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/skip` | Builders' skip full of rubble, 3 × 2 m | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/sunbed_stack` | The beach concession's sunbeds stacked on end, with two umbrellas: the obstacle on GF | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/kitchen_counter` | 2 m of kitchen cupboards under a steel top; back at the origin | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/stove` | Restaurant range with a pot left on it | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/hotplate` | Two-ring electric hotplate, for a counter: the staff room | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/radio` | Radiogram on short legs: the TV room | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/washing_machine` | Industrial front-loading washing machine: the laundry | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/hanging_sheet` | Bed sheet pegged on 2 m of washing line, no collider: the laundry | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/boiler` | Old boiler drum with a flue to the ceiling: the boiler room | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/water_tank` | Tall galvanised expansion tank: the boiler room | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/switchboard` | The hotel's main switchboard with its lever, hung on a wall | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/wall_button` | Up and down push-button box for the roller shutter, hung on a wall | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/locker` | Steel staff locker: `locker_closed`, and `locker_ajar` with the porter's coat inside | Made by `tools/make_kit.py` | This project | Project's own |
+| `props/curtain` | Drawn curtain, 1.4 m wide, hanging from its origin at the rail | Made by `tools/make_kit.py` | This project | Project's own |
 | `props/painted_chair` | White painted wooden room chair | [Poly Haven: Painted Wooden Chair 01](https://polyhaven.com/a/painted_wooden_chair_01) | Kuutti Siitonen | CC0 |
 | `props/nightstand` | Painted wooden nightstand | [Poly Haven: Painted Wooden Nightstand](https://polyhaven.com/a/painted_wooden_nightstand) | Kirill Sannikov | CC0 |
 | `props/dining_table` | Long painted wooden table, 2.4 m | [Poly Haven: Painted Wooden Table](https://polyhaven.com/a/painted_wooden_table) | Kirill Sannikov | CC0 |
