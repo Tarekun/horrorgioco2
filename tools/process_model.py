@@ -21,7 +21,10 @@ INPUT is a .gltf, .glb, .fbx, .obj or .blend file. The script:
    (--roughness, --metallic);
 5. downscales every remaining texture so its longer side is at most
    --texture-size;
-6. exports glTF (separate .gltf, .bin and textures named after it) with
+6. with --collision box, adds its bounding box as a convex collider (an
+   object named *-convcolonly, which Godot doesn't draw), so that furniture
+   blocks the player;
+7. exports glTF (separate .gltf, .bin and textures named after it) with
    its animations; --actions keeps only the named ones, and --drop deletes
    the named objects first (a source's helper shapes).
 
@@ -61,6 +64,8 @@ def main():
     after = count_triangles()
     strip_materials(args.roughness, args.metallic)
     downscale_textures(args.texture_size)
+    if args.collision == "box":
+        add_box_collider("Collision")
     export(args.output)
     print(f"process_model: {args.input} -> {args.output}: {before} -> {after} triangles")
 
@@ -81,6 +86,9 @@ def parse_args(argv):
     parser.add_argument("--actions", default="", help="comma-separated animations to keep")
     parser.add_argument("--roughness", type=float, default=0.8, help="constant roughness")
     parser.add_argument("--metallic", type=float, default=0.0, help="constant metallic")
+    parser.add_argument(
+        "--collision", choices=["none", "box"], default="none", help="collider to add"
+    )
     args = parser.parse_args(argv)
     if not args.output.endswith(".gltf"):
         parser.error("OUTPUT must be a .gltf file")
@@ -252,6 +260,15 @@ def upstream(node):
                     seen.add(link.from_node)
                     stack.append(link.from_node)
     return seen
+
+
+def add_box_collider(name):
+    low, high = bounds()
+    mesh = bpy.data.meshes.new(name + "-convcolonly")
+    corners = [(x, y, z) for x in (low.x, high.x) for y in (low.y, high.y) for z in (low.z, high.z)]
+    faces = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
+    mesh.from_pydata(corners, [], faces)
+    bpy.context.scene.collection.objects.link(bpy.data.objects.new(mesh.name, mesh))
 
 
 def downscale_textures(size):

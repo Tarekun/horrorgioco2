@@ -1,11 +1,11 @@
 ## Checks every model in assets/models/ against the budgets in docs/design/visual-style.md.
-## A model's budget comes from its category, the folder under assets/models/ it sits in, and
-## each model needs a CC0 entry in assets/sources.json (see tools/build_assets.py).
+## A model's budget comes from its category, the folder under assets/models/ it sits in.
+## Each model's own folder is named after its entry in assets/sources.json, which is either
+## a CC0 source or tools/make_kit.py (see tools/build_assets.py).
 
 extends GutTest
 
 const MODELS_DIR: String = "res://assets/models/"
-const SOURCES_PATH: String = "res://assets/sources.json"
 const MODEL_EXTENSIONS: Array[String] = ["gltf", "glb"]
 
 ## Most triangles a model of each category may have.
@@ -30,9 +30,6 @@ const MAX_TEXTURE_SIZE: Dictionary[String, int] = {
 	"hero_props": 256,
 	"environment": 512,
 }
-
-## Texture import mode for VRAM compression (ResourceImporterTexture's compress/mode).
-const COMPRESS_VRAM: int = 2
 
 
 func test_budget_tables_cover_the_same_categories() -> void:
@@ -70,15 +67,7 @@ func test_materials_are_albedo_only() -> void:
 		var model := _instantiate(path)
 		for material in _materials(model):
 			var name: String = "%s (%s)" % [path, material.resource_name]
-			assert_true(material is StandardMaterial3D, "%s is not a StandardMaterial3D" % name)
-			var standard := material as StandardMaterial3D
-			if standard == null:
-				continue
-			assert_false(standard.normal_enabled, "%s uses a normal map" % name)
-			assert_null(standard.roughness_texture, "%s has a roughness map" % name)
-			assert_null(standard.metallic_texture, "%s has a metallic map" % name)
-			assert_false(standard.ao_enabled, "%s uses an occlusion map" % name)
-			assert_false(standard.heightmap_enabled, "%s uses a height map" % name)
+			assert_eq(AssetRules.material_problem(material), "", name)
 		model.free()
 
 
@@ -96,25 +85,43 @@ func test_textures_import_vram_compressed_with_mipmaps() -> void:
 	for path in _model_paths():
 		var model := _instantiate(path)
 		for texture in _textures(model):
-			var config := ConfigFile.new()
-			var import_path: String = texture.resource_path + ".import"
-			assert_eq(config.load(import_path), OK, "%s is missing" % import_path)
-			assert_eq(config.get_value("params", "compress/mode", 0), COMPRESS_VRAM, import_path)
-			assert_true(config.get_value("params", "mipmaps/generate", false), import_path)
+			var texture_path: String = texture.resource_path
+			assert_eq(AssetRules.import_problem(texture_path), "", texture_path)
 		model.free()
 
 
-func test_every_model_has_a_cc0_source() -> void:
-	var sources: Dictionary[String, Dictionary] = _sources()
+func test_shared_materials_are_used() -> void:
+	# A surface named after a shared material must get the .tres on import,
+	# not the flat grey the generator gives it.
 	for path in _model_paths():
-		var name: String = path.get_file().get_basename()
-		assert_has(sources, name, "%s is not in %s" % [path, SOURCES_PATH])
+		var model := _instantiate(path)
+		for material in _materials(model):
+			var shared: String = AssetRules.MATERIALS_DIR.path_join(
+				material.resource_name + ".tres"
+			)
+			if ResourceLoader.exists(shared):
+				assert_eq(material.resource_path, shared, path)
+		model.free()
+
+
+func test_every_model_has_a_source() -> void:
+	var sources: Dictionary[String, Dictionary] = AssetRules.sources("models")
+	for path in _model_paths():
+		var name: String = _entry_name(path)
+		assert_has(sources, name, "%s is not in %s" % [path, AssetRules.SOURCES_PATH])
 		if not sources.has(name):
 			continue
 		var entry: Dictionary = sources[name]
 		assert_eq(entry.get("category"), _category(path), "%s category" % name)
-		assert_eq(entry.get("license"), "CC0", "%s license" % name)
-		assert_string_starts_with(str(entry.get("source", "")), "https://", "%s source" % name)
+		assert_eq(AssetRules.source_problem(entry), "", name)
+
+
+func test_every_source_has_been_built() -> void:
+	var built: Dictionary[String, bool] = {}
+	for path in _model_paths():
+		built[_entry_name(path)] = true
+	for name in AssetRules.sources("models"):
+		assert_true(built.has(name), "%s is in the manifest but not in %s" % [name, MODELS_DIR])
 
 
 func _model_paths(dir: String = MODELS_DIR) -> Array[String]:
@@ -129,6 +136,11 @@ func _model_paths(dir: String = MODELS_DIR) -> Array[String]:
 
 func _category(path: String) -> String:
 	return path.trim_prefix(MODELS_DIR).get_slice("/", 0)
+
+
+## The manifest entry a model comes from: the folder it sits in.
+func _entry_name(path: String) -> String:
+	return path.get_base_dir().get_file()
 
 
 func _instantiate(path: String) -> Node:
@@ -182,13 +194,3 @@ func _textures(root: Node) -> Array[Texture2D]:
 			if texture != null and texture not in textures:
 				textures.append(texture)
 	return textures
-
-
-func _sources() -> Dictionary[String, Dictionary]:
-	var sources: Dictionary[String, Dictionary] = {}
-	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(SOURCES_PATH))
-	assert_true(data is Dictionary, "%s is not a JSON object" % SOURCES_PATH)
-	if data is Dictionary:
-		for entry: Dictionary in (data as Dictionary).get("models", []):
-			sources[str(entry.get("name"))] = entry
-	return sources

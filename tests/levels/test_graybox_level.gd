@@ -3,6 +3,7 @@
 extends GutTest
 
 const LEVEL_SCENE: PackedScene = preload("res://scenes/levels/graybox_level.tscn")
+const NavigationSync: GDScript = preload("res://tests/levels/navigation_sync.gd")
 
 var _level: Node3D
 
@@ -10,11 +11,9 @@ var _level: Node3D
 func before_each() -> void:
 	_level = LEVEL_SCENE.instantiate() as Node3D
 	add_child_autofree(_level)
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	# Let the navigation map take in the region.
-	_map()
-	await get_tree().physics_frame
+	await NavigationSync.wait_for_region(
+		_level.get_node("NavigationRegion3D") as NavigationRegion3D
+	)
 
 
 func after_each() -> void:
@@ -22,11 +21,7 @@ func after_each() -> void:
 
 
 func _map() -> RID:
-	var map: RID = (
-		(_level.get_node("NavigationRegion3D") as NavigationRegion3D).get_navigation_map()
-	)
-	NavigationServer3D.map_force_update(map)
-	return map
+	return (_level.get_node("NavigationRegion3D") as NavigationRegion3D).get_navigation_map()
 
 
 ## Distance along the navmesh path from `from` to `to`, or -1 if `to` can't be reached.
@@ -99,8 +94,7 @@ func test_has_doors_between_the_rooms() -> void:
 ## Opens a door and lets the navigation server pick up its link.
 func _open(door_name: String, from: Vector3) -> void:
 	_door(door_name).open(from)
-	await get_tree().physics_frame
-	await get_tree().physics_frame
+	await NavigationSync.wait_for_map_update(get_tree(), _map())
 
 
 func test_closed_doors_cut_the_rooms_off_from_the_street() -> void:
@@ -122,8 +116,7 @@ func test_closing_a_door_shuts_the_path_again() -> void:
 	var spawn: Vector3 = (_level.get_node("PlayerSpawn") as Marker3D).global_position
 	await _open("DoorFront", Vector3(0, 0, 14))
 	_door("DoorFront").close()
-	await get_tree().physics_frame
-	await get_tree().physics_frame
+	await NavigationSync.wait_for_map_update(get_tree(), _map())
 	assert_eq(_path_length(spawn, Vector3(3, 0, 4)), -1.0)
 
 
