@@ -4,6 +4,7 @@
 extends GutTest
 
 const LEVEL_SCENE: PackedScene = preload("res://scenes/levels/hotel_miramare.tscn")
+const NavigationSync: GDScript = preload("res://tests/levels/navigation_sync.gd")
 
 ## Floor heights, from the basement up.
 const BASEMENT_Y: float = -3.2
@@ -60,11 +61,9 @@ var _level: Node3D
 func before_each() -> void:
 	_level = LEVEL_SCENE.instantiate() as Node3D
 	add_child_autofree(_level)
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	# Let the navigation map take in the region.
-	_map()
-	await get_tree().physics_frame
+	await NavigationSync.wait_for_region(
+		_level.get_node("NavigationRegion3D") as NavigationRegion3D
+	)
 
 
 func after_each() -> void:
@@ -72,11 +71,7 @@ func after_each() -> void:
 
 
 func _map() -> RID:
-	var map: RID = (
-		(_level.get_node("NavigationRegion3D") as NavigationRegion3D).get_navigation_map()
-	)
-	NavigationServer3D.map_force_update(map)
-	return map
+	return (_level.get_node("NavigationRegion3D") as NavigationRegion3D).get_navigation_map()
 
 
 ## Distance along the navmesh path from `from` to `to`, or -1 if `to` can't be reached.
@@ -146,5 +141,4 @@ func _open(door_id: StringName) -> void:
 	var door: Door = _door(door_id)
 	door.is_locked = false
 	door.open(door.global_position + door.global_basis.z)
-	await get_tree().physics_frame
-	await get_tree().physics_frame
+	await NavigationSync.wait_for_map_update(get_tree(), _map())
