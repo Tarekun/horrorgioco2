@@ -46,6 +46,7 @@ Hitboxes sit on their own layer and only mask the opposing hurtbox layer; hurtbo
 - `Enemies` holds E1–E3 from the doc's encounters, all in the basement. E1 (`enemy_boiler_room`) is dormant behind the boilers until something calls `wake()`, which the power will do; E3 keeps to the staff room with a small `wander_radius`. The staff room door starts open, so E3 can come out.
 - `Pickups` holds the doc's items, each with its `pickup_id`: the healing (2 health drinks and a first aid kit), the steel pipe and the key items K1, K2 and K4. `BlockadeRoom28` is the plank across room 28's doorway: a pickup giving the wooden plank, with the plank's collider as a child, so taking it clears the way in.
 - `SaveSpots` holds S1–S3 with their `spot_id`s and area names.
+- `TensionEvents` is an instance of `scenes/levels/tension/hotel_tension_events.tscn`, the eleven one-shot scares of the doc's Tension table (see Tension events below).
 - `Documents` (D1–D4) and `Puzzles` (the key cabinet, and the spot on room 22's nightstand where the clock appears) are `Marker3D` placeholders carrying their ids as metadata, for #80 and #82 to replace.
 
 The player starts at `PlayerSpawn` in room 22. The navmesh is baked into `assets/data/hotel_miramare_navmesh.res`. The layout came from `tools/generate_hotel_graybox.py`, but everything above from `Enemies` down was placed by hand, so edit the scene directly: rerunning the generator would wipe it.
@@ -55,6 +56,19 @@ The player starts at `PlayerSpawn` in room 22. The navmesh is baked into `assets
 After changing a level's walls, doors or solid props, rebake its navmesh with `godot --headless --path . -s res://tools/bake_navmesh.gd -- <level>`, where `<level>` is `hotel_miramare` or `graybox_level`.
 
 Doors (`scenes/levels/door.tscn`) are `Interactable`s opened with `interact` (`PlayerInteraction` on the player, with the `InteractionHint` text at the bottom of the screen). A locked door with a `key_id` unlocks and opens for a player carrying that key item, with a "Used <key>." message; the key is kept. A door's `NavigationLink3D` is on only while it's open, so enemies don't path through closed doors. Navmeshes are baked with the doors shut, so rebake after moving one.
+
+## Tension events
+
+The scares above ground (`docs/design/slice.md`, Tension) are `TensionEvent`s (`scripts/levels/tension/`), one per id, under the hotel's `TensionEvents`. Each event fires once per level load and saves nothing, so loading a save plays it again. It is set off by a trigger child: a `TensionTrigger` (an `Area3D` that goes off when the player enters it) or a `TensionSight` (the player, standing in its area, looks at its `target` with nothing in between). When it fires it runs its `TensionAction` children, each after its own `delay`:
+
+- `TensionSound` plays a stream at its position, on the SFX bus (or Ambience for a lasting background), optionally for a `duration` or moving by `travel` while it plays;
+- `TensionParticles` starts a `CPUParticles3D` set up in the scene (left with `emitting` off), using the shared `assets/materials/vapour.tres` for steam, fog and draughts;
+- `TensionSway` swings a node around one of its axes, dying away over a `duration` or for good; `TensionTurn` turns one and leaves it (a door creaking open); `TensionReveal` shows hidden nodes (a lit stove's flame);
+- `TensionFlicker` flickers the lights and glowing lamp shades under two groups named by path, with a dip of the camera's exposure, since the hotel's lamps are baked into the lightmap and their energy only lights dynamic objects.
+
+All values are exported, so writers tune an event in the inspector. Wiring that is particular to one event is done with signal connections in the scene: room 21's `ShowerTap` (an `Interactable`, usable only while the shower runs) stops the water and the steam, and a second trigger by room 23's door stops the phone. Events are sound and light only: they never hurt the player and never call `NoiseEvent`, so enemies don't hear them.
+
+The props an event moves belong to the event, not to `Props`: the curtain at the 2F corridor's west end and room 13's wardrobe (`scenes/levels/tension/creaking_wardrobe.tscn`, with doors that open and hangers that swing). They are left out of `tools/dress_hotel.gd`'s layout, their meshes are `gi_mode` dynamic so a lightmap bake leaves them out, and their old entries were removed from the baked lightmap's users. The laundry's extra sheet in front of a linen cart is new and has no collider.
 
 ## Items
 
