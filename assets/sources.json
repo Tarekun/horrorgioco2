@@ -1,0 +1,13 @@
+{
+	"models": [
+		{
+			"name": "painted_chair",
+			"category": "props",
+			"source": "https://polyhaven.com/a/painted_wooden_chair_01",
+			"author": "Kuutti Siitonen",
+			"license": "CC0",
+			"fetch": {"polyhaven": "painted_wooden_chair_01"},
+			"process": {"triangles": 450, "texture_size": 256}
+		}
+	]
+}
