@@ -4,123 +4,123 @@
 [ext_resource type="PackedScene" path="res://assets/models/characters/luca/luca.gltf" id="2_6o6pb"]
 [ext_resource type="AnimationLibrary" path="res://assets/data/player_animations.res" id="3_vyyk8"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vyyk8"]
-albedo_color = Color(0.45, 0.32, 0.2, 1)
-roughness = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_cuhgi"]
-size = Vector3(0.05, 0.75, 0.09)
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_e734v"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_vyyk8"]
 animation = &"attack_heavy_charge"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_h5gvi"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_cuhgi"]
 animation = &"attack_heavy_swing"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_rfycw"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_e734v"]
 animation = &"attack_light_1"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mj8wc"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_h5gvi"]
 animation = &"attack_light_2"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lwyi2"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_rfycw"]
 animation = &"attack_light_3"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4lhdc"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mj8wc"]
 animation = &"backstep"
 play_mode = 1
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1uftg"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lwyi2"]
 animation = &"death"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_tiweb"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4lhdc"]
 animation = &"dodge"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_g6bvx"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1uftg"]
 animation = &"hit"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_psntq"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_tiweb"]
 animation = &"idle"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_6l5l2"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_g6bvx"]
 animation = &"walk"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_qnrl6"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_psntq"]
 animation = &"run"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ynfjr"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_6l5l2"]
 animation = &"sprint"
 
-[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_781a3"]
+[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_qnrl6"]
 min_space = 0.0
 max_space = 5.5
 sync_mode = 1
-blend_point_0/node = SubResource("AnimationNodeAnimation_psntq")
+blend_point_0/node = SubResource("AnimationNodeAnimation_tiweb")
 blend_point_0/pos = 0.0
 blend_point_0/name = &"idle"
-blend_point_1/node = SubResource("AnimationNodeAnimation_6l5l2")
+blend_point_1/node = SubResource("AnimationNodeAnimation_g6bvx")
 blend_point_1/pos = 1.5
 blend_point_1/name = &"walk"
-blend_point_2/node = SubResource("AnimationNodeAnimation_qnrl6")
+blend_point_2/node = SubResource("AnimationNodeAnimation_psntq")
 blend_point_2/pos = 3.5
 blend_point_2/name = &"run"
-blend_point_3/node = SubResource("AnimationNodeAnimation_ynfjr")
+blend_point_3/node = SubResource("AnimationNodeAnimation_6l5l2")
 blend_point_3/pos = 5.5
 blend_point_3/name = &"sprint"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mftr4"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ynfjr"]
 animation = &"winded"
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gnbca"]
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_781a3"]
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_c8n1s"]
-states/attack_heavy_charge/node = SubResource("AnimationNodeAnimation_e734v")
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_mftr4"]
+states/attack_heavy_charge/node = SubResource("AnimationNodeAnimation_vyyk8")
 states/attack_heavy_charge/position = Vector2(300, 400)
-states/attack_heavy_swing/node = SubResource("AnimationNodeAnimation_h5gvi")
+states/attack_heavy_swing/node = SubResource("AnimationNodeAnimation_cuhgi")
 states/attack_heavy_swing/position = Vector2(300, 500)
-states/attack_light_1/node = SubResource("AnimationNodeAnimation_rfycw")
+states/attack_light_1/node = SubResource("AnimationNodeAnimation_e734v")
 states/attack_light_1/position = Vector2(300, 100)
-states/attack_light_2/node = SubResource("AnimationNodeAnimation_mj8wc")
+states/attack_light_2/node = SubResource("AnimationNodeAnimation_h5gvi")
 states/attack_light_2/position = Vector2(300, 200)
-states/attack_light_3/node = SubResource("AnimationNodeAnimation_lwyi2")
+states/attack_light_3/node = SubResource("AnimationNodeAnimation_rfycw")
 states/attack_light_3/position = Vector2(300, 300)
-states/backstep/node = SubResource("AnimationNodeAnimation_4lhdc")
+states/backstep/node = SubResource("AnimationNodeAnimation_mj8wc")
 states/backstep/position = Vector2(300, 700)
-states/death/node = SubResource("AnimationNodeAnimation_1uftg")
+states/death/node = SubResource("AnimationNodeAnimation_lwyi2")
 states/death/position = Vector2(300, 900)
-states/dodge/node = SubResource("AnimationNodeAnimation_tiweb")
+states/dodge/node = SubResource("AnimationNodeAnimation_4lhdc")
 states/dodge/position = Vector2(300, 600)
-states/hit/node = SubResource("AnimationNodeAnimation_g6bvx")
+states/hit/node = SubResource("AnimationNodeAnimation_1uftg")
 states/hit/position = Vector2(300, 800)
-states/locomotion/node = SubResource("AnimationNodeBlendSpace1D_781a3")
+states/locomotion/node = SubResource("AnimationNodeBlendSpace1D_qnrl6")
 states/locomotion/position = Vector2(0, 0)
-states/winded/node = SubResource("AnimationNodeAnimation_mftr4")
+states/winded/node = SubResource("AnimationNodeAnimation_ynfjr")
 states/winded/position = Vector2(300, 1000)
-transitions = ["Start", "locomotion", SubResource("AnimationNodeStateMachineTransition_gnbca")]
+transitions = ["Start", "locomotion", SubResource("AnimationNodeStateMachineTransition_781a3")]
 
-[node name="PlayerModel" type="Node3D" unique_id=817793877 node_paths=PackedStringArray("limp_pivot", "animation_tree")]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gnbca"]
+albedo_color = Color(0.45, 0.32, 0.2, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_c8n1s"]
+size = Vector3(0.05, 0.75, 0.09)
+
+[node name="PlayerModel" type="Node3D" unique_id=1105220391 node_paths=PackedStringArray("limp_pivot", "animation_tree")]
 script = ExtResource("1_54w00")
 limp_pivot = NodePath("Model")
 animation_tree = NodePath("AnimationTree")
 
 [node name="Model" type="Node3D" parent="." unique_id=1959901072 instance=ExtResource("2_6o6pb")]
 
-[node name="PlankAttachment" type="BoneAttachment3D" parent="." unique_id=586035138]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1309001477]
+libraries/ = ExtResource("3_vyyk8")
+
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=1870455327]
+callback_mode_method = 1
+tree_root = SubResource("AnimationNodeStateMachine_mftr4")
+anim_player = NodePath("../AnimationPlayer")
+parameters/locomotion/blend_position = 0.0
+
+[node name="PlankAttachment" type="BoneAttachment3D" parent="." unique_id=130332562]
 bone_name = "DEF-hand.R"
 use_external_skeleton = true
 external_skeleton = NodePath("../Model/Rig/Skeleton3D")
 
-[node name="Plank" type="MeshInstance3D" parent="PlankAttachment" unique_id=1203502455]
+[node name="Plank" type="MeshInstance3D" parent="PlankAttachment" unique_id=1687186156]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
-material_override = SubResource("StandardMaterial3D_vyyk8")
-mesh = SubResource("BoxMesh_cuhgi")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=903059417]
-libraries/ = ExtResource("3_vyyk8")
-
-[node name="AnimationTree" type="AnimationTree" parent="." unique_id=463057860]
-callback_mode_method = 1
-tree_root = SubResource("AnimationNodeStateMachine_c8n1s")
-anim_player = NodePath("../AnimationPlayer")
-parameters/locomotion/blend_position = 0.0
+material_override = SubResource("StandardMaterial3D_gnbca")
+mesh = SubResource("BoxMesh_c8n1s")

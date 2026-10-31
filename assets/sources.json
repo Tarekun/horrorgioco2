@@ -492,6 +492,25 @@
 				"drop": "Icosphere",
 				"actions": "Idle_Loop,Walk_Loop,Jog_Fwd_Loop,Sprint_Loop,Punch_Jab,Punch_Cross,Punch_Enter,Sword_Attack,Roll,Hit_Chest,Death01,Crouch_Idle_Loop"
 			}
+		},
+		{
+			"name": "monster",
+			"category": "monsters",
+			"source": "https://opengameart.org/node/174563",
+			"author": "Quaternius",
+			"license": "CC0",
+			"fetch": {
+				"url": "https://opengameart.org/sites/default/files/universal_animation_librarystandard.zip",
+				"file": "Animation Library[Standard]/Godot/AnimationLibrary_Godot_Standard.glb"
+			},
+			"process": {
+				"triangles": 4000,
+				"texture_size": 512,
+				"rotate": 180,
+				"height": 1.8,
+				"drop": "Icosphere",
+				"actions": "Idle_Loop,Walk_Loop,Jog_Fwd_Loop,Sword_Attack,Hit_Chest,Death01"
+			}
 		}
 	],
 	"textures": [
