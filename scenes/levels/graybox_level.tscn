@@ -1,6 +1,7 @@
-[gd_scene load_steps=71 format=3]
+[gd_scene load_steps=72 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
+[ext_resource type="Resource" path="res://assets/data/items/wooden_plank.tres" id="starting_weapon"]
 [ext_resource type="Environment" path="res://assets/data/atmosphere_environment.tres" id="2"]
 [ext_resource type="AudioStream" path="res://assets/audio/ambience_drone.wav" id="3"]
 [ext_resource type="Script" path="res://scripts/audio/ambience_player.gd" id="4"]
@@ -665,6 +666,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 20)
 [node name="Player" parent="." instance=ExtResource("1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 20)
 
+[node name="PlayerItems" parent="Player"]
+starting_weapon = ExtResource("starting_weapon")
+
 [node name="Enemies" type="Node3D" parent="."]
 
 [node name="EnemyCorridor" parent="Enemies" instance=ExtResource("5")]
@@ -739,3 +743,5 @@ item = ExtResource("13")
 [node name="FireAxeOffice" parent="Pickups" instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0, -7)
 item = ExtResource("14")
+
+[editable path="Player"]

@@ -47,6 +47,9 @@ func test_level_has_player_with_camera_and_outdoor_fog() -> void:
 	var player := _level.get_node("Player") as Player
 	assert_not_null(player)
 	assert_not_null(player.camera_controller)
+	assert_eq(
+		player.items.equipped_weapon, ItemCatalog.find(&"wooden_plank"), "armed to try combat"
+	)
 	assert_eq(_level.get_node("Outdoors").find_children("*", "FogVolume", true, false).size(), 1)
 
 

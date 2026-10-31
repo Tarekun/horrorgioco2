@@ -65,6 +65,9 @@ func test_player_spawns_at_the_spawn_point() -> void:
 	assert_not_null(spawn)
 	assert_almost_eq(player.global_position.x, spawn.global_position.x, 0.5)
 	assert_almost_eq(player.global_position.z, spawn.global_position.z, 0.5)
+	assert_eq(
+		player.items.equipped_weapon, ItemCatalog.find(&"wooden_plank"), "armed to try combat"
+	)
 
 
 func test_at_least_two_enemies_are_placed() -> void:
