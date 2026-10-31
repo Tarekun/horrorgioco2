@@ -1,4 +1,5 @@
-## Tests for enemies as persistent objects: recording and loading corpses.
+## Tests for enemies as persistent objects: recording and loading corpses, and
+## waking as placed when a load sets the event that wakes them.
 
 extends GutTest
 
@@ -104,3 +105,15 @@ func test_loading_another_state_leaves_it_alive() -> void:
 	_enemy.load_state({})
 	_enemy.load_state({"is_dead": false})
 	assert_false(_enemy.is_dead())
+
+
+func test_a_loaded_event_wakes_a_dormant_enemy_unalerted() -> void:
+	var sleeper: Enemy = _spawn_enemy(Vector3(4.0, 0.0, -4.0))
+	sleeper.is_dormant = true
+	await _frames(3)
+	var placed: Vector3 = sleeper.global_position
+	sleeper.wake(false)
+	assert_false(sleeper.is_dormant)
+	assert_false(sleeper.perception.is_alert())
+	assert_false(sleeper.is_chasing())
+	assert_almost_eq(sleeper.global_position, placed, Vector3.ONE * 0.01)

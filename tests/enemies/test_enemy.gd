@@ -102,15 +102,6 @@ func test_waking_alerts_a_dormant_enemy_to_the_player() -> void:
 	assert_eq(sleeper.get_state(), EnemyBrain.State.CHASE)
 
 
-func test_waking_unalerted_leaves_it_as_placed() -> void:
-	var sleeper: Enemy = _spawn_dormant(Vector3(4.0, 0.0, -4.0))
-	await _frames(3)
-	sleeper.wake(false)
-	assert_false(sleeper.is_dormant)
-	assert_false(sleeper.perception.is_alert())
-	assert_false(sleeper.is_chasing())
-
-
 func test_a_hit_wakes_a_dormant_enemy() -> void:
 	var sleeper: Enemy = _spawn_dormant(Vector3(4.0, 0.0, -4.0))
 	await _frames(3)
