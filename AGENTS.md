@@ -48,7 +48,7 @@ All GDScript is statically typed. `project.godot` sets `debug/gdscript/warnings/
 |---|---|
 | `scenes/` | Scenes (`.tscn`), grouped in subfolders by feature (`scenes/player/`, `scenes/enemies/`, `scenes/levels/`). `scenes/main.tscn` is the entry point. |
 | `scripts/` | GDScript, mirroring `scenes/` (`scenes/player/player.tscn` → `scripts/player/player.gd`). Autoloads go in `scripts/autoload/`. |
-| `assets/` | Imported art, audio and fonts by type (`assets/models/`, `assets/textures/`, `assets/audio/`). Data resources (`.tres`) go in `assets/data/`. |
+| `assets/` | Imported art, audio and fonts by type (`assets/models/`, `assets/textures/`, `assets/audio/`), with shared materials in `assets/materials/`. Data resources (`.tres`) go in `assets/data/`. Downloaded models and textures go through the asset pipeline in `tools/README.md`. |
 | `tests/` | GUT tests mirroring `scripts/` (`scripts/player/player.gd` → `tests/player/test_player.gd`). |
 | `tools/` | Development tooling (check script). Not shipped. |
 | `addons/` | Third-party plugins (GUT). Don't edit; update by replacing the whole folder. |

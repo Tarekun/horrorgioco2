@@ -1,34 +1,14 @@
-## The player's visible character: a skinned rig with idle, walk and run
-## animations blended by movement speed through an AnimationTree.
-##
-## The player reports its ground speed with set_speed(); the model smooths it
-## and feeds it to the locomotion blend space. One-off actions (attacks, dodge,
-## hit reactions) are further states of the tree's state machine: play_action()
-## jumps to one and return_to_locomotion() goes back.
-##
-## The model advances the tree itself each frame, so an action can be played
-## faster or slower than its clip (a slow weapon's swing) and the whole
-## animation can freeze (hitstop) without restarting the state machine.
+## The player's visible character (see CharacterModel), plus what only the
+## player's body does: footsteps called from the walk and run clips, and a limp
+## when hurt.
 
 class_name PlayerModel
-extends Node3D
+extends CharacterModel
 
 ## Emitted when a foot lands, with the speed (m/s) the character is moving at.
 signal footstep_taken(speed: float)
 
-## Name of the AnimationTree parameter driving the locomotion blend space.
-const BLEND_PARAMETER: StringName = &"parameters/locomotion/blend_position"
-
-## Name of the state machine state holding the locomotion blend space.
-const LOCOMOTION_STATE: StringName = &"locomotion"
-
-## Name of the AnimationTree parameter holding the state machine playback.
-const PLAYBACK_PARAMETER: StringName = &"parameters/playback"
-
-## How quickly the blend follows the speed (higher is snappier).
-@export var blend_responsiveness: float = 12.0
-
-## The node the limp tilts and dips: the skeleton, which no clip animates.
+## The node the limp tilts and dips: the model, which no clip moves.
 @export var limp_pivot: Node3D
 
 ## How far (metres) the body dips and how far (radians) it rolls at a full limp
@@ -42,9 +22,6 @@ const PLAYBACK_PARAMETER: StringName = &"parameters/playback"
 ## Limp cycles per metre travelled.
 @export var limp_cycles_per_metre: float = 0.5
 
-## The AnimationTree holding the locomotion blend space.
-@export var animation_tree: AnimationTree
-
 ## Footsteps are ignored below this blend speed (m/s), so a near-idle pose
 ## stays silent even though the walk clip has a little weight.
 @export var min_footstep_speed: float = 0.6
@@ -53,43 +30,16 @@ const PLAYBACK_PARAMETER: StringName = &"parameters/playback"
 ## emit_footstep() at the same instant; this folds those into one.
 @export var min_footstep_interval: float = 0.15
 
-var _target_speed: float = 0.0
-var _blend_speed: float = 0.0
 var _time_since_footstep: float = 1.0
-var _playback: AnimationNodeStateMachinePlayback
 var _limp_target: float = 0.0
 var _limp: float = 0.0
 var _limp_phase: float = 0.0
-var _action_speed: float = 1.0
-var _is_frozen: bool = false
-
-
-func _ready() -> void:
-	if animation_tree:
-		animation_tree.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
-		_playback = animation_tree.get(PLAYBACK_PARAMETER) as AnimationNodeStateMachinePlayback
 
 
 func _process(delta: float) -> void:
 	_time_since_footstep += delta
-	_blend_speed = smoothed_speed(_blend_speed, _target_speed, blend_responsiveness, delta)
-	if animation_tree:
-		animation_tree.set(BLEND_PARAMETER, _blend_speed)
-		if not _is_frozen:
-			animation_tree.advance(delta * _action_speed)
+	super(delta)
 	_update_limp(delta)
-
-
-## Exponentially approaches `target` from `current`, frame-rate independent.
-static func smoothed_speed(
-	current: float, target: float, responsiveness: float, delta: float
-) -> float:
-	return lerpf(current, target, 1.0 - exp(-responsiveness * delta))
-
-
-## Sets the horizontal speed (m/s) the locomotion animations should match.
-func set_speed(speed: float) -> void:
-	_target_speed = maxf(speed, 0.0)
 
 
 ## Sets how strongly the character limps (0 to 1). It eases in and out, and
@@ -109,50 +59,6 @@ func get_limp() -> float:
 static func limp_offset(phase: float, weight: float, dip: float, roll: float) -> Vector2:
 	var sway: float = sin(phase)
 	return Vector2(-dip * weight * (0.5 + 0.5 * sway), roll * weight * sway)
-
-
-## Returns the smoothed speed currently driving the blend.
-func get_blend_speed() -> float:
-	return _blend_speed
-
-
-## Plays a one-off action clip (an attack, say) from its start. Given a
-## `duration`, the clip is stretched or squeezed to last that many seconds, so
-## a slow weapon swings slowly; otherwise it plays at its own length.
-func play_action(action: StringName, duration: float = 0.0) -> void:
-	if _playback == null:
-		return
-	_action_speed = 1.0
-	if duration > 0.0 and animation_tree.has_animation(action):
-		_action_speed = animation_tree.get_animation(action).length / duration
-	_playback.start(action, true)
-
-
-## Goes back to the locomotion blend.
-func return_to_locomotion() -> void:
-	_action_speed = 1.0
-	if _playback:
-		_playback.start(LOCOMOTION_STATE, true)
-
-
-## Returns the state currently playing: LOCOMOTION_STATE or an action's name.
-func get_current_state() -> StringName:
-	return _playback.get_current_node() if _playback else &""
-
-
-## Freezes or resumes the animation (hitstop).
-func set_frozen(is_frozen: bool) -> void:
-	_is_frozen = is_frozen
-
-
-func is_frozen() -> bool:
-	return _is_frozen
-
-
-## How fast the tree plays relative to its clips: 1 except while an action is
-## stretched to a duration.
-func get_action_speed() -> float:
-	return _action_speed
 
 
 func _update_limp(delta: float) -> void:

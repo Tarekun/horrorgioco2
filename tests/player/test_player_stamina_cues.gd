@@ -117,7 +117,9 @@ func test_sprinting_to_zero_gets_the_player_winded() -> void:
 func test_the_animation_clip_exists() -> void:
 	var player := _player.model.get_node("AnimationPlayer") as AnimationPlayer
 	assert_true(player.has_animation(PlayerStaminaCues.WINDED_ACTION))
-	assert_lt(player.get_animation(PlayerStaminaCues.WINDED_ACTION).length, 1.5, "a short one")
+	var animation: Animation = player.get_animation(PlayerStaminaCues.WINDED_ACTION)
+	# It loops, so it holds for however long the player stays winded.
+	assert_eq(animation.loop_mode, Animation.LOOP_LINEAR, "loops")
 
 
 func test_no_winded_animation_over_another_action() -> void:

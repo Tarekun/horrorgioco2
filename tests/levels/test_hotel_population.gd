@@ -61,7 +61,8 @@ func test_the_pickups_hold_the_budget() -> void:
 		elif item.category == ItemData.Category.WEAPON:
 			weapons.append(item.id)
 	assert_eq(healing, HEALING_TOTAL)
-	weapons.sort()
+	# StringNames sort by address, not by text.
+	weapons.sort_custom(func(a: StringName, b: StringName) -> bool: return str(a) < str(b))
 	assert_eq(weapons, [&"steel_pipe", &"wooden_plank"] as Array[StringName])
 
 
