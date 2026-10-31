@@ -114,9 +114,9 @@
 [ext_resource type="PackedScene" uid="uid://bs74nu153ni6k" path="res://assets/models/props/sign/sign_do_not_disturb.gltf" id="99_rnndf"]
 [ext_resource type="PackedScene" uid="uid://buq3uaplygqb2" path="res://assets/models/props/room_number/room_number_23.gltf" id="100_0aray"]
 [ext_resource type="PackedScene" uid="uid://c77nse6ncs3ob" path="res://assets/models/props/room_number/room_number_25.gltf" id="101_swu8v"]
-[ext_resource type="PackedScene" uid="uid://dehys57fu60y5" path="res://assets/models/props/curtain/curtain.gltf" id="102_4npss"]
 [ext_resource type="PackedScene" uid="uid://dpdxm36dboj6m" path="res://assets/models/environment/balcony_divider/balcony_divider.gltf" id="103_87koc"]
 [ext_resource type="LightmapGIData" uid="uid://co2ik4xvqnmhn" path="res://scenes/levels/hotel_miramare.lmbake" id="104_sc03c"]
+[ext_resource type="PackedScene" path="res://scenes/levels/tension/hotel_tension_events.tscn" id="105_tension"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c7jyt"]
 resource_name = "concrete_floor"
@@ -5355,9 +5355,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 3.2, 4.5)
 [node name="RoomNumber15" parent="Props/FirstFloor" unique_id=1532107557 instance=ExtResource("87_r1rj7")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 10.3, 4.9, 0.9)
 
-[node name="Wardrobe3" parent="Props/FirstFloor" unique_id=1267431714 instance=ExtResource("82_r4ggw")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 17.56, 3.2, 3.75)
-
 [node name="Bed4" parent="Props/FirstFloor" unique_id=1110490412 instance=ExtResource("81_lgopr")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 13.14, 3.2, 5.2)
 
@@ -5514,9 +5511,6 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 10.3
 
 [node name="SignStairs" parent="Props/SecondFloor" unique_id=1407838484 instance=ExtResource("70_fqrgp")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3, 9.15, 0.89)
-
-[node name="Curtain" parent="Props/SecondFloor" unique_id=98655483 instance=ExtResource("102_4npss")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.17, 8.85, -0.25)
 
 [node name="Armchair" parent="Props/SecondFloor" unique_id=1405599960 instance=ExtResource("68_csqy6")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 6.4, -6.3)
@@ -6000,6 +5994,8 @@ metadata/reward_item = &"key_basement"
 [node name="ClockRoom22" type="Marker3D" parent="Puzzles" unique_id=295565761]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.65, 7, -5.3)
 metadata/appears_after = &"doc_porter_log"
+
+[node name="TensionEvents" parent="." instance=ExtResource("105_tension")]
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=322884459]
 navigation_mesh = ExtResource("6")
