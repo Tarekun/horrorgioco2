@@ -18,7 +18,7 @@ extends Node
 ## Emitted when the winded animation starts.
 signal winded
 
-## The animation state played when winded (see tools/generate_player_model.gd).
+## The animation state played when winded (see tools/generate_character_models.gd).
 const WINDED_ACTION: StringName = &"winded"
 
 ## Stamina (as a fraction of the maximum) above which breathing is silent.

@@ -146,7 +146,7 @@ func test_dead_enemies_are_corpses_where_they_fell() -> void:
 	var corpse: Enemy = _enemy("EnemyYard")
 	assert_true(corpse.is_dead())
 	assert_almost_eq(corpse.global_position, Vector3(-18.0, 0.0, -3.0), Vector3.ONE * 0.01)
-	assert_almost_eq(corpse.rotation_degrees.x, -90.0, 0.01)
+	assert_almost_eq(corpse.rotation_degrees.x, 90.0, 0.01)
 	assert_false(corpse.is_in_group(Enemy.ENEMY_GROUP))
 	await get_tree().physics_frame
 	assert_true(corpse.is_dead())

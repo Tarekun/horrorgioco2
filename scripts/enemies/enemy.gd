@@ -16,6 +16,11 @@
 ## A dormant enemy stands still, blind and deaf, until a level event calls
 ## wake() or the player hits it; either way it wakes alerted to the player.
 ##
+## Its EnemyModel shows all this: it is fed the enemy's speed, and plays the
+## attack, stagger, fall and get-up clips as the state changes. A downed enemy
+## lies on its back; the model is turned back upright inside the lying body,
+## so its own fall animation shows it going down.
+##
 ## Enemies are persistent (see WorldState): dying records the corpse's
 ## position in SaveSystem.world, and loading a save lays the corpse there
 ## again. Living enemies record nothing, so a load brings them back where they
@@ -77,6 +82,10 @@ const PLAYER_GROUP: StringName = &"player"
 ## Seconds a downed enemy stays down, plus or minus the variation.
 @export var downed_duration: float = 8.0
 @export var downed_variation: float = 2.0
+## Seconds a downed enemy takes to get up, standing still.
+@export var get_up_duration: float = 1.2
+## Seconds the fall animation takes.
+@export var fall_duration: float = 1.2
 ## Fraction of its maximum health an enemy gets back up with.
 @export_range(0.0, 1.0) var get_up_health_ratio: float = 0.4
 
@@ -86,6 +95,8 @@ const PLAYER_GROUP: StringName = &"player"
 @export var attack_hitbox: Hitbox
 @export var navigation_agent: NavigationAgent3D
 @export var perception: EnemyPerception
+## The animated body. Optional: without one the enemy still works, unseen.
+@export var model: EnemyModel
 
 ## The player being hunted. Found in the player group when not set.
 var target: Node3D
@@ -100,6 +111,7 @@ var _spawn_position: Vector3
 var _attack_time: float = 0.0
 var _cooldown_left: float = 0.0
 var _has_wander_point: bool = false
+var _getting_up_left: float = 0.0
 
 
 func _ready() -> void:
@@ -125,14 +137,16 @@ func _physics_process(delta: float) -> void:
 		_cooldown_left -= delta
 	if is_dormant:
 		_stop()
-		move_and_slide()
-		return
-
-	perception.update(delta, _get_target())
-	var senses := _gather_senses()
-	brain.tick(delta, senses)
-	_run_state(delta)
+	else:
+		perception.update(delta, _get_target())
+		var senses := _gather_senses()
+		brain.tick(delta, senses)
+		_run_state(delta)
+		if _getting_up_left > 0.0:
+			_getting_up_left -= delta
+			_stop()
 	move_and_slide()
+	_update_model()
 
 
 ## Current state of the state machine.
@@ -186,6 +200,9 @@ func load_state(state: Dictionary) -> void:
 	global_position = WorldState.decode_vector(state.get("position"), global_position)
 	rotation = WorldState.decode_vector(state.get("rotation"), rotation)
 	brain.kill()
+	_keep_model_upright()
+	if model:
+		model.finish_action(&"fall")
 
 
 ## Picks a random point near the spawn that the navmesh can reach. Returns
@@ -302,6 +319,8 @@ func _start_attack() -> void:
 	is_attacking = true
 	_attack_time = 0.0
 	attack_hitbox.damage = Scarcity.current().roll_enemy_damage(rng)
+	if model:
+		model.play_action(&"attack", attack_windup + attack_active + attack_recovery)
 	attack_started.emit()
 
 
@@ -320,6 +339,9 @@ func _on_state_changed(old_state: EnemyBrain.State, new_state: EnemyBrain.State)
 	match new_state:
 		EnemyBrain.State.ATTACK:
 			_start_attack()
+		EnemyBrain.State.STAGGER:
+			if model:
+				model.play_action(&"stagger", stagger_duration)
 		EnemyBrain.State.DOWNED:
 			_fall()
 		EnemyBrain.State.DEAD:
@@ -354,16 +376,37 @@ func _roll_downed_duration() -> float:
 
 func _fall() -> void:
 	add_to_group(DOWNED_GROUP)
-	rotation_degrees.x = -90.0
+	# On its back, the way the fall animation lands.
+	rotation_degrees.x = 90.0
+	_keep_model_upright()
+	if model:
+		model.play_action(&"fall", fall_duration)
 	downed.emit()
 
 
 func _get_up() -> void:
 	remove_from_group(DOWNED_GROUP)
 	rotation_degrees.x = 0.0
+	_keep_model_upright()
+	_getting_up_left = get_up_duration
+	if model:
+		model.play_action(&"get_up", get_up_duration)
 	if health_component.is_dead:
 		health_component.revive(health_component.max_health * get_up_health_ratio)
 	got_up.emit()
+
+
+## Feeds the model the speed the enemy moves at.
+func _update_model() -> void:
+	if model:
+		model.set_speed(Vector2(velocity.x, velocity.z).length())
+
+
+## Turns the model back against the body's tilt, so its animations play
+## standing on the floor whether the body is up or lying down.
+func _keep_model_upright() -> void:
+	if model:
+		model.rotation.x = -rotation.x
 
 
 func _become_corpse() -> void:

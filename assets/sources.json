@@ -1,6 +1,22 @@
 {
 	"models": [
 		{
+			"name": "monster",
+			"category": "monsters",
+			"source": "https://opengameart.org/node/174563",
+			"author": "Quaternius",
+			"license": "CC0",
+			"fetch": {
+				"url": "https://opengameart.org/sites/default/files/universal_animation_librarystandard.zip",
+				"file": "Animation Library[Standard]/Godot/AnimationLibrary_Godot_Standard.glb"
+			},
+			"process": {
+				"triangles": 4000, "texture_size": 512, "rotate": 180, "height": 1.8,
+				"drop": "Icosphere",
+				"actions": "Idle_Loop,Walk_Loop,Jog_Fwd_Loop,Sword_Attack,Hit_Chest,Death01"
+			}
+		},
+		{
 			"name": "painted_chair",
 			"category": "props",
 			"source": "https://polyhaven.com/a/painted_wooden_chair_01",

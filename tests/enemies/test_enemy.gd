@@ -152,7 +152,7 @@ func test_falls_down_at_zero_health() -> void:
 	assert_true(_enemy.is_in_group(Enemy.DOWNED_GROUP))
 	assert_signal_emitted(_enemy, "downed")
 	assert_signal_not_emitted(_enemy, "died")
-	assert_eq(_enemy.rotation_degrees.x, -90.0)
+	assert_eq(_enemy.rotation_degrees.x, 90.0)
 
 
 func test_a_downed_enemy_does_not_move_or_attack() -> void:
@@ -215,7 +215,7 @@ func test_a_corpse_stays_and_never_gets_up() -> void:
 	await _seconds(2.0)
 	assert_true(is_instance_valid(_enemy))
 	assert_true(_enemy.is_dead())
-	assert_eq(_enemy.rotation_degrees.x, -90.0)
+	assert_eq(_enemy.rotation_degrees.x, 90.0)
 	assert_eq(_enemy.collision_layer, 0)
 
 

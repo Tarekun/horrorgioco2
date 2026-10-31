@@ -1,0 +1,90 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_model.gd" id="1_d01jf"]
+[ext_resource type="PackedScene" path="res://assets/models/monsters/monster/monster.gltf" id="2_lf7uq"]
+[ext_resource type="AnimationLibrary" path="res://assets/data/enemy_animations.res" id="3_f103d"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rpi5p"]
+albedo_color = Color(0.42, 0.44, 0.38, 1)
+roughness = 0.9
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lvwqp"]
+animation = &"attack"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_nhsxk"]
+animation = &"fall"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_j5rvg"]
+animation = &"get_up"
+play_mode = 1
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_nlnek"]
+animation = &"idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_abuuq"]
+animation = &"walk"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_efoch"]
+animation = &"run"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_vttwq"]
+min_space = 0.0
+max_space = 3.0
+sync_mode = 1
+blend_point_0/node = SubResource("AnimationNodeAnimation_nlnek")
+blend_point_0/pos = 0.0
+blend_point_0/name = &"idle"
+blend_point_1/node = SubResource("AnimationNodeAnimation_abuuq")
+blend_point_1/pos = 1.2
+blend_point_1/name = &"walk"
+blend_point_2/node = SubResource("AnimationNodeAnimation_efoch")
+blend_point_2/pos = 3.0
+blend_point_2/name = &"run"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7ok14"]
+animation = &"stagger"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_138ef"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ivbes"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qsaiu"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_jabjb"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_3ek70"]
+states/attack/node = SubResource("AnimationNodeAnimation_lvwqp")
+states/attack/position = Vector2(300, 100)
+states/fall/node = SubResource("AnimationNodeAnimation_nhsxk")
+states/fall/position = Vector2(300, 300)
+states/get_up/node = SubResource("AnimationNodeAnimation_j5rvg")
+states/get_up/position = Vector2(300, 400)
+states/locomotion/node = SubResource("AnimationNodeBlendSpace1D_vttwq")
+states/locomotion/position = Vector2(0, 0)
+states/stagger/node = SubResource("AnimationNodeAnimation_7ok14")
+states/stagger/position = Vector2(300, 200)
+transitions = ["attack", "locomotion", SubResource("AnimationNodeStateMachineTransition_138ef"), "stagger", "locomotion", SubResource("AnimationNodeStateMachineTransition_ivbes"), "get_up", "locomotion", SubResource("AnimationNodeStateMachineTransition_qsaiu"), "Start", "locomotion", SubResource("AnimationNodeStateMachineTransition_jabjb")]
+
+[node name="EnemyModel" type="Node3D" unique_id=497239360 node_paths=PackedStringArray("skeleton", "animation_tree")]
+script = ExtResource("1_d01jf")
+skin = SubResource("StandardMaterial3D_rpi5p")
+skeleton = NodePath("Model/Rig/Skeleton3D")
+animation_tree = NodePath("AnimationTree")
+
+[node name="Model" type="Node3D" parent="." unique_id=1106243547 instance=ExtResource("2_lf7uq")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=447969898]
+libraries/ = ExtResource("3_f103d")
+
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=711959315]
+callback_mode_method = 1
+tree_root = SubResource("AnimationNodeStateMachine_3ek70")
+anim_player = NodePath("../AnimationPlayer")
+parameters/locomotion/blend_position = 0.0
