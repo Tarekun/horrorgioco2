@@ -33,7 +33,7 @@ Commit each model with its `.import` file and, for static models, the `.unwrap_c
 
 ```sh
 "$BLENDER" --background --factory-startup --python tools/process_model.py -- \
-    INPUT.glb OUTPUT.gltf --triangles 450 --texture-size 256 [--rotate 180] [--height 1.8]
+    INPUT.glb OUTPUT.gltf --triangles 450 --texture-size 256 [--rotate 180] [--height 1.8] [--drop OBJECT,...] [--actions CLIP,...]
 ```
 
 It imports glTF, FBX, OBJ or `.blend`; turns and scales the model and puts its origin at the bottom centre; decimates it to `--triangles` (first merging flat areas, then collapsing edges); keeps only the base colour, alpha and emission of each material, with constant roughness and metallic; downscales textures to `--texture-size`; and exports glTF with separate textures and its animations. `--help` lists every option.
@@ -44,6 +44,7 @@ It imports glTF, FBX, OBJ or `.blend`; turns and scales the model and puts its o
 - **Models** get an `.import` file that swaps each material named after a shared one (`assets/materials/<name>.tres`) in for it, and unwraps `environment`, `props` and `hero_props` models for baked lightmaps.
 - **`--collision box`** adds the model's bounding box as a convex collider, for furniture the player should bump into.
 - **Units.** A source in the wrong units comes out the wrong size; check it in the editor and fix it with `--height`.
+- **`--drop`** deletes the named objects (a source's helper shapes) and **`--actions`** keeps only the named animations, so a character carries just the clips the game plays.
 - **Shape keys** are dropped from meshes that need decimating, since Blender can't apply a modifier to them.
 - Heavy decimation (over about 90%) breaks thin parts such as chair spokes. Prefer sources already near the budget, and look at the result.
 

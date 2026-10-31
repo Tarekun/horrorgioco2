@@ -25,7 +25,8 @@ INPUT is a .gltf, .glb, .fbx, .obj or .blend file. The script:
    object named *-convcolonly, which Godot doesn't draw), so that furniture
    blocks the player;
 7. exports glTF (separate .gltf, .bin and textures named after it) with
-   its animations.
+   its animations; --actions keeps only the named ones, and --drop deletes
+   the named objects first (a source's helper shapes).
 
 The triangle count after decimation is printed; tests/assets/test_model_budgets.gd
 checks the exported models against the budgets of their folder.
@@ -55,6 +56,8 @@ PLANAR_ANGLE = 5.0
 def main():
     args = parse_args(sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else [])
     load(args.input)
+    drop_objects(args.drop)
+    keep_actions(args.actions)
     transform(args.rotate, args.height, args.scale, args.origin)
     before = count_triangles()
     decimate(args.triangles)
@@ -79,6 +82,8 @@ def parse_args(argv):
     parser.add_argument(
         "--origin", choices=["bottom", "keep"], default="bottom", help="where to put the origin"
     )
+    parser.add_argument("--drop", default="", help="comma-separated objects to delete")
+    parser.add_argument("--actions", default="", help="comma-separated animations to keep")
     parser.add_argument("--roughness", type=float, default=0.8, help="constant roughness")
     parser.add_argument("--metallic", type=float, default=0.0, help="constant metallic")
     parser.add_argument(
@@ -99,6 +104,32 @@ def load(path):
         sys.exit(f"process_model: unsupported format {extension}")
     bpy.ops.wm.read_factory_settings(use_empty=True)
     IMPORTERS[extension](os.path.abspath(path))
+
+
+def drop_objects(names):
+    for name in filter(None, names.split(",")):
+        obj = bpy.data.objects.get(name)
+        if obj is None:
+            sys.exit(f"process_model: no object named {name} to drop")
+        bpy.data.objects.remove(obj)
+
+
+def keep_actions(names):
+    wanted = set(filter(None, names.split(",")))
+    if not wanted:
+        return
+    missing = wanted - {a.name for a in bpy.data.actions}
+    if missing:
+        sys.exit(f"process_model: no animation named {', '.join(sorted(missing))}")
+    for action in list(bpy.data.actions):
+        if action.name not in wanted:
+            bpy.data.actions.remove(action)
+    for obj in bpy.data.objects:
+        if obj.animation_data:
+            obj.animation_data.action = None
+            for track in list(obj.animation_data.nla_tracks):
+                if not any(strip.action and strip.action.name in wanted for strip in track.strips):
+                    obj.animation_data.nla_tracks.remove(track)
 
 
 def transform(rotate, height, scale, origin):

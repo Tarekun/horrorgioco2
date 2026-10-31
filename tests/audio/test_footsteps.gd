@@ -74,8 +74,12 @@ func test_idle_makes_no_footsteps() -> void:
 
 func test_walking_steps_twice_per_cycle() -> void:
 	_run_at(1.5, 4.0)
-	# A 1 s cycle has two foot contacts.
-	assert_between(_step_times.size(), 7, 9, "steps in 4 s")
+	# Each walk cycle has two foot contacts.
+	var cycle: float = (
+		(_model.get_node("AnimationPlayer") as AnimationPlayer).get_animation(&"walk").length
+	)
+	var expected: int = roundi(2.0 * 4.0 / cycle)
+	assert_between(_step_times.size(), expected - 1, expected + 1, "steps in 4 s")
 
 
 func test_running_steps_twice_per_cycle_without_double_triggers() -> void:
@@ -93,8 +97,7 @@ func test_footstep_reports_the_current_speed() -> void:
 
 
 func test_footsteps_land_at_foot_contact_phase() -> void:
-	# Contact is a quarter and three quarters through the cycle, when the
-	# hips are lowest. Verify the clip's method keys against the hip height.
+	# Each gait clip calls emit_footstep() once per foot landing.
 	var player := _model.get_node("AnimationPlayer") as AnimationPlayer
 	for clip: StringName in [&"walk", &"run"]:
 		var animation: Animation = player.get_animation(clip)
@@ -108,7 +111,9 @@ func test_footsteps_land_at_foot_contact_phase() -> void:
 				assert_eq(value["method"], &"emit_footstep")
 				calls += 1
 		assert_eq(calls, 2, "%s has two contacts" % clip)
-	assert_eq(player.get_animation(&"idle").get_track_count(), 5, "idle has no method track")
+	var idle: Animation = player.get_animation(&"idle")
+	for track: int in idle.get_track_count():
+		assert_ne(idle.track_get_type(track), Animation.TYPE_METHOD, "idle has no method track")
 
 
 # --- Rules ---
