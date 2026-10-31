@@ -10,7 +10,6 @@
 [ext_resource type="Script" path="res://scripts/levels/tension/tension_reveal.gd" id="8_reveal"]
 [ext_resource type="Script" path="res://scripts/levels/tension/tension_flicker.gd" id="9_flicker"]
 [ext_resource type="Script" path="res://scripts/levels/tension/shower_tap.gd" id="10_tap"]
-[ext_resource type="Material" path="res://assets/materials/vapour.tres" id="11_vapour"]
 [ext_resource type="PackedScene" path="res://assets/models/props/curtain/curtain.gltf" id="12_curtain"]
 [ext_resource type="PackedScene" path="res://assets/models/props/hanging_sheet/hanging_sheet.gltf" id="13_sheet"]
 [ext_resource type="PackedScene" path="res://scenes/levels/tension/creaking_wardrobe.tscn" id="14_wardrobe"]
@@ -26,8 +25,32 @@
 [ext_resource type="AudioStream" path="res://assets/audio/pot_simmer.wav" id="24_simmer"]
 [ext_resource type="AudioStream" path="res://assets/audio/fabric_rustle.wav" id="25_rustle"]
 
+[sub_resource type="Gradient" id="Gradient_vapour"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_vapour"]
+gradient = SubResource("Gradient_vapour")
+width = 64
+height = 64
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vapour"]
+resource_name = "vapour"
+transparency = 1
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradientTexture2D_vapour")
+roughness = 1.0
+disable_receive_shadows = true
+billboard_mode = 3
+proximity_fade_enabled = true
+proximity_fade_distance = 0.3
+
 [sub_resource type="QuadMesh" id="QuadMesh_puff"]
-material = ExtResource("11_vapour")
+material = SubResource("StandardMaterial3D_vapour")
 size = Vector2(0.5, 0.5)
 
 [sub_resource type="Gradient" id="Gradient_puff"]

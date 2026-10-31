@@ -62,7 +62,7 @@ Doors (`scenes/levels/door.tscn`) are `Interactable`s opened with `interact` (`P
 The scares above ground (`docs/design/slice.md`, Tension) are `TensionEvent`s (`scripts/levels/tension/`), one per id, under the hotel's `TensionEvents`. Each event fires once per level load and saves nothing, so loading a save plays it again. It is set off by a trigger child: a `TensionTrigger` (an `Area3D` that goes off when the player enters it) or a `TensionSight` (the player, standing in its area, looks at its `target` with nothing in between). When it fires it runs its `TensionAction` children, each after its own `delay`:
 
 - `TensionSound` plays a stream at its position, on the SFX bus (or Ambience for a lasting background), optionally for a `duration` or moving by `travel` while it plays;
-- `TensionParticles` starts a `CPUParticles3D` set up in the scene (left with `emitting` off), using the shared `assets/materials/vapour.tres` for steam, fog and draughts;
+- `TensionParticles` starts a `CPUParticles3D` set up in the scene (left with `emitting` off); steam, fog and draughts share the events scene's soft `vapour` billboard material;
 - `TensionSway` swings a node around one of its axes, dying away over a `duration` or for good; `TensionTurn` turns one and leaves it (a door creaking open); `TensionReveal` shows hidden nodes (a lit stove's flame);
 - `TensionFlicker` flickers the lights and glowing lamp shades under two groups named by path, with a dip of the camera's exposure, since the hotel's lamps are baked into the lightmap and their energy only lights dynamic objects.
 
