@@ -48,7 +48,10 @@ func _bake(level_path: String, output_path: String) -> bool:
 	# Matched by property: naming Door would compile it, and it needs autoloads.
 	for node: Node in level.find_children("*", "", true, false):
 		if node.get(&"starts_open") == true:
-			(node.get(&"hinge") as Node3D).rotation.y = 0.0
+			for leaf: StringName in [&"hinge", &"second_hinge"]:
+				var hinge := node.get(leaf) as Node3D
+				if hinge:
+					hinge.rotation.y = 0.0
 
 	var navmesh := NavigationMesh.new()
 	navmesh.agent_radius = 0.5
