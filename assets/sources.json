@@ -1,6 +1,165 @@
 {
 	"models": [
 		{
+			"name": "floor",
+			"category": "environment",
+			"make": {
+				"variants": [
+					"terrazzo",
+					"carpet",
+					"floor_tiles",
+					"concrete_floor"
+				]
+			}
+		},
+		{
+			"name": "ceiling",
+			"category": "environment",
+			"make": {
+				"variants": [
+					"ceiling_plaster",
+					"ceiling_tiles",
+					"concrete_wall"
+				]
+			}
+		},
+		{
+			"name": "wall",
+			"category": "environment",
+			"make": {
+				"variants": [
+					"wallpaper",
+					"painted_wall",
+					"wall_tiles",
+					"brick",
+					"stripped_plaster",
+					"concrete_wall",
+					"wood_panelling"
+				]
+			}
+		},
+		{
+			"name": "wall_door",
+			"category": "environment",
+			"make": {
+				"variants": [
+					"wallpaper",
+					"painted_wall",
+					"wall_tiles",
+					"brick",
+					"stripped_plaster",
+					"concrete_wall",
+					"wood_panelling"
+				]
+			}
+		},
+		{
+			"name": "wall_window",
+			"category": "environment",
+			"make": {
+				"variants": [
+					"wallpaper",
+					"painted_wall",
+					"wall_tiles",
+					"brick",
+					"stripped_plaster",
+					"concrete_wall",
+					"wood_panelling"
+				]
+			}
+		},
+		{
+			"name": "door_frame",
+			"category": "environment",
+			"make": {}
+		},
+		{
+			"name": "stairs",
+			"category": "environment",
+			"make": {
+				"variants": [
+					"terrazzo",
+					"concrete_floor"
+				]
+			}
+		},
+		{
+			"name": "stair_landing",
+			"category": "environment",
+			"make": {
+				"variants": [
+					"terrazzo",
+					"concrete_floor"
+				]
+			}
+		},
+		{
+			"name": "bed",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "wardrobe",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "reception_desk",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "desk_lamp",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "bedside_lamp",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "ceiling_lamp",
+			"category": "props",
+			"make": {}
+		},
+		{
+			"name": "room_number",
+			"category": "props",
+			"make": {
+				"variants": [
+					"11",
+					"12",
+					"13",
+					"14",
+					"15",
+					"16",
+					"21",
+					"22",
+					"23",
+					"24",
+					"25",
+					"26",
+					"27",
+					"28"
+				]
+			}
+		},
+		{
+			"name": "sign",
+			"category": "props",
+			"make": {
+				"variants": [
+					"out_of_order",
+					"do_not_disturb",
+					"stairs",
+					"lift",
+					"reception",
+					"private"
+				]
+			}
+		},
+		{
 			"name": "painted_chair",
 			"category": "props",
 			"source": "https://polyhaven.com/a/painted_wooden_chair_01",
@@ -11,7 +170,143 @@
 			},
 			"process": {
 				"triangles": 450,
+				"texture_size": 256,
+				"collision": "box"
+			}
+		},
+		{
+			"name": "nightstand",
+			"category": "props",
+			"source": "https://polyhaven.com/a/painted_wooden_nightstand",
+			"author": "Kirill Sannikov",
+			"license": "CC0",
+			"fetch": {
+				"polyhaven": "painted_wooden_nightstand"
+			},
+			"process": {
+				"triangles": 500,
+				"texture_size": 256,
+				"collision": "box"
+			}
+		},
+		{
+			"name": "dining_table",
+			"category": "props",
+			"source": "https://polyhaven.com/a/painted_wooden_table",
+			"author": "Kirill Sannikov",
+			"license": "CC0",
+			"fetch": {
+				"polyhaven": "painted_wooden_table"
+			},
+			"process": {
+				"triangles": 500,
+				"texture_size": 256,
+				"collision": "box"
+			}
+		},
+		{
+			"name": "cupboard",
+			"category": "props",
+			"source": "https://polyhaven.com/a/painted_wooden_cabinet_02",
+			"author": "Kirill Sannikov",
+			"license": "CC0",
+			"fetch": {
+				"polyhaven": "painted_wooden_cabinet_02"
+			},
+			"process": {
+				"triangles": 500,
+				"texture_size": 256,
+				"collision": "box"
+			}
+		},
+		{
+			"name": "shelves",
+			"category": "props",
+			"source": "https://polyhaven.com/a/painted_wooden_shelves",
+			"author": "Kirill Sannikov",
+			"license": "CC0",
+			"fetch": {
+				"polyhaven": "painted_wooden_shelves"
+			},
+			"process": {
+				"triangles": 500,
+				"texture_size": 256,
+				"collision": "box"
+			}
+		},
+		{
+			"name": "sofa",
+			"category": "props",
+			"source": "https://polyhaven.com/a/sofa_02",
+			"author": "Kirill Sannikov",
+			"license": "CC0",
+			"fetch": {
+				"polyhaven": "sofa_02"
+			},
+			"process": {
+				"triangles": 500,
+				"texture_size": 256,
+				"collision": "box"
+			}
+		},
+		{
+			"name": "armchair",
+			"category": "props",
+			"source": "https://polyhaven.com/a/mid_century_lounge_chair",
+			"author": "Kuutti Siitonen",
+			"license": "CC0",
+			"fetch": {
+				"polyhaven": "mid_century_lounge_chair"
+			},
+			"process": {
+				"triangles": 500,
+				"texture_size": 256,
+				"collision": "box"
+			}
+		},
+		{
+			"name": "television",
+			"category": "props",
+			"source": "https://polyhaven.com/a/television_02",
+			"author": "Benny Weimer",
+			"license": "CC0",
+			"fetch": {
+				"polyhaven": "television_02"
+			},
+			"process": {
+				"triangles": 500,
+				"texture_size": 256,
+				"collision": "box"
+			}
+		},
+		{
+			"name": "wall_clock",
+			"category": "props",
+			"source": "https://polyhaven.com/a/wall_clock",
+			"author": "PierreB3D",
+			"license": "CC0",
+			"fetch": {
+				"polyhaven": "wall_clock"
+			},
+			"process": {
+				"triangles": 500,
 				"texture_size": 256
+			}
+		},
+		{
+			"name": "steel_shelves",
+			"category": "props",
+			"source": "https://polyhaven.com/a/steel_frame_shelves_01",
+			"author": "James Ray Cock",
+			"license": "CC0",
+			"fetch": {
+				"polyhaven": "steel_frame_shelves_01"
+			},
+			"process": {
+				"triangles": 500,
+				"texture_size": 256,
+				"height": 2.14,
+				"collision": "box"
 			}
 		}
 	],

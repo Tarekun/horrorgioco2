@@ -5,6 +5,7 @@ class_name AssetRules
 extends RefCounted
 
 const SOURCES_PATH: String = "res://assets/sources.json"
+const MATERIALS_DIR: String = "res://assets/materials/"
 
 ## Texture import mode for VRAM compression (ResourceImporterTexture's compress/mode).
 const COMPRESS_VRAM: int = 2
@@ -20,8 +21,11 @@ static func sources(section: String) -> Dictionary[String, Dictionary]:
 	return entries
 
 
-## Why an entry isn't a valid CC0 record, or "" if it is.
+## Why an entry isn't a valid CC0 record, or "" if it is. A model made by
+## tools/make_kit.py is the project's own and needs no source.
 static func source_problem(entry: Dictionary) -> String:
+	if entry.has("make"):
+		return "" if entry.size() == 3 and entry.has("category") else "mixes make with a source"
 	if entry.get("license") != "CC0":
 		return "license is %s, not CC0" % entry.get("license")
 	if not str(entry.get("source", "")).begins_with("https://"):

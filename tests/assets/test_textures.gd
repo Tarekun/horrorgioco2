@@ -5,7 +5,6 @@
 extends GutTest
 
 const TEXTURES_DIR: String = "res://assets/textures/"
-const MATERIALS_DIR: String = "res://assets/materials/"
 const TEXTURE_EXTENSIONS: Array[String] = ["jpg", "png"]
 
 ## Environment tiles are 256 px, or 512 for large hero surfaces.
@@ -50,7 +49,7 @@ func test_textures_import_vram_compressed_with_mipmaps() -> void:
 
 func test_materials_are_albedo_only() -> void:
 	var paths: Array[String] = _material_paths()
-	assert_gt(paths.size(), 0, "no materials in %s" % MATERIALS_DIR)
+	assert_gt(paths.size(), 0, "no materials in %s" % AssetRules.MATERIALS_DIR)
 	for path in paths:
 		assert_eq(AssetRules.material_problem(load(path) as Material), "", path)
 
@@ -93,9 +92,9 @@ func _texture_paths() -> Array[String]:
 
 func _material_paths() -> Array[String]:
 	var paths: Array[String] = []
-	for file in DirAccess.get_files_at(MATERIALS_DIR):
+	for file in DirAccess.get_files_at(AssetRules.MATERIALS_DIR):
 		if file.get_extension() == "tres":
-			paths.append(MATERIALS_DIR.path_join(file))
+			paths.append(AssetRules.MATERIALS_DIR.path_join(file))
 	return paths
 
 

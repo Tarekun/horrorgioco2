@@ -7,3 +7,4 @@ resource_name = "wallpaper"
 albedo_texture = ExtResource("1")
 roughness = 0.9
 texture_filter = 5
+uv1_scale = Vector3(2, 1.3333, 1)

@@ -13,14 +13,18 @@ with tools/install_blender.sh. Each entry's "process" settings become the
 options of its Blender script:
 
 - a model is written to assets/models/<category>/<name>/<name>.gltf by
-  tools/process_model.py;
+  tools/process_model.py, or, for a model made rather than downloaded, by
+  tools/make_kit.py (one glTF per variant, <name>_<variant>.gltf);
 - a texture is written to assets/textures/<name>.jpg by
   tools/process_texture.py, with the source's ambient occlusion map baked
   in when it has one.
 
 Each new texture gets an .import file that makes Godot compress it for the
-GPU (VRAM) with mipmaps. Then run Godot's import (godot --headless --import)
-and commit the new files with their .import files.
+GPU (VRAM) with mipmaps. Each model's .import file maps its materials named
+after a shared material onto assets/materials/<name>.tres, and has Godot
+unwrap static models (environment and props) for baked lightmaps. Then run
+Godot's import (godot --headless --import) and commit the new files with
+their .import files.
 
 A model entry in assets/sources.json looks like:
 
@@ -43,6 +47,16 @@ and a texture entry, under "textures", the same without "category":
       "license": "CC0",
       "fetch": {"ambientcg": "Terrazzo011"},
       "process": {"size": 512, "saturation": 0.8}
+    }
+
+A model built by tools/make_kit.py has "make" in place of "source",
+"author", "license", "fetch" and "process", listing its variants if it has
+any:
+
+    {
+      "name": "wall",
+      "category": "environment",
+      "make": {"variants": ["wallpaper", "painted_wall"]}
     }
 
 "fetch" says how to get the raw files:
@@ -70,6 +84,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST = os.path.join(ROOT, "assets", "sources.json")
 CACHE = os.path.join(ROOT, ".asset_cache")
 MODELS = os.path.join(ROOT, "assets", "models")
+MATERIALS = os.path.join(ROOT, "assets", "materials")
 TEXTURES = os.path.join(ROOT, "assets", "textures")
 AMBIENTCG_ZIP = "https://ambientcg.com/get?file={id}_1K-JPG.zip"
 POLYHAVEN_API = "https://api.polyhaven.com/files/"
@@ -85,6 +100,19 @@ type="CompressedTexture2D"
 
 compress/mode=2
 mipmaps/generate=true
+"""
+# Categories of models that never move, unwrapped for LightmapGI.
+STATIC_CATEGORIES = ("environment", "props", "hero_props")
+MODEL_IMPORT = """[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+{uid}
+[params]
+
+meshes/light_baking={light_baking}
+_subresources={subresources}
 """
 
 
@@ -107,12 +135,18 @@ def main():
 
 def build_model(model):
     name = model["name"]
-    source = fetch_model(name, model["fetch"])
     out_dir = os.path.join(MODELS, model["category"], name)
-    clean(out_dir)
-    blender(name, "process_model.py", [source, os.path.join(out_dir, name + ".gltf")], model)
+    if "make" in model:
+        clean(out_dir)
+        blender(name, "make_kit.py", [name, out_dir], model["make"])
+    else:
+        source = fetch_model(name, model["fetch"])
+        clean(out_dir)
+        arguments = [source, os.path.join(out_dir, name + ".gltf")]
+        blender(name, "process_model.py", arguments, model["process"])
     drop_stale_imports(out_dir)
     seed_texture_imports(out_dir)
+    seed_model_imports(out_dir, model["category"] in STATIC_CATEGORIES)
 
 
 def build_texture(texture):
@@ -121,15 +155,18 @@ def build_texture(texture):
     arguments = [color, os.path.join(TEXTURES, name + ".jpg")]
     if ao:
         arguments += ["--ao", ao]
-    blender(name, "process_texture.py", arguments, texture)
+    blender(name, "process_texture.py", arguments, texture["process"])
     seed_texture_imports(TEXTURES)
 
 
-def blender(name, script, arguments, entry):
+def blender(name, script, arguments, options):
     command = [os.environ.get("BLENDER", "blender"), "--background", "--factory-startup"]
+    # Blender exits 0 when a script raises unless told otherwise.
+    command += ["--python-exit-code", "1"]
     command += ["--python", os.path.join(ROOT, "tools", script), "--"] + arguments
-    for key, value in entry["process"].items():
-        command += ["--" + key.replace("_", "-"), str(value)]
+    for key, value in options.items():
+        value = ",".join(value) if isinstance(value, list) else str(value)
+        command += ["--" + key.replace("_", "-"), value]
     print(f"build_assets: {name}", flush=True)
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     prefix = script.removesuffix(".py") + ":"
@@ -229,6 +266,37 @@ def drop_stale_imports(out_dir):
     for entry in os.listdir(out_dir):
         if entry.endswith(".import") and not os.path.exists(os.path.join(out_dir, entry[:-7])):
             os.remove(os.path.join(out_dir, entry))
+
+
+def seed_model_imports(out_dir, is_static):
+    """Rewrites each model's .import file, keeping its uid, so that Godot
+    imports it with the shared materials and, if static, lightmap UVs."""
+    for entry in os.listdir(out_dir):
+        if not entry.endswith(".gltf"):
+            continue
+        with open(os.path.join(out_dir, entry), encoding="utf-8") as file:
+            names = [material["name"] for material in json.load(file).get("materials", [])]
+        materials = {
+            name: {
+                "use_external/enabled": True,
+                "use_external/fallback_path": f"res://assets/materials/{name}.tres",
+                "use_external/path": f"res://assets/materials/{name}.tres",
+            }
+            for name in names
+            if os.path.exists(os.path.join(MATERIALS, name + ".tres"))
+        }
+        path = os.path.join(out_dir, entry + ".import")
+        uid = ""
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as file:
+                uid = next((line for line in file if line.startswith("uid=")), "")
+        subresources = json.dumps({"materials": materials} if materials else {}, indent=1)
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(
+                MODEL_IMPORT.format(
+                    uid=uid, light_baking=2 if is_static else 1, subresources=subresources
+                )
+            )
 
 
 def seed_texture_imports(out_dir):
