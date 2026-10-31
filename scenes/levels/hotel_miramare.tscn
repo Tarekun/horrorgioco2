@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://djh7q1yb67tir" path="res://scripts/audio/ambience_player.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://blmiojn8twg4q" path="res://assets/models/environment/floor/floor_floor_tiles.gltf" id="4_c7jyt"]
 [ext_resource type="PackedScene" path="res://scenes/levels/door.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/levels/double_door.tscn" id="5_double_door"]
 [ext_resource type="PackedScene" uid="uid://cbk1r0d6nqlgs" path="res://assets/models/environment/ceiling/ceiling_concrete_wall.gltf" id="5_sc03c"]
 [ext_resource type="NavigationMesh" path="res://assets/data/hotel_miramare_navmesh.res" id="6"]
 [ext_resource type="PackedScene" uid="uid://cpvqs03qt7ceu" path="res://assets/models/environment/floor/floor_concrete_floor.gltf" id="6_gmwgl"]
@@ -5740,6 +5741,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -3.2, 1)
 is_locked = true
 locked_message = "Chained shut."
 key_id = &"key_basement"
+is_self_closing = true
 door_id = &"door_basement"
 
 [node name="DoorLaundry" parent="Doors/Basement" unique_id=1786185263 instance=ExtResource("5")]
@@ -5790,7 +5792,7 @@ door_id = &"door_kitchen"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -1)
 door_id = &"door_dining_corridor"
 
-[node name="DoorDiningLobby" parent="Doors/GroundFloor" unique_id=1211863428 instance=ExtResource("5")]
+[node name="DoorDiningLobby" parent="Doors/GroundFloor" unique_id=1211863428 instance=ExtResource("5_double_door")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 0, -4)
 door_id = &"door_dining_lobby"
 
