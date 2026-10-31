@@ -78,9 +78,11 @@ An action needs its full cost available; otherwise it doesn't start. There's no 
 
 The player holds one melee weapon at a time, equipped from the inventory. Melee weapons **never break**. The names are placeholders until the narrative is set.
 
+The player starts unarmed. **Unarmed, `attack` does nothing**: no shove, no fists, no stomp.
+
 | Weapon | Light damage (1 / 2 / 3) | Heavy (full charge) | Stamina (light / heavy) | Reach | Speed | Where |
 |---|---|---|---|---|---|---|
-| Wooden plank | 8 / 8 / 12 | 25 | 10 / 20 | 1.6 m | fast | start |
+| Wooden plank | 8 / 8 / 12 | 25 | 10 / 20 | 1.6 m | fast | first, early |
 | Steel pipe | 12 / 12 / 18 | 35 | 12 / 25 | 1.8 m | medium | early |
 | Fire axe | 18 / 26 (2-hit combo) | 50 | 18 / 35 | 1.9 m | slow | midgame |
 
