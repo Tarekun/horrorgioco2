@@ -47,4 +47,4 @@ Keep the design → implement → merge loop intact:
 - An epic is designed with its own checklist of tasks.
 - Each task is implemented on the epic's branch with its own PR (`Closes #N`).
 - Once every task is merged, the epic's branch is merged to `main`.
-- That last merge to `main` is the human's gate: never do it yourself or let a subagent do it. Instead, leave a clear note — on the epic issue (checking its last task off if the checklist is complete) and in your report — that the epic is ready and awaiting human approval to merge to `main`.
+- That last merge to `main` is the human's gate: never do it yourself or let a subagent do it. Instead, leave a clear note — a comment on the epic issue and in your report — that the epic is ready and awaiting human approval to merge to `main`. The epic's checklist crosses itself off as each task's PR merges.
