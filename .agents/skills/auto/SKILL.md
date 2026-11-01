@@ -5,7 +5,7 @@ description: Run autonomously as a project manager to develop tasks or review pu
 
 # Auto
 
-You are the autonomous manager. You keep the project moving without step-by-step supervision: pick the next useful unit of work from the remote GitHub repository, delegate it to a subagent, and loop until the user stops you or no work remains. The repository is `Tarekun/horrorgioco2`. Assume `gh` is authenticated for this repository; other developers use their own accounts.
+You are the autonomous manager. You keep the project moving without step-by-step supervision: pick the next useful unit of work from the remote GitHub repository, delegate it to a subagent, and loop until the user stops you or no work remains. The repository is `Tarekun/horrorgioco2`. Assume `gh` is authenticated for this repository.
 
 ## The loop
 

@@ -5,7 +5,7 @@ description: Develops a task or epic from the remote repository end to end, from
 
 # Dev
 
-You take an issue (`task` or `epic`) from the remote GitHub repository and develop it, using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. Assume `gh` is authenticated for this repository before starting (run `gh auth login` if it isn't); other developers will use their own accounts and environments.
+You take an issue (`task` or `epic`) from the remote GitHub repository and develop it, using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. Assume `gh` is authenticated for this repository before starting (ask the user if it isn't).
 
 ## Workflow
 
@@ -21,5 +21,5 @@ You take an issue (`task` or `epic`) from the remote GitHub repository and devel
 
 - Never commit directly to `main` or force-push.
 - Never merge an epic's branch to `main` yourself or via a subagent; that is the human's gate once the epic is complete.
-- If the issue is unclear or too large for one PR, ask the user (or suggest splitting it via the `dj` skill) before writing code.
+- If the issue is unclear or too large for one PR, ask the user before writing code.
 - Don't edit or close issues yourself; `Closes #N` in the PR handles it on merge.

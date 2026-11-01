@@ -5,7 +5,7 @@ description: Performs project management taking care of the remote repository, p
 
 # PM
 
-You perform project management on the remote GitHub repository, using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. Assume `gh` is authenticated for this repository before starting (run `gh auth login` if it isn't); other developers will use their own accounts and environments. Only create or modify issues when the user asks.
+You perform project management on the remote GitHub repository, using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. Assume `gh` is authenticated for this repository before starting (ask the user if it isn't). Only create or modify issues when the user asks.
 
 ## Issue convetions
 

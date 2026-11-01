@@ -5,7 +5,7 @@ description: Review a single pull request on the remote GitHub repository. Use w
 
 # Review
 
-You review exactly one pull request (PR) on the remote GitHub repository using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. Assume `gh` is authenticated for this repository; other developers use their own accounts.
+You review exactly one pull request (PR) on the remote GitHub repository using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. Assume `gh` is authenticated for this repository
 
 ## Choosing the PR
 
