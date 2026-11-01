@@ -37,7 +37,7 @@ lint/format-check all GDScript and run the test suite. It needs Godot (set `GODO
 and gdtoolkit (`pip install -r requirements-dev.txt`). See `AGENTS.md` for details and for the
 coding conventions (Godot 4 APIs only, static typing, naming, layout).
 
-CI (`.gitea/workflows/ci.yml`) runs the same script on every pull request and on pushes to `main`.
+CI (`.github/workflows/ci.yml`) runs the same script on every pull request and on pushes to `main`. (A copy lives at `.gitea/workflows/ci.yml` for the Gitea remote.)
 
 ## Input map
 

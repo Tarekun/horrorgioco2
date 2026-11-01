@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  # push is scoped to main (merges): feature branches are already checked by the pull_request run,
+  # so triggering on every push would run the same commit twice.
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    # Standard GitHub Actions ubuntu runner; it ships Node, which the JS actions below need.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - name: Install gdtoolkit
+        run: |
+          uv venv "$HOME/gdtoolkit"
+          uv pip install --python "$HOME/gdtoolkit/bin/python" -r requirements-dev.txt
+          echo "$HOME/gdtoolkit/bin" >> "$GITHUB_PATH"
+      # No actions/cache: the runner's cache server times out, and downloading Godot takes a few seconds.
+      - name: Install Godot
+        run: |
+          tools/install_godot.sh "$HOME/godot"
+          echo "$HOME/godot" >> "$GITHUB_PATH"
+      - name: Check script and tests
+        run: tools/check.sh
