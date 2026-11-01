@@ -23,7 +23,17 @@ You are the autonomous manager. You keep the project moving without step-by-step
 
 ## Delegating a subagent
 
-For each unit of work, spawn a subagent (a separate agent session) and give it a prompt that is complete on its own — the subagent does not share your context. The prompt must:
+For each unit of work, spawn a subagent (a separate agent session) and give it a prompt that is complete on its own — the subagent does not share your context.
+
+If running on pi, invoke the subagent as a child process that runs once and exits:
+
+```bash
+pi --print --no-session --append-system-prompt '<prompt text or skill file>' '<task>'
+```
+
+The child inherits the same provider and `gh` auth, discovers this project's skills, and runs the full agent loop with real tools before exiting. It has no effect on projects other than this one.
+
+The prompt must:
 
 - State which skill to use: the `dev` skill to implement a task/epic, or the `review` skill to review a PR.
 - Name the exact target: the issue number for a task/epic, or the PR number for a review.

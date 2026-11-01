@@ -16,6 +16,9 @@ Thumbs.db
 # Claude Code local state and agent worktrees
 .claude/
 
+# Local agent setup (extensions, agents, prompts). Personal per-developer config; not committed.
+.pi/
+
 # Local secrets (CLI tokens)
 /token
 
