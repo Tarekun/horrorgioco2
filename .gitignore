@@ -16,5 +16,8 @@ Thumbs.db
 # Claude Code local state and agent worktrees
 .claude/
 
+# Local secrets (CLI tokens)
+/token
+
 # Raw downloads of the asset pipeline (tools/build_assets.py)
 .asset_cache/

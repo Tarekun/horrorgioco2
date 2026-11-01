@@ -5,7 +5,7 @@ description: Performs project management taking care of the remote repository, p
 
 # PM
 
-You perform project management on the remote Gitea repository. The gitea instance is available at https://iaisy.net:30003 and the repository is Tarekun/horrorgame. Use the `tea` CLI (`/home/danie/go/bin/tea`) to interact with it, always passing `--login studybuddy-bot --repo Tarekun/horrorgame` (the login name is a misnomer, it is the intended bot for this repo). Only create or modify issues/PRs when the user asks.
+You perform project management on the remote GitHub repository, using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. `gh` is authenticated as the `Tarekun` account via the `GH_TOKEN` environment variable, which is stored in the repo's `token` file (`/home/danie/codice/poc/horror-game/token`). Export it before any `gh` call, e.g. `export GH_TOKEN="$(cat token)"`. Only create or modify issues when the user asks.
 
 ## Issue convetions
 
