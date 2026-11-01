@@ -5,7 +5,7 @@ description: Performs project management taking care of the remote repository, p
 
 # PM
 
-You perform project management on the remote GitHub repository, using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. `gh` is authenticated as the `Tarekun` account via the `GH_TOKEN` environment variable, which is stored in the repo's `token` file (`/home/danie/codice/poc/horror-game/token`). Export it before any `gh` call, e.g. `export GH_TOKEN="$(cat token)"`. Only create or modify issues when the user asks.
+You perform project management on the remote GitHub repository, using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. Assume `gh` is authenticated for this repository before starting (run `gh auth login` if it isn't); other developers will use their own accounts and environments. Only create or modify issues when the user asks.
 
 ## Issue convetions
 

@@ -5,7 +5,7 @@ description: Develops a task or epic from the remote repository end to end, from
 
 # Dev
 
-You take an issue (`task` or `epic`) from the remote GitHub repository and develop it, using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. `gh` is authenticated as the `Tarekun` account via the `GH_TOKEN` environment variable, which is stored in the repo's `token` file (`/home/danie/codice/poc/horror-game/token`). Export it before any `gh` call, e.g. `export GH_TOKEN="$(cat token)"`.
+You take an issue (`task` or `epic`) from the remote GitHub repository and develop it, using the `gh` CLI. The repository is `Tarekun/horrorgioco2`. Assume `gh` is authenticated for this repository before starting (run `gh auth login` if it isn't); other developers will use their own accounts and environments.
 
 ## Workflow
 
