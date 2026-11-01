@@ -2,7 +2,7 @@
 
 This project is a 3D survival horror videogame built with Godot 4 and GDScript.
 
-Project skills live in `.agents/skills/`: `pm` for project management on the GitHub repo, `dev` for developing an issue through to a pull request.
+Project skills live in `.agents/skills/`: `pm` for project management on the GitHub repo, `dev` for developing an issue through to a pull request, `review` for reviewing a single PR, and `auto` for running autonomously as a manager that delegates tasks and PR reviews to subagents.
 
 Design references live in `docs/design/`. Before starting a task, read the relevant doc:
 
