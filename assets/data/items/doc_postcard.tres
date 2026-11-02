@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+; Working text until #21 writes the slice's documents.
+
+[ext_resource type="Script" path="res://scripts/items/item_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"doc_postcard"
+display_name = "Postcard"
+category = 4
+description = "A faded postcard of the Miramare, never sent."
+pages = PackedStringArray("To room 22, Hotel Miramare.\n\nSame room next year. Promise?")
