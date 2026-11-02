@@ -442,6 +442,9 @@ func _slide(rng: RandomNumberGenerator) -> PackedFloat32Array:
 			var thump: float = sin(TAU * 60.0 * after) * exp(-after * 14.0)
 			landed = (rubble * 5.0 * exp(-after * 6.0) + thump * 1.5) * minf(after * 400.0, 1.0)
 		samples[i] = slide + landed
+	return samples
+
+
 ## A lift car moving in its shaft: a steady motor hum with a soft rumble and
 ## a faint rattle. The tones fit a whole number of cycles and the noise is
 ## crossfaded, so it loops without a click.
