@@ -1,0 +1,48 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/items/document_pickup.gd" id="1"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+size = Vector3(0.21, 0.01, 0.297)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
+albedo_color = Color(0.9, 0.88, 0.8, 1)
+roughness = 0.9
+
+[sub_resource type="Gradient" id="Gradient_glint"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_glint"]
+gradient = SubResource("Gradient_glint")
+width = 64
+height = 64
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glint"]
+resource_local_to_scene = true
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 0.93, 0.78, 0.3)
+albedo_texture = SubResource("GradientTexture2D_glint")
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_glint"]
+size = Vector2(0.35, 0.35)
+
+[node name="DocumentPickup" type="Node3D" node_paths=PackedStringArray("glint")]
+script = ExtResource("1")
+glint = NodePath("Glint")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+mesh = SubResource("BoxMesh_body")
+surface_material_override/0 = SubResource("StandardMaterial3D_body")
+
+[node name="Glint" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_glint")
+surface_material_override/0 = SubResource("StandardMaterial3D_glint")
