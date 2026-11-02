@@ -59,6 +59,9 @@ const STEP_PROBE_DISTANCE: float = 0.4
 ## What the player carries. Pickups add to it.
 var inventory := Inventory.new()
 
+## Which documents the player has read.
+var document_log := DocumentLog.new()
+
 ## Scales walk, run and sprint speed; the health cues lower it in Danger.
 var speed_multiplier: float = 1.0
 
@@ -137,6 +140,7 @@ func is_lit() -> bool:
 func write_save(save: SaveData) -> void:
 	save.player_health = health_component.current_health
 	save.inventory = inventory.to_dict()
+	save.documents_read = document_log.to_dict()
 	var weapon: ItemData = items.equipped_weapon if items else null
 	save.equipped_weapon = weapon.id if weapon else &""
 	save.is_flashlight_on = is_lit()
@@ -148,6 +152,7 @@ func read_save(save: SaveData) -> void:
 	# Revive sets the health whether or not the player is down.
 	health_component.revive(save.player_health)
 	inventory.from_dict(save.inventory)
+	document_log.from_dict(save.documents_read)
 	if items and not save.equipped_weapon.is_empty():
 		items.equip(ItemCatalog.find(save.equipped_weapon))
 	if flashlight:

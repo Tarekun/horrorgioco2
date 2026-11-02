@@ -12,6 +12,7 @@ func _make_save() -> SaveData:
 	save.timestamp = 1_793_000_000
 	save.player_health = 62.5
 	save.inventory = {"wooden_plank": 1, "pistol_ammo": 16}
+	save.documents_read = {"doc_registration_card": true}
 	save.equipped_weapon = &"wooden_plank"
 	save.is_flashlight_on = false
 	save.world.record(&"Pickups/Ammo", {"is_collected": true})
@@ -37,6 +38,7 @@ func test_round_trips_through_json() -> void:
 	assert_eq(loaded.timestamp, 1_793_000_000)
 	assert_eq(loaded.player_health, 62.5)
 	assert_eq(loaded.inventory, {"wooden_plank": 1, "pistol_ammo": 16} as Dictionary[String, int])
+	assert_eq(loaded.documents_read, {"doc_registration_card": true} as Dictionary[String, bool])
 	assert_eq(loaded.equipped_weapon, &"wooden_plank")
 	assert_false(loaded.is_flashlight_on)
 	assert_eq(loaded.world.get_state(&"Pickups/Ammo"), {"is_collected": true})
@@ -80,6 +82,7 @@ func test_missing_or_mistyped_values_fall_back_to_defaults() -> void:
 	assert_eq(loaded.play_time, 0.0)
 	assert_eq(loaded.player_health, 0.0)
 	assert_eq(loaded.inventory, {"ampoule": 2} as Dictionary[String, int])
+	assert_true(loaded.documents_read.is_empty())
 	assert_eq(loaded.equipped_weapon, &"")
 	assert_true(loaded.is_flashlight_on)
 	assert_true(loaded.world.is_empty())

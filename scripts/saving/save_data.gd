@@ -31,6 +31,9 @@ var player_health: float = 0.0
 ## Item ids and counts, as Inventory.to_dict() gives them.
 var inventory: Dictionary[String, int] = {}
 
+## Read document ids, as DocumentLog.to_dict() gives them.
+var documents_read: Dictionary[String, bool] = {}
+
 ## Id of the weapon held, or empty.
 var equipped_weapon: StringName = &""
 
@@ -51,6 +54,7 @@ func to_dict() -> Dictionary:
 		{
 			"health": player_health,
 			"inventory": inventory.duplicate(),
+			"documents_read": documents_read.duplicate(),
 			"equipped_weapon": String(equipped_weapon),
 			"is_flashlight_on": is_flashlight_on,
 		},
@@ -78,6 +82,10 @@ static func from_dict(data: Dictionary) -> SaveData:
 		var amount: Variant = items[id]
 		if amount is float or amount is int:
 			save.inventory[str(id)] = int(amount)
+	var read_documents: Dictionary = _get_dictionary(player, "documents_read")
+	for id: Variant in read_documents:
+		if read_documents[id]:
+			save.documents_read[str(id)] = true
 	save.equipped_weapon = StringName(_get_string(player, "equipped_weapon"))
 	var flashlight: Variant = player.get("is_flashlight_on")
 	save.is_flashlight_on = flashlight if flashlight is bool else true

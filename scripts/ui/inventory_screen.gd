@@ -27,6 +27,8 @@ signal closed
 signal equip_requested(item: ItemData)
 ## Emitted when the player chooses Use on `item`.
 signal use_requested(item: ItemData)
+## Emitted when the player chooses Read on a document.
+signal read_requested(item: ItemData)
 
 ## Whose inventory and health it shows.
 @export var player: Player
@@ -190,10 +192,15 @@ func use_selected() -> void:
 		use_requested.emit(item)
 
 
-## Shows the selected item's description.
+## Shows the selected item's description, or asks to read it if it is a
+## document.
 func examine_selected() -> void:
 	var item: ItemData = get_selected_item()
-	if item:
+	if item == null:
+		return
+	if item.is_document():
+		read_requested.emit(item)
+	else:
 		description_label.text = item.description
 
 
@@ -254,6 +261,7 @@ func _show_details(item: ItemData) -> void:
 	equip_button.disabled = item == null or not item.is_equippable() or item == equipped_item
 	use_button.disabled = item == null or not item.is_usable()
 	examine_button.disabled = item == null
+	examine_button.text = "Read" if item and item.is_document() else "Examine"
 	# A button that just became unusable gives the focus back to the list.
 	for button: Button in _action_buttons():
 		if button.disabled and button.has_focus():
