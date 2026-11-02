@@ -438,6 +438,9 @@ func _slide(rng: RandomNumberGenerator) -> PackedFloat32Array:
 			var thump: float = sin(TAU * 60.0 * after) * exp(-after * 14.0)
 			landed = (rubble * 5.0 * exp(-after * 6.0) + thump * 1.5) * minf(after * 400.0, 1.0)
 		samples[i] = slide + landed
+	return samples
+
+
 ## A steel roller shutter going up: a motor whine under the fast clatter of
 ## the slats winding onto the drum, ending in a clang as it stops at the top.
 func _shutter_rattle(rng: RandomNumberGenerator) -> PackedFloat32Array:
