@@ -120,6 +120,9 @@
 [ext_resource type="Script" path="res://scripts/saving/level_flag.gd" id="level_flag_158"]
 [ext_resource type="PackedScene" path="res://scenes/levels/switchboard.tscn" id="switchboard_158"]
 [ext_resource type="AudioStream" path="res://assets/audio/machinery_groan.wav" id="machinery_groan_158"]
+[ext_resource type="Script" uid="uid://ccpfjo26q8nak" path="res://scripts/interaction/examinable.gd" id="examinable_162"]
+[ext_resource type="Script" uid="uid://qquu8va1u6nk" path="res://scripts/interaction/state_examinable.gd" id="state_examinable_162"]
+[ext_resource type="Script" uid="uid://d2b7720nnhlqm" path="res://scripts/interaction/phone_examinable.gd" id="phone_examinable_162"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c7jyt"]
 resource_name = "concrete_floor"
@@ -5740,6 +5743,10 @@ light_data = ExtResource("104_sc03c")
 script = ExtResource("level_flag_158")
 flag_id = &"power_restored"
 
+[node name="PorterLogRead" type="Node" parent="LevelFlags"]
+script = ExtResource("level_flag_158")
+flag_id = &"doc_porter_log_read"
+
 [node name="Mechanisms" type="Node3D" parent="."]
 
 [node name="SwitchboardBasement" parent="Mechanisms" node_paths=PackedStringArray("power_flag", "lights", "enemy", "machinery_sound") instance=ExtResource("switchboard_158")]
@@ -6025,6 +6032,132 @@ metadata/reward_item = &"key_basement"
 [node name="ClockRoom22" type="Marker3D" parent="Puzzles" unique_id=295565761]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.65, 7, -5.3)
 metadata/appears_after = &"doc_porter_log"
+
+[node name="Examinables" type="Node3D" parent="."]
+
+[node name="SecondFloor" type="Node3D" parent="Examinables"]
+
+[node name="PhoneRoom22" type="Node3D" parent="Examinables/SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.45, 7.03, -2.6)
+script = ExtResource("phone_examinable_162")
+lines = PackedStringArray("His phone. No signal.", "Battery {battery}%.")
+
+[node name="WristbandRoom22" type="Node3D" parent="Examinables/SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.9, 6.95, -4.85)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("A wristband from the beach club. The closing party.", "His own is still on his wrist.")
+
+[node name="NightstandRoom22" type="Node3D" parent="Examinables/SecondFloor" node_paths=PackedStringArray("flag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.45, 7.03, -5.3)
+script = ExtResource("state_examinable_162")
+lines = PackedStringArray("A clean square in the dust.", "Something stood here.")
+flag = NodePath("../../../LevelFlags/PorterLogRead")
+lines_after = PackedStringArray("A flip clock, stopped at 04:47.", "It fits the square in the dust exactly.")
+
+[node name="BedsRoom22" type="Node3D" parent="Examinables/SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.9, 6.9, -4)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("Two single beds, pushed together.", "One side slept in. The other still made.")
+
+[node name="LiftSecondFloor" type="Node3D" parent="Examinables/SecondFloor" node_paths=PackedStringArray("flag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.3, 8, -4.8)
+script = ExtResource("state_examinable_162")
+lines = PackedStringArray("Out of order.", "The floor indicator says 3. There is no third floor.")
+flag = NodePath("../../../LevelFlags/PowerRestored")
+lines_after = PackedStringArray("It works now.", "The indicator shows where it is.")
+
+[node name="DoorRoom24" type="Node3D" parent="Examinables/SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.55, 7.4, -0.95)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("A sign on the handle: Do not disturb.", "A TV behind the door, playing the song from the beach club. Slowed down.")
+
+[node name="ChairRoom28" type="Node3D" parent="Examinables/SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6.9, -4.45)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("A chair in the middle of the empty room.", "Facing the window.")
+
+[node name="FirstFloor" type="Node3D" parent="Examinables"]
+
+[node name="LiftFirstFloor" type="Node3D" parent="Examinables/FirstFloor" node_paths=PackedStringArray("flag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.3, 4.8, -4.8)
+script = ExtResource("state_examinable_162")
+lines = PackedStringArray("Out of order.", "The floor indicator says 3. There is no third floor.")
+flag = NodePath("../../../LevelFlags/PowerRestored")
+lines_after = PackedStringArray("It works now.", "The indicator shows where it is.")
+
+[node name="BedsRoom12" type="Node3D" parent="Examinables/FirstFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.9, 3.7, -4)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("The same beds as in twenty-two, in the same places.", "Stripped. The mattresses rolled up.")
+
+[node name="BuildingSiteRoom15" type="Node3D" parent="Examinables/FirstFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 4.6, 4)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("Stripped to the brick. Scaffolding, dust sheets.", "No tools, no names. Nobody working.")
+
+[node name="GroundFloor" type="Node3D" parent="Examinables"]
+
+[node name="BuildingSiteGroundFloor" type="Node3D" parent="Examinables/GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 1.4, 4)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("Stripped to the brick, like the room above.", "Only these two rooms. Nothing says why.")
+
+[node name="LiftGroundFloor" type="Node3D" parent="Examinables/GroundFloor" node_paths=PackedStringArray("flag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.3, 1.6, -4.8)
+script = ExtResource("state_examinable_162")
+lines = PackedStringArray("Out of order.", "The floor indicator says 3. There is no third floor.")
+flag = NodePath("../../../LevelFlags/PowerRestored")
+lines_after = PackedStringArray("It works now.", "The indicator shows where it is.")
+
+[node name="DiningTable" type="Node3D" parent="Examinables/GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.85, -3.5)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("Laid for the closing dinner.", "The food is still warm.")
+
+[node name="ClockWall" type="Node3D" parent="Examinables/GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.6, 1.6, -4.2)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("Rome, London, New York, Tokyo.", "None of them is right.")
+
+[node name="KeyBoard" type="Node3D" parent="Examinables/GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.05, 1.3, 0.85)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("Room keys on numbered hooks.", "Twenty-two's hook is empty.")
+
+[node name="ReceptionDesk" type="Node3D" parent="Examinables/GroundFloor" node_paths=PackedStringArray("flag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 1, -2.3)
+script = ExtResource("state_examinable_162")
+lines = PackedStringArray("The lamp on. The radio playing.", "His chair is empty.")
+flag = NodePath("../../../LevelFlags/PowerRestored")
+shown = 2
+
+[node name="Basement" type="Node3D" parent="Examinables"]
+
+[node name="BasementDoor" type="Node3D" parent="Examinables/Basement" node_paths=PackedStringArray("door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.55, -2.2, 1.12)
+script = ExtResource("state_examinable_162")
+lines = PackedStringArray("Chained and padlocked.", "Cold air comes up from under it.")
+door = NodePath("../../../Doors/Basement/DoorBasement")
+lines_after = PackedStringArray("The chain lies where it fell.", "Cold air still comes up from under it.")
+
+[node name="RollerShutter" type="Node3D" parent="Examinables/Basement" node_paths=PackedStringArray("flag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.85, -2, -0.45)
+script = ExtResource("state_examinable_162")
+lines = PackedStringArray("A steel shutter, down to the floor.", "The button beside it does nothing.")
+flag = NodePath("../../../LevelFlags/PowerRestored")
+shown = 1
+
+[node name="Switchboard" type="Node3D" parent="Examinables/Basement" node_paths=PackedStringArray("flag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.8, -2.2, -6.7)
+script = ExtResource("state_examinable_162")
+lines = PackedStringArray("Every breaker down, as if someone threw them all.")
+flag = NodePath("../../../LevelFlags/PowerRestored")
+lines_after = PackedStringArray("Every breaker still down.", "The lights are on anyway.")
+
+[node name="PorterLocker" type="Node3D" parent="Examinables/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.4, -1.6, -3.95)
+script = ExtResource("examinable_162")
+lines = PackedStringArray("The porter's coat, on the hanger.", "The name card on the door is blank.")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=322884459]
 navigation_mesh = ExtResource("6")

@@ -34,7 +34,7 @@ const SAVE_SPOTS: Dictionary[StringName, float] = {
 }
 
 ## slice.md's saved level flags.
-const LEVEL_FLAGS: Array[StringName] = [&"power_restored"]
+const LEVEL_FLAGS: Array[StringName] = [&"power_restored", &"doc_porter_log_read"]
 
 const DOCUMENT_IDS: Array[StringName] = [
 	&"doc_registration_card", &"doc_lost_property", &"doc_porter_log", &"doc_postcard"
