@@ -5915,7 +5915,9 @@ pickup_id = &"pickup_drink_room22"
 
 [node name="BlockadeRoom28" parent="Pickups" unique_id=1235777228 instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 7.6, -0.9)
+prompt = "Pull the plank off."
 item = ExtResource("12")
+equips_on_pickup = true
 pickup_id = &"blockade_room_28"
 
 [node name="Plank" type="StaticBody3D" parent="Pickups/BlockadeRoom28" unique_id=1005475622]
