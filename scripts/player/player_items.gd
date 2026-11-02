@@ -6,7 +6,8 @@
 ## the game, using an item is instant and safe.
 ##
 ## Equip on a weapon swaps the weapon PlayerCombat swings. Weapons stay in the
-## inventory whether held or not; the player starts holding `starting_weapon`.
+## inventory whether held or not; the player starts holding `starting_weapon`,
+## or nothing when it is unset (a new game starts unarmed).
 
 class_name PlayerItems
 extends Node
@@ -17,7 +18,8 @@ signal weapon_equipped(item: ItemData)
 ## Shown when a healing item would be wasted.
 const FULL_HEALTH_MESSAGE: String = "You don't need that right now."
 
-## The weapon the player starts with, put in the inventory and equipped.
+## The weapon the player starts with, put in the inventory and equipped. Unset
+## on the player scene, so a new game starts unarmed; test levels set it.
 @export var starting_weapon: ItemData
 
 @export var player: Player

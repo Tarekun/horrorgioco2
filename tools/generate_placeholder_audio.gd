@@ -1,8 +1,9 @@
 ## Generates the placeholder audio: footstep variants, a looping ambient drone, a
-## heartbeat, a heavy breath, and the sounds of the hotel's tension events
-## (docs/design/slice.md): a running shower, a ringing phone, cutlery, a creak, a
-## gust of wind, a draught like the sea, a buzzing lamp, footsteps on the floor
-## above, swinging hangers, a simmering pot and rustling fabric.
+## heartbeat, a heavy breath, the slide down the rubble chute, and the sounds of
+## the hotel's tension events (docs/design/slice.md): a running shower, a ringing
+## phone, cutlery, a creak, a gust of wind, a draught like the sea, a buzzing
+## lamp, footsteps on the floor above, swinging hangers, a simmering pot and
+## rustling fabric.
 ##
 ## Everything is synthesized from noise and sine waves with a fixed seed, so the
 ## output is reproducible and has no third-party content. The WAV files are
@@ -20,6 +21,9 @@ const HEARTBEAT_SECONDS: float = 0.9
 const BREATH_SECONDS: float = 2.2
 ## Crossfade (seconds) that hides the seam of the looping tension sounds.
 const LOOP_CROSSFADE_SECONDS: float = 0.5
+const SLIDE_SECONDS: float = 2.2
+## When the slide lands in the skip, in seconds from its start.
+const SLIDE_LANDING_SECONDS: float = 1.7
 
 
 func _init() -> void:
@@ -45,6 +49,8 @@ func _init() -> void:
 	is_ok = _save("hangers.wav", _clinks(rng, knocks, 1800.0, 1.4), false) and is_ok
 	is_ok = _save("pot_simmer.wav", _simmer(rng), true) and is_ok
 	is_ok = _save("fabric_rustle.wav", _rustle(rng), false) and is_ok
+	# Last, so the sounds above keep their random numbers.
+	is_ok = _save("chute_slide.wav", _slide(rng), false) and is_ok
 	quit(0 if is_ok else 1)
 
 
@@ -347,6 +353,40 @@ func _loop(raw: PackedFloat32Array) -> PackedFloat32Array:
 		if i < fade:
 			var weight: float = float(i) / fade
 			samples[i] = raw[i] * weight + raw[i + count] * (1.0 - weight)
+	return samples
+
+
+## Sliding down a plastic rubble chute: a rushing scrape of filtered noise that speeds
+## up, rattled by the joints between segments, then a crash into the rubble.
+func _slide(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var count: int = int(SLIDE_SECONDS * MIX_RATE)
+	var samples := PackedFloat32Array()
+	samples.resize(count)
+	var hiss: float = 1.0 - exp(-TAU * 2200.0 / MIX_RATE)
+	var rumble: float = 1.0 - exp(-TAU * 160.0 / MIX_RATE)
+	var crash: float = 1.0 - exp(-TAU * 900.0 / MIX_RATE)
+	var bright: float = 0.0
+	var low: float = 0.0
+	var rubble: float = 0.0
+	for i in count:
+		var t: float = float(i) / MIX_RATE
+		var noise: float = rng.randf_range(-1.0, 1.0)
+		bright += hiss * (noise - bright)
+		low += rumble * (noise - low)
+		rubble += crash * (noise - rubble)
+		var slide: float = 0.0
+		if t < SLIDE_LANDING_SECONDS:
+			var progress: float = t / SLIDE_LANDING_SECONDS
+			# A knock at every joint, closer together as the slide speeds up.
+			var joints: float = pow(sin(PI * 5.0 * progress * progress), 16.0)
+			var swell: float = minf(t * 6.0, 1.0) * (0.5 + 0.5 * progress)
+			slide = (bright * 0.6 + low * 3.0 * (1.0 + joints * 2.0)) * swell
+		var landed: float = 0.0
+		if t >= SLIDE_LANDING_SECONDS:
+			var after: float = t - SLIDE_LANDING_SECONDS
+			var thump: float = sin(TAU * 60.0 * after) * exp(-after * 14.0)
+			landed = (rubble * 5.0 * exp(-after * 6.0) + thump * 1.5) * minf(after * 400.0, 1.0)
+		samples[i] = slide + landed
 	return samples
 
 

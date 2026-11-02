@@ -4,6 +4,10 @@
 ## one so it can be found in the dark. Picking one up adds its items to the
 ## player's inventory, shows a short message and removes the pickup.
 ##
+## Its prompt is "Pick up" unless the scene sets another (the plank nailed
+## across a doorway reads "Pull the plank off."). With `equips_on_pickup`, a
+## weapon is also equipped straight away.
+##
 ## How many it holds isn't set here: it is the item's standard pickup amount in
 ## the Scarcity resource (8 pistol rounds, say), times `bundles`.
 ##
@@ -25,6 +29,10 @@ const PICKUP_GROUP: StringName = &"pickups"
 ## How many standard pickups of `item` this one holds (2 for a bigger stash).
 @export_range(1, 10) var bundles: int = 1
 
+## Equips the item as soon as it is picked up (a weapon the player needs at
+## once, like the plank off room 28's doorway).
+@export var equips_on_pickup: bool = false
+
 ## Stable id for saves. Left empty, it is the pickup's path inside its level
 ## (WorldState.default_id()), which holds as long as the level isn't rearranged.
 @export var pickup_id: StringName
@@ -44,11 +52,15 @@ var _glint_material: StandardMaterial3D
 var _glint_time: float = 0.0
 
 
+func _init() -> void:
+	# Before the scene's own values, so a placed pickup can set another prompt.
+	prompt = "Pick up"
+
+
 func _ready() -> void:
 	super._ready()
 	add_to_group(PICKUP_GROUP)
 	add_to_group(WorldState.GROUP)
-	prompt = "Pick up"
 	if pickup_id.is_empty():
 		pickup_id = WorldState.default_id(self)
 	if glint:
@@ -63,8 +75,9 @@ func _process(delta: float) -> void:
 	_update_glint()
 
 
-## Adds the item to the player's inventory and removes the pickup. Returns the
-## message to show, or "" if `actor` can't carry items.
+## Adds the item to the player's inventory (and equips it, with
+## `equips_on_pickup`) and removes the pickup. Returns the message to show, or
+## "" if `actor` can't carry items.
 func interact(actor: Node3D) -> String:
 	interacted.emit(actor)
 	var player := actor as Player
@@ -72,6 +85,8 @@ func interact(actor: Node3D) -> String:
 		return ""
 	var amount: int = get_amount()
 	player.inventory.add(item, amount)
+	if equips_on_pickup and player.items:
+		player.items.equip(item)
 	_remove()
 	SaveSystem.world.record(pickup_id, {"is_collected": true})
 	collected.emit(self)
