@@ -9,17 +9,22 @@
 			"name":"Scene",
 			"nodes":[
 				0,
-				1
+				1,
+				2
 			]
 		}
 	],
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Mesh"
+			"name":"Frame"
 		},
 		{
 			"mesh":1,
+			"name":"Curtain"
+		},
+		{
+			"mesh":2,
 			"name":"Collision-convcolonly"
 		}
 	],
@@ -55,7 +60,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Mesh",
+			"name":"Frame",
 			"primitives":[
 				{
 					"attributes":{
@@ -65,7 +70,12 @@
 					},
 					"indices":3,
 					"material":0
-				},
+				}
+			]
+		},
+		{
+			"name":"Curtain",
+			"primitives":[
 				{
 					"attributes":{
 						"POSITION":4,

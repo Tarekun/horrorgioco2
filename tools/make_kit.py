@@ -891,16 +891,21 @@ def ceiling_pipes():
 
 
 def roller_shutter():
-    """A steel roller shutter, down: 2 m wide (X) and 3 m high, its box at the top."""
-    shape = Shape()
+    """A steel roller shutter, down: 2 m wide (X) and 3 m high, its box at the top. The
+    guides and the box are the Frame; the slats are the Curtain, a separate object from
+    the floor up to the box (2.56 m) so that scenes/levels/roller_shutter.tscn can roll
+    it up."""
+    frame = Shape()
     for side in (-1, 1):
         x0, x1 = sorted((side * 1.0, side * 0.92))
-        shape.box((x0, 0, -0.06), (x1, 3.0, 0.06), "dark_steel", "+x -x +z -z")
+        frame.box((x0, 0, -0.06), (x1, 3.0, 0.06), "dark_steel", "+x -x +z -z")
+    frame.box((-1.0, 2.56, -0.2), (1.0, 3.0, 0.2), "dark_steel", "+z -z -y")
+    frame.build("Frame")
+    curtain = Shape()
     for i in range(16):
         y0, d = i * 0.16, 0.02 + 0.01 * (i % 2)
-        shape.box((-0.92, y0, -d), (0.92, y0 + 0.16, d), "galvanised", "+z -z -y")
-    shape.box((-1.0, 2.56, -0.2), (1.0, 3.0, 0.2), "dark_steel", "+z -z -y")
-    shape.build("Mesh")
+        curtain.box((-0.92, y0, -d), (0.92, y0 + 0.16, d), "galvanised", "+z -z -y")
+    curtain.build("Curtain")
     collider("Collision", (-1.0, 0, -0.06), (1.0, 3.0, 0.06))
 
 

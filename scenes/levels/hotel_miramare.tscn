@@ -64,7 +64,6 @@
 [ext_resource type="PackedScene" uid="uid://6y3d86wuiimc" path="res://assets/models/props/boiler/boiler.gltf" id="48_pamio"]
 [ext_resource type="PackedScene" uid="uid://bwtpc3wxd2b7r" path="res://assets/models/props/water_tank/water_tank.gltf" id="49_oxcb1"]
 [ext_resource type="PackedScene" uid="uid://dr8oa8grxkxhn" path="res://assets/models/props/switchboard/switchboard.gltf" id="50_467ik"]
-[ext_resource type="PackedScene" uid="uid://uykxwbgbofe3" path="res://assets/models/environment/roller_shutter/roller_shutter.gltf" id="51_rc0cv"]
 [ext_resource type="PackedScene" uid="uid://bmd0cwadr5f5o" path="res://assets/models/props/wall_button/wall_button.gltf" id="52_lyj8t"]
 [ext_resource type="PackedScene" uid="uid://bq0tx5ar1gecm" path="res://assets/models/props/sign/sign_private.gltf" id="53_cqwil"]
 [ext_resource type="PackedScene" uid="uid://byjfvtkidfhvl" path="res://assets/models/props/locker/locker_ajar.gltf" id="54_1t406"]
@@ -133,6 +132,8 @@
 [ext_resource type="Resource" path="res://assets/data/items/key_basement.tres" id="82_key_basement"]
 [ext_resource type="Script" path="res://scripts/levels/combination_lock_puzzle.gd" id="82_combination_lock"]
 [ext_resource type="Script" path="res://scripts/levels/flag_reveal.gd" id="82_flag_reveal"]
+[ext_resource type="PackedScene" path="res://scenes/levels/roller_shutter.tscn" id="roller_shutter_159"]
+[ext_resource type="Script" path="res://scripts/levels/shutter_button.gd" id="shutter_button_159"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c7jyt"]
 resource_name = "concrete_floor"
@@ -4966,9 +4967,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.25, -3.2, -1.6)
 [node name="SwitchboardBasement" parent="Props/Basement" unique_id=618666069 instance=ExtResource("50_467ik")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.2, -2.4, -6.9)
 
-[node name="ShutterStaff" parent="Props/Basement" unique_id=842377230 instance=ExtResource("51_rc0cv")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 18, -3.2, 0)
-
 [node name="ShutterButton" parent="Props/Basement" unique_id=1475500533 instance=ExtResource("52_lyj8t")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 17.4, -2.1, 0.9)
 
@@ -5763,6 +5761,16 @@ stream = ExtResource("machinery_groan_158")
 bus = &"SFX"
 unit_size = 4.0
 max_distance = 30.0
+
+[node name="ShutterStaff" parent="Mechanisms" instance=ExtResource("roller_shutter_159")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 18, -3.2, 0)
+shutter_id = &"shutter_staff"
+
+[node name="ShutterButton" type="Node3D" parent="Mechanisms" node_paths=PackedStringArray("power_flag", "shutter")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 17.4, -2, 0.65)
+script = ExtResource("shutter_button_159")
+power_flag = NodePath("../../LevelFlags/PowerRestored")
+shutter = NodePath("../ShutterStaff")
 
 [node name="Doors" type="Node3D" parent="." unique_id=698680099]
 

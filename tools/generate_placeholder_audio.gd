@@ -27,6 +27,7 @@ const LOOP_CROSSFADE_SECONDS: float = 0.5
 const SLIDE_SECONDS: float = 2.2
 ## When the slide lands in the skip, in seconds from its start.
 const SLIDE_LANDING_SECONDS: float = 1.7
+const SHUTTER_SECONDS: float = 3.3
 
 
 func _init() -> void:
@@ -56,6 +57,7 @@ func _init() -> void:
 	is_ok = _save("fabric_rustle.wav", _rustle(rng), false) and is_ok
 	# Last, so the sounds above keep their random numbers.
 	is_ok = _save("chute_slide.wav", _slide(rng), false) and is_ok
+	is_ok = _save("shutter_rattle.wav", _shutter_rattle(rng), false) and is_ok
 	quit(0 if is_ok else 1)
 
 
@@ -436,6 +438,34 @@ func _slide(rng: RandomNumberGenerator) -> PackedFloat32Array:
 			var thump: float = sin(TAU * 60.0 * after) * exp(-after * 14.0)
 			landed = (rubble * 5.0 * exp(-after * 6.0) + thump * 1.5) * minf(after * 400.0, 1.0)
 		samples[i] = slide + landed
+	return samples
+
+
+## A steel roller shutter going up: a motor whine under the fast clatter of
+## the slats winding onto the drum, ending in a clang as it stops at the top.
+func _shutter_rattle(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var count: int = int(SHUTTER_SECONDS * MIX_RATE)
+	var samples := PackedFloat32Array()
+	samples.resize(count)
+	var stop: float = SHUTTER_SECONDS - 0.4
+	var phase: float = 0.0
+	for i in count:
+		var t: float = float(i) / MIX_RATE
+		var is_running: bool = t < stop
+		phase += TAU * (95.0 + 25.0 * minf(t * 2.0, 1.0)) / MIX_RATE
+		var motor: float = (sin(phase) * 0.5 + sin(phase * 2.0 + 0.3) * 0.25) if is_running else 0.0
+		var slat_time: float = fmod(t, 1.0 / 14.0)
+		var clatter: float = rng.randf_range(-1.0, 1.0) * exp(-slat_time * 120.0)
+		clatter *= (0.6 + 0.4 * sin(TAU * 410.0 * t)) if is_running else 0.0
+		var clang: float = 0.0
+		if not is_running:
+			var after: float = t - stop
+			clang = (
+				(sin(TAU * 230.0 * after) * 0.7 + sin(TAU * 610.0 * after) * 0.4)
+				* exp(-after * 9.0)
+			)
+			clang += rng.randf_range(-1.0, 1.0) * exp(-after * 60.0)
+		samples[i] = (motor * 0.6 + clatter + clang * 1.2) * minf(t * 40.0, 1.0)
 	return samples
 
 
