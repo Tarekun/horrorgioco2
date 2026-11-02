@@ -15,6 +15,8 @@
 ##
 ## A dormant enemy stands still, blind and deaf, until a level event calls
 ## wake() or the player hits it; either way it wakes alerted to the player.
+## A level loading a save where the event already happened wakes it unalerted,
+## as placed.
 ##
 ## Its EnemyModel shows all this: it is fed the enemy's speed, and plays the
 ## attack, stagger, fall and get-up clips as the state changes. A downed enemy
@@ -186,13 +188,14 @@ func get_persistent_id() -> StringName:
 	return enemy_id
 
 
-## Wakes a dormant enemy, already alerted to the player.
-func wake() -> void:
+## Wakes a dormant enemy, already alerted to the player unless `is_alerted`
+## is false (a loaded save wakes it as placed, like any other enemy).
+func wake(is_alerted: bool = true) -> void:
 	if not is_dormant:
 		return
 	is_dormant = false
 	var player: Node3D = _get_target()
-	if player:
+	if player and is_alerted:
 		perception.alert_to(player.global_position)
 
 

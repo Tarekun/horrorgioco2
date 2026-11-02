@@ -33,6 +33,9 @@ const SAVE_SPOTS: Dictionary[StringName, float] = {
 	&"save_basement_stairs": BASEMENT_Y,
 }
 
+## slice.md's saved level flags.
+const LEVEL_FLAGS: Array[StringName] = [&"power_restored", &"doc_porter_log_read"]
+
 ## Other persistent objects, by their ids in slice.md.
 const MECHANISMS: Array[StringName] = [&"obstacle_sunbeds"]
 
@@ -165,9 +168,18 @@ func test_every_persistent_object_has_its_own_id() -> void:
 		# A path-based default id would break as soon as the level is rearranged.
 		assert_false(String(id).contains("/"), "%s has no explicit id" % node.name)
 		ids[id] = node
+	for flag: StringName in LEVEL_FLAGS:
+		assert_true(ids.has(flag), "%s is placed" % flag)
 	for id: StringName in MECHANISMS:
 		assert_has(ids, id)
 	assert_eq(
 		ids.size(),
-		DOOR_IDS.size() + PICKUPS.size() + ENEMIES.size() + SAVE_SPOTS.size() + MECHANISMS.size()
+		(
+			DOOR_IDS.size()
+			+ PICKUPS.size()
+			+ ENEMIES.size()
+			+ SAVE_SPOTS.size()
+			+ LEVEL_FLAGS.size()
+			+ MECHANISMS.size()
+		)
 	)
