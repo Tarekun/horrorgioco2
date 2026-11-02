@@ -1,0 +1,569 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/tension/tension_event.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/levels/tension/tension_trigger.gd" id="2_trigger"]
+[ext_resource type="Script" path="res://scripts/levels/tension/tension_sight.gd" id="3_sight"]
+[ext_resource type="Script" path="res://scripts/levels/tension/tension_sound.gd" id="4_sound"]
+[ext_resource type="Script" path="res://scripts/levels/tension/tension_particles.gd" id="5_particles"]
+[ext_resource type="Script" path="res://scripts/levels/tension/tension_sway.gd" id="6_sway"]
+[ext_resource type="Script" path="res://scripts/levels/tension/tension_turn.gd" id="7_turn"]
+[ext_resource type="Script" path="res://scripts/levels/tension/tension_reveal.gd" id="8_reveal"]
+[ext_resource type="Script" path="res://scripts/levels/tension/tension_flicker.gd" id="9_flicker"]
+[ext_resource type="Script" path="res://scripts/levels/tension/shower_tap.gd" id="10_tap"]
+[ext_resource type="PackedScene" path="res://assets/models/props/curtain/curtain.gltf" id="12_curtain"]
+[ext_resource type="PackedScene" path="res://assets/models/props/hanging_sheet/hanging_sheet.gltf" id="13_sheet"]
+[ext_resource type="PackedScene" path="res://scenes/levels/tension/creaking_wardrobe.tscn" id="14_wardrobe"]
+[ext_resource type="AudioStream" path="res://assets/audio/shower_running.wav" id="15_shower"]
+[ext_resource type="AudioStream" path="res://assets/audio/phone_ring.wav" id="16_phone"]
+[ext_resource type="AudioStream" path="res://assets/audio/cutlery_clink.wav" id="17_clink"]
+[ext_resource type="AudioStream" path="res://assets/audio/creak.wav" id="18_creak"]
+[ext_resource type="AudioStream" path="res://assets/audio/wind_gust.wav" id="19_gust"]
+[ext_resource type="AudioStream" path="res://assets/audio/sea_draught.wav" id="20_sea"]
+[ext_resource type="AudioStream" path="res://assets/audio/lamp_buzz.wav" id="21_buzz"]
+[ext_resource type="AudioStream" path="res://assets/audio/footsteps_above.wav" id="22_steps"]
+[ext_resource type="AudioStream" path="res://assets/audio/hangers.wav" id="23_hangers"]
+[ext_resource type="AudioStream" path="res://assets/audio/pot_simmer.wav" id="24_simmer"]
+[ext_resource type="AudioStream" path="res://assets/audio/fabric_rustle.wav" id="25_rustle"]
+
+[sub_resource type="Gradient" id="Gradient_vapour"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_vapour"]
+gradient = SubResource("Gradient_vapour")
+width = 64
+height = 64
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vapour"]
+resource_name = "vapour"
+transparency = 1
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradientTexture2D_vapour")
+roughness = 1.0
+disable_receive_shadows = true
+billboard_mode = 3
+proximity_fade_enabled = true
+proximity_fade_distance = 0.3
+
+[sub_resource type="QuadMesh" id="QuadMesh_puff"]
+material = SubResource("StandardMaterial3D_vapour")
+size = Vector2(0.5, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_puff"]
+offsets = PackedFloat32Array(0, 0.25, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_room21"]
+size = Vector3(5.6, 2.4, 5.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_corridor_2f"]
+size = Vector3(4, 2.4, 1.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_door23"]
+size = Vector3(2.6, 2.4, 1.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tray_view"]
+size = Vector3(12, 2.4, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_doorway26"]
+size = Vector3(2.2, 2.4, 2.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_corridor_room22"]
+size = Vector3(6, 2.4, 1.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_stairs_top"]
+size = Vector3(2.8, 2.6, 1.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_corridor_1f"]
+size = Vector3(7.6, 2.4, 1.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_room13"]
+size = Vector3(4.8, 2.4, 5.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_half_landing"]
+size = Vector3(3, 2.8, 2.7)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kitchen"]
+size = Vector3(5.6, 2.4, 5.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_laundry"]
+size = Vector3(11.6, 2.4, 5.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_flame"]
+albedo_color = Color(0.1, 0.2, 0.6, 1)
+emission_enabled = true
+emission = Color(0.3, 0.5, 1, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="TorusMesh" id="TorusMesh_flame"]
+material = SubResource("StandardMaterial3D_flame")
+inner_radius = 0.11
+outer_radius = 0.14
+rings = 16
+ring_segments = 6
+
+[node name="TensionEvents" type="Node3D"]
+
+[node name="Shower" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 6.4, 4)
+script = ExtResource("1_event")
+event_id = &"tension_shower"
+
+[node name="Room" type="Area3D" parent="Shower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0.2)
+script = ExtResource("2_trigger")
+
+[node name="Shape" type="CollisionShape3D" parent="Shower/Room"]
+shape = SubResource("BoxShape3D_room21")
+
+[node name="Water" type="Node3D" parent="Shower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 1.8, -2.4)
+script = ExtResource("4_sound")
+stream = ExtResource("15_shower")
+volume_db = -4.0
+max_distance = 25.0
+
+[node name="SteamParticles" type="CPUParticles3D" parent="Shower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.1, -1.1)
+emitting = false
+amount = 24
+lifetime = 5.0
+mesh = SubResource("QuadMesh_puff")
+emission_shape = 3
+emission_box_extents = Vector3(0.45, 0.05, 0.1)
+direction = Vector3(0, 0.3, 1)
+spread = 35.0
+gravity = Vector3(0, 0.06, 0)
+initial_velocity_min = 0.15
+initial_velocity_max = 0.3
+scale_amount_min = 0.8
+scale_amount_max = 1.6
+color = Color(0.85, 0.85, 0.85, 0.3)
+color_ramp = SubResource("Gradient_puff")
+
+[node name="Steam" type="Node3D" parent="Shower" node_paths=PackedStringArray("particles")]
+script = ExtResource("5_particles")
+particles = NodePath("../SteamParticles")
+
+[node name="Tap" type="Node3D" parent="Shower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -2)
+script = ExtResource("10_tap")
+
+[node name="Phone" type="Node3D" parent="." node_paths=PackedStringArray("trigger")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 6.4, 1)
+script = ExtResource("1_event")
+event_id = &"tension_phone"
+trigger = NodePath("Corridor")
+
+[node name="Corridor" type="Area3D" parent="Phone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.2, -1)
+script = ExtResource("2_trigger")
+
+[node name="Shape" type="CollisionShape3D" parent="Phone/Corridor"]
+shape = SubResource("BoxShape3D_corridor_2f")
+
+[node name="DoorZone" type="Area3D" parent="Phone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -0.7)
+script = ExtResource("2_trigger")
+
+[node name="Shape" type="CollisionShape3D" parent="Phone/DoorZone"]
+shape = SubResource("BoxShape3D_door23")
+
+[node name="Ring" type="Node3D" parent="Phone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.7, 3)
+script = ExtResource("4_sound")
+stream = ExtResource("16_phone")
+volume_db = -3.0
+unit_size = 4.0
+max_distance = 30.0
+duration = 45.0
+
+[node name="Tray" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.1, 6.4, -0.7)
+script = ExtResource("1_event")
+event_id = &"tension_tray"
+
+[node name="Corridor" type="Area3D" parent="Tray" node_paths=PackedStringArray("target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9, 1.2, 0.7)
+script = ExtResource("3_sight")
+target = NodePath("../TrayTop")
+max_distance = 12.0
+view_angle = 25.0
+
+[node name="Shape" type="CollisionShape3D" parent="Tray/Corridor"]
+shape = SubResource("BoxShape3D_tray_view")
+
+[node name="TrayTop" type="Marker3D" parent="Tray"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="WispParticles" type="CPUParticles3D" parent="Tray"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.15, 0)
+emitting = false
+amount = 6
+lifetime = 3.0
+mesh = SubResource("QuadMesh_puff")
+emission_shape = 3
+emission_box_extents = Vector3(0.06, 0.01, 0.06)
+direction = Vector3(0, 1, 0)
+spread = 10.0
+gravity = Vector3(0, 0.05, 0)
+initial_velocity_min = 0.08
+initial_velocity_max = 0.15
+scale_amount_min = 0.3
+scale_amount_max = 0.6
+color = Color(0.9, 0.9, 0.9, 0.18)
+color_ramp = SubResource("Gradient_puff")
+
+[node name="Wisp" type="Node3D" parent="Tray" node_paths=PackedStringArray("particles")]
+script = ExtResource("5_particles")
+particles = NodePath("../WispParticles")
+duration = 60.0
+
+[node name="Clink" type="Node3D" parent="Tray"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+script = ExtResource("4_sound")
+delay = 0.6
+stream = ExtResource("17_clink")
+volume_db = -10.0
+unit_size = 2.0
+max_distance = 15.0
+
+[node name="Coat" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4, 6.4, -6.4)
+script = ExtResource("1_event")
+event_id = &"tension_coat"
+
+[node name="Doorway" type="Area3D" parent="Coat" node_paths=PackedStringArray("target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 1.2, 6)
+script = ExtResource("3_sight")
+target = NodePath("../Shape")
+view_angle = 25.0
+target_radius = 0.45
+
+[node name="Shape" type="CollisionShape3D" parent="Coat/Doorway"]
+shape = SubResource("BoxShape3D_doorway26")
+
+[node name="Shape" type="Marker3D" parent="Coat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.12)
+
+[node name="Creak" type="Node3D" parent="Coat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.3)
+script = ExtResource("4_sound")
+delay = 0.8
+stream = ExtResource("18_creak")
+volume_db = -14.0
+pitch_scale = 0.75
+unit_size = 2.0
+max_distance = 12.0
+
+[node name="Curtain" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17, 6.4, -0.25)
+script = ExtResource("1_event")
+event_id = &"tension_curtain"
+
+[node name="Corridor" type="Area3D" parent="Curtain"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.83, 1.2, 0.25)
+script = ExtResource("2_trigger")
+
+[node name="Shape" type="CollisionShape3D" parent="Curtain/Corridor"]
+shape = SubResource("BoxShape3D_corridor_room22")
+
+[node name="Curtain" parent="Curtain" instance=ExtResource("12_curtain")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 2.45, 0)
+
+[node name="Stirs" type="Node3D" parent="Curtain" node_paths=PackedStringArray("target")]
+script = ExtResource("6_sway")
+target = NodePath("../Curtain")
+degrees = 2.5
+lean_degrees = -6.0
+period = 3.5
+
+[node name="FogParticles" type="CPUParticles3D" parent="Curtain"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.07, 1.6, 0.25)
+emitting = false
+amount = 16
+lifetime = 8.0
+mesh = SubResource("QuadMesh_puff")
+emission_shape = 3
+emission_box_extents = Vector3(0.05, 0.5, 0.6)
+direction = Vector3(1, 0, 0)
+spread = 25.0
+gravity = Vector3(0, -0.02, 0)
+initial_velocity_min = 0.15
+initial_velocity_max = 0.3
+scale_amount_min = 1.5
+scale_amount_max = 2.5
+color = Color(0.62, 0.67, 0.74, 0.16)
+color_ramp = SubResource("Gradient_puff")
+
+[node name="Fog" type="Node3D" parent="Curtain" node_paths=PackedStringArray("particles")]
+script = ExtResource("5_particles")
+particles = NodePath("../FogParticles")
+
+[node name="Gust" type="Node3D" parent="Curtain"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 1.6, 0.25)
+script = ExtResource("4_sound")
+stream = ExtResource("19_gust")
+unit_size = 6.0
+max_distance = 40.0
+
+[node name="Flicker" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 6.4, 1)
+script = ExtResource("1_event")
+event_id = &"tension_flicker"
+
+[node name="Stairs" type="Area3D" parent="Flicker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.4, 2.5)
+script = ExtResource("2_trigger")
+
+[node name="Shape" type="CollisionShape3D" parent="Flicker/Stairs"]
+shape = SubResource("BoxShape3D_stairs_top")
+
+[node name="Lamps" type="Node3D" parent="Flicker"]
+script = ExtResource("9_flicker")
+delay = 0.3
+lights_path = NodePath("../../../Lights/SecondFloor")
+lamps_path = NodePath("../../../Props/SecondFloor")
+
+[node name="Buzz" type="Node3D" parent="Flicker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, -1)
+script = ExtResource("4_sound")
+delay = 0.3
+stream = ExtResource("21_buzz")
+volume_db = -4.0
+unit_size = 4.0
+max_distance = 20.0
+
+[node name="Footsteps" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3.2, 1)
+script = ExtResource("1_event")
+event_id = &"tension_footsteps"
+
+[node name="Corridor" type="Area3D" parent="Footsteps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 1.2, -1)
+script = ExtResource("2_trigger")
+
+[node name="Shape" type="CollisionShape3D" parent="Footsteps/Corridor"]
+shape = SubResource("BoxShape3D_corridor_1f")
+
+[node name="Steps" type="Node3D" parent="Footsteps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 3.3, -1)
+script = ExtResource("4_sound")
+delay = 1.5
+stream = ExtResource("22_steps")
+volume_db = -2.0
+unit_size = 5.0
+max_distance = 25.0
+travel = Vector3(-10, 0, 0)
+
+[node name="Wardrobe" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.56, 3.2, 3.75)
+script = ExtResource("1_event")
+event_id = &"tension_wardrobe"
+
+[node name="Room" type="Area3D" parent="Wardrobe"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.96, 1.2, 0.35)
+script = ExtResource("2_trigger")
+
+[node name="Shape" type="CollisionShape3D" parent="Wardrobe/Room"]
+shape = SubResource("BoxShape3D_room13")
+
+[node name="Wardrobe" parent="Wardrobe" instance=ExtResource("14_wardrobe")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="DoorOpens" type="Node3D" parent="Wardrobe" node_paths=PackedStringArray("target")]
+script = ExtResource("7_turn")
+delay = 0.8
+target = NodePath("../Wardrobe/LeftHinge")
+degrees = -75.0
+duration = 2.5
+
+[node name="Creak" type="Node3D" parent="Wardrobe"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 1.2, 0)
+script = ExtResource("4_sound")
+delay = 0.8
+stream = ExtResource("18_creak")
+volume_db = -3.0
+pitch_scale = 0.9
+max_distance = 20.0
+
+[node name="HangersSwing" type="Node3D" parent="Wardrobe" node_paths=PackedStringArray("target")]
+script = ExtResource("6_sway")
+delay = 1.5
+target = NodePath("../Wardrobe/Hangers")
+degrees = 14.0
+period = 1.2
+duration = 4.0
+
+[node name="HangersKnock" type="Node3D" parent="Wardrobe"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 1.8, 0)
+script = ExtResource("4_sound")
+delay = 1.5
+stream = ExtResource("23_hangers")
+volume_db = -8.0
+unit_size = 2.0
+max_distance = 15.0
+
+[node name="Basement" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -3.2, 1)
+script = ExtResource("1_event")
+event_id = &"tension_basement"
+
+[node name="HalfLanding" type="Area3D" parent="Basement" node_paths=PackedStringArray("target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 2.1, 4.65)
+script = ExtResource("3_sight")
+target = NodePath("../Door")
+max_distance = 9.0
+target_radius = 0.6
+
+[node name="Shape" type="CollisionShape3D" parent="Basement/HalfLanding"]
+shape = SubResource("BoxShape3D_half_landing")
+
+[node name="Door" type="Marker3D" parent="Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="DraughtParticles" type="CPUParticles3D" parent="Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0.12)
+emitting = false
+amount = 14
+lifetime = 4.0
+mesh = SubResource("QuadMesh_puff")
+emission_shape = 3
+emission_box_extents = Vector3(0.6, 0.02, 0.03)
+direction = Vector3(0, 0.1, 1)
+spread = 30.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 0.2
+initial_velocity_max = 0.4
+damping_min = 0.05
+damping_max = 0.05
+scale_amount_min = 0.6
+scale_amount_max = 1.2
+color = Color(0.7, 0.75, 0.8, 0.14)
+color_ramp = SubResource("Gradient_puff")
+
+[node name="Draught" type="Node3D" parent="Basement" node_paths=PackedStringArray("particles")]
+script = ExtResource("5_particles")
+particles = NodePath("../DraughtParticles")
+
+[node name="Sea" type="Node3D" parent="Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.2)
+script = ExtResource("4_sound")
+stream = ExtResource("20_sea")
+bus = &"Ambience"
+volume_db = -8.0
+unit_size = 2.5
+max_distance = 14.0
+
+[node name="Pot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.6, 0, 4)
+script = ExtResource("1_event")
+event_id = &"tension_pot"
+
+[node name="Kitchen" type="Area3D" parent="Pot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 1.2, 0.1)
+script = ExtResource("2_trigger")
+
+[node name="Shape" type="CollisionShape3D" parent="Pot/Kitchen"]
+shape = SubResource("BoxShape3D_kitchen")
+
+[node name="Flame" type="Node3D" parent="Pot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.9, 0.2)
+visible = false
+
+[node name="Ring" type="MeshInstance3D" parent="Pot/Flame"]
+cast_shadow = 0
+gi_mode = 2
+mesh = SubResource("TorusMesh_flame")
+
+[node name="Glow" type="OmniLight3D" parent="Pot/Flame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+light_color = Color(0.45, 0.6, 1, 1)
+light_energy = 0.8
+light_bake_mode = 0
+omni_range = 2.5
+
+[node name="Lit" type="Node3D" parent="Pot" node_paths=PackedStringArray("targets")]
+script = ExtResource("8_reveal")
+targets = [NodePath("../Flame")]
+
+[node name="SteamParticles" type="CPUParticles3D" parent="Pot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.13, 0.2)
+emitting = false
+amount = 12
+lifetime = 3.0
+mesh = SubResource("QuadMesh_puff")
+emission_shape = 3
+emission_box_extents = Vector3(0.08, 0.01, 0.08)
+direction = Vector3(0, 1, 0)
+spread = 15.0
+gravity = Vector3(0, 0.1, 0)
+initial_velocity_min = 0.15
+initial_velocity_max = 0.3
+scale_amount_min = 0.5
+scale_amount_max = 1.0
+color = Color(0.9, 0.9, 0.9, 0.22)
+color_ramp = SubResource("Gradient_puff")
+
+[node name="Steam" type="Node3D" parent="Pot" node_paths=PackedStringArray("particles")]
+script = ExtResource("5_particles")
+particles = NodePath("../SteamParticles")
+
+[node name="Simmer" type="Node3D" parent="Pot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.1, 0.2)
+script = ExtResource("4_sound")
+stream = ExtResource("24_simmer")
+volume_db = -8.0
+unit_size = 2.5
+max_distance = 15.0
+
+[node name="Sheets" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.95, -3.2, -5.15)
+script = ExtResource("1_event")
+event_id = &"tension_sheets"
+
+[node name="Laundry" type="Area3D" parent="Sheets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, 1.2, 1.15)
+script = ExtResource("2_trigger")
+
+[node name="Shape" type="CollisionShape3D" parent="Sheets/Laundry"]
+shape = SubResource("BoxShape3D_laundry")
+
+[node name="Line" type="Node3D" parent="Sheets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.32, 0)
+
+[node name="HangingSheet" parent="Sheets/Line" instance=ExtResource("13_sheet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.32, 0)
+
+[node name="Brushed" type="Node3D" parent="Sheets" node_paths=PackedStringArray("target")]
+script = ExtResource("6_sway")
+delay = 0.4
+target = NodePath("../Line")
+period = 1.8
+duration = 5.0
+
+[node name="Rustle" type="Node3D" parent="Sheets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = ExtResource("4_sound")
+delay = 0.4
+stream = ExtResource("25_rustle")
+volume_db = -6.0
+max_distance = 15.0
+
+[node name="Mesh" parent="Curtain/Curtain" index="0"]
+gi_mode = 2
+
+[node name="Mesh" parent="Sheets/Line/HangingSheet" index="0"]
+gi_mode = 2
+
+[connection signal="fired" from="Shower" to="Shower/Tap" method="turn_on"]
+[connection signal="turned_off" from="Shower/Tap" to="Shower/Water" method="stop"]
+[connection signal="turned_off" from="Shower/Tap" to="Shower/Steam" method="stop"]
+[connection signal="triggered" from="Phone/DoorZone" to="Phone/Ring" method="stop"]
+
+[editable path="Curtain/Curtain"]
+[editable path="Sheets/Line/HangingSheet"]
