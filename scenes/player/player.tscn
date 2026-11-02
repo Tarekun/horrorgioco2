@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3]
+[gd_scene load_steps=30 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -28,7 +28,8 @@
 [ext_resource type="Script" path="res://scripts/player/player_items.gd" id="25"]
 [ext_resource type="Resource" path="res://assets/data/items/wooden_plank.tres" id="26"]
 [ext_resource type="PackedScene" path="res://scenes/ui/save_screen.tscn" id="27"]
-[ext_resource type="PackedScene" path="res://scenes/ui/combination_lock_screen.tscn" id="28"]
+[ext_resource type="PackedScene" path="res://scenes/ui/document_reader.tscn" id="28"]
+[ext_resource type="PackedScene" path="res://scenes/ui/combination_lock_screen.tscn" id="29"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -124,19 +125,23 @@ hint = NodePath("../InteractionHint")
 
 [node name="SaveScreen" parent="." instance=ExtResource("27")]
 
-[node name="CombinationLockScreen" parent="." node_paths=PackedStringArray("player") instance=ExtResource("28")]
+[node name="CombinationLockScreen" parent="." node_paths=PackedStringArray("player") instance=ExtResource("29")]
 player = NodePath("..")
 
 [node name="InventoryScreen" parent="." node_paths=PackedStringArray("player") instance=ExtResource("24")]
 player = NodePath("..")
 
-[node name="PlayerItems" type="Node" parent="." node_paths=PackedStringArray("player", "health_component", "combat", "inventory_screen")]
+[node name="DocumentReader" parent="." node_paths=PackedStringArray("player") instance=ExtResource("28")]
+player = NodePath("..")
+
+[node name="PlayerItems" type="Node" parent="." node_paths=PackedStringArray("player", "health_component", "combat", "inventory_screen", "document_reader")]
 script = ExtResource("25")
 starting_weapon = ExtResource("26")
 player = NodePath("..")
 health_component = NodePath("../HealthComponent")
 combat = NodePath("../PlayerCombat")
 inventory_screen = NodePath("../InventoryScreen")
+document_reader = NodePath("../DocumentReader")
 
 [node name="HealthOverlay" parent="." instance=ExtResource("19")]
 

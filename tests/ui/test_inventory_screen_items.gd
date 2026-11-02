@@ -129,6 +129,18 @@ func test_actions_depend_on_the_category() -> void:
 	assert_false(_screen.examine_button.disabled)
 
 
+func test_examine_reads_on_a_document_instead() -> void:
+	var document: ItemData = _make_item(&"test_doc", ItemData.Category.DOCUMENT)
+	_player.inventory.add(document)
+	_screen.open()
+	_screen.select_tab(ItemData.Category.DOCUMENT)
+	assert_eq(_screen.examine_button.text, "Read")
+	watch_signals(_screen)
+	_screen.examine_button.pressed.emit()
+	assert_signal_emitted_with_parameters(_screen, "read_requested", [document])
+	assert_eq(_screen.description_label.text, "")
+
+
 func test_examine_shows_the_description() -> void:
 	_player.inventory.add(ROUNDS, 8)
 	_player.inventory.add(SHELLS, 4)
