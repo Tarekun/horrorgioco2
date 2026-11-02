@@ -168,6 +168,14 @@ func place_at(marker: Node3D) -> void:
 		camera_controller.snap_behind_player()
 
 
+## Moves the player by `offset`, camera included, keeping the view as it is.
+## For a lift ride, where the player is carried somewhere identical.
+func move_by(offset: Vector3) -> void:
+	global_position += offset
+	if camera_controller:
+		camera_controller.global_position += offset
+
+
 ## Returns the current movement speed.
 func get_current_speed() -> float:
 	return _current_speed

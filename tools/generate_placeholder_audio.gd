@@ -28,6 +28,8 @@ const SLIDE_SECONDS: float = 2.2
 ## When the slide lands in the skip, in seconds from its start.
 const SLIDE_LANDING_SECONDS: float = 1.7
 const SHUTTER_SECONDS: float = 3.3
+const HUM_SECONDS: float = 2.0
+const CHIME_SECONDS: float = 1.4
 
 
 func _init() -> void:
@@ -58,6 +60,8 @@ func _init() -> void:
 	# Last, so the sounds above keep their random numbers.
 	is_ok = _save("chute_slide.wav", _slide(rng), false) and is_ok
 	is_ok = _save("shutter_rattle.wav", _shutter_rattle(rng), false) and is_ok
+	is_ok = _save("lift_hum.wav", _lift_hum(rng), true) and is_ok
+	is_ok = _save("lift_chime.wav", _lift_chime(), false) and is_ok
 	quit(0 if is_ok else 1)
 
 
@@ -438,6 +442,42 @@ func _slide(rng: RandomNumberGenerator) -> PackedFloat32Array:
 			var thump: float = sin(TAU * 60.0 * after) * exp(-after * 14.0)
 			landed = (rubble * 5.0 * exp(-after * 6.0) + thump * 1.5) * minf(after * 400.0, 1.0)
 		samples[i] = slide + landed
+## A lift car moving in its shaft: a steady motor hum with a soft rumble and
+## a faint rattle. The tones fit a whole number of cycles and the noise is
+## crossfaded, so it loops without a click.
+func _lift_hum(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var count: int = int(HUM_SECONDS * MIX_RATE)
+	var fade: int = int(0.5 * MIX_RATE)
+	var raw := PackedFloat32Array()
+	raw.resize(count + fade)
+	var coefficient: float = 1.0 - exp(-TAU * 150.0 / MIX_RATE)
+	var rumble: float = 0.0
+	for i in raw.size():
+		rumble += coefficient * (rng.randf_range(-1.0, 1.0) - rumble)
+		raw[i] = rumble
+	var samples := PackedFloat32Array()
+	samples.resize(count)
+	for i in count:
+		var noise: float = raw[i]
+		if i < fade:
+			var weight: float = float(i) / fade
+			noise = raw[i] * weight + raw[i + count] * (1.0 - weight)
+		var t: float = float(i) / MIX_RATE
+		var motor: float = sin(TAU * 50.0 * t) * 0.5 + sin(TAU * 100.0 * t + 0.6) * 0.25
+		var rattle: float = sin(TAU * 7.0 * t) * sin(TAU * 310.0 * t) * 0.06
+		samples[i] = motor + noise * 2.5 + rattle
+	return samples
+
+
+## A single soft chime, like an old lift arriving at a floor.
+func _lift_chime() -> PackedFloat32Array:
+	var count: int = int(CHIME_SECONDS * MIX_RATE)
+	var samples := PackedFloat32Array()
+	samples.resize(count)
+	for i in count:
+		var t: float = float(i) / MIX_RATE
+		var tone: float = (sin(TAU * 880.0 * t) + sin(TAU * 1760.0 * t) * 0.2) * exp(-t * 3.5)
+		samples[i] = tone * minf(t * 400.0, 1.0)
 	return samples
 
 

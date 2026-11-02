@@ -1,0 +1,358 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/lift_stop.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/levels/lift_button.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/wood_panelling.jpg" id="3"]
+[ext_resource type="Texture2D" path="res://assets/textures/carpet.jpg" id="4"]
+[ext_resource type="Texture2D" path="res://assets/textures/ceiling_plaster.jpg" id="5"]
+
+[sub_resource type="StandardMaterial3D" id="steel"]
+resource_name = "steel"
+albedo_color = Color(0.42, 0.43, 0.44, 1)
+metallic = 0.8
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="dark_steel"]
+resource_name = "dark_steel"
+albedo_color = Color(0.07, 0.07, 0.08, 1)
+metallic = 0.5
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="brass"]
+resource_name = "brass"
+albedo_color = Color(0.5, 0.33, 0.1, 1)
+metallic = 0.8
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="brass_lit"]
+resource_name = "brass_lit"
+albedo_color = Color(1, 0.62, 0.2, 1)
+emission_enabled = true
+emission = Color(1, 0.55, 0.15, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="StandardMaterial3D" id="wood_panelling"]
+resource_name = "wood_panelling"
+albedo_texture = ExtResource("3")
+roughness = 0.55
+texture_filter = 5
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="carpet"]
+resource_name = "carpet"
+albedo_texture = ExtResource("4")
+roughness = 1.0
+texture_filter = 5
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="ceiling_plaster"]
+resource_name = "ceiling_plaster"
+albedo_texture = ExtResource("5")
+roughness = 0.9
+texture_filter = 5
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="frame_side"]
+material = SubResource("steel")
+size = Vector3(0.32, 2.5, 0.03)
+
+[sub_resource type="BoxMesh" id="frame_top"]
+material = SubResource("steel")
+size = Vector3(1, 0.4, 0.03)
+
+[sub_resource type="BoxMesh" id="indicator_plate"]
+material = SubResource("dark_steel")
+size = Vector3(0.2, 0.16, 0.01)
+
+[sub_resource type="BoxMesh" id="call_plate"]
+material = SubResource("steel")
+size = Vector3(0.12, 0.3, 0.02)
+
+[sub_resource type="CylinderMesh" id="button"]
+material = SubResource("brass")
+top_radius = 0.02
+bottom_radius = 0.02
+height = 0.012
+radial_segments = 12
+rings = 0
+
+[sub_resource type="BoxMesh" id="door_panel"]
+material = SubResource("steel")
+size = Vector3(0.5, 2.1, 0.03)
+
+[sub_resource type="BoxShape3D" id="doorway"]
+size = Vector3(1, 2.1, 0.1)
+
+[sub_resource type="BoxMesh" id="car_floor"]
+material = SubResource("carpet")
+size = Vector3(2, 0.1, 2)
+
+[sub_resource type="BoxMesh" id="car_ceiling"]
+material = SubResource("ceiling_plaster")
+size = Vector3(2, 0.05, 2)
+
+[sub_resource type="BoxMesh" id="car_back"]
+material = SubResource("wood_panelling")
+size = Vector3(2, 2.4, 0.05)
+
+[sub_resource type="BoxMesh" id="car_side"]
+material = SubResource("wood_panelling")
+size = Vector3(0.05, 2.4, 2)
+
+[sub_resource type="BoxMesh" id="car_front_side"]
+material = SubResource("wood_panelling")
+size = Vector3(0.5, 2.4, 0.04)
+
+[sub_resource type="BoxMesh" id="car_front_top"]
+material = SubResource("wood_panelling")
+size = Vector3(1, 0.3, 0.04)
+
+[sub_resource type="BoxMesh" id="button_panel"]
+material = SubResource("steel")
+size = Vector3(1.2, 0.3, 0.02)
+
+[sub_resource type="BoxShape3D" id="car_floor_shape"]
+size = Vector3(2, 0.1, 2)
+
+[sub_resource type="BoxShape3D" id="car_ceiling_shape"]
+size = Vector3(2, 0.05, 2)
+
+[sub_resource type="BoxShape3D" id="car_back_shape"]
+size = Vector3(2, 2.4, 0.05)
+
+[sub_resource type="BoxShape3D" id="car_side_shape"]
+size = Vector3(0.05, 2.4, 2)
+
+[sub_resource type="BoxShape3D" id="car_front_side_shape"]
+size = Vector3(0.5, 2.4, 0.04)
+
+[sub_resource type="BoxShape3D" id="car_front_top_shape"]
+size = Vector3(1, 0.3, 0.04)
+
+[node name="LiftStop" type="Node3D"]
+script = ExtResource("1")
+lit_material = SubResource("brass_lit")
+unlit_material = SubResource("brass")
+
+[node name="Frame" type="Node3D" parent="."]
+
+[node name="Left" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.66, 1.25, 0.115)
+gi_mode = 2
+mesh = SubResource("frame_side")
+
+[node name="Right" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.66, 1.25, 0.115)
+gi_mode = 2
+mesh = SubResource("frame_side")
+
+[node name="Top" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0.115)
+gi_mode = 2
+mesh = SubResource("frame_top")
+
+[node name="IndicatorPlate" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0.135)
+gi_mode = 2
+mesh = SubResource("indicator_plate")
+
+[node name="Indicator" type="Label3D" parent="Frame"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0.141)
+pixel_size = 0.0015
+modulate = Color(1, 0.55, 0.15, 1)
+text = "3"
+font_size = 72
+outline_size = 0
+
+[node name="CallPlate" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.91, 1.15, 0.11)
+gi_mode = 2
+mesh = SubResource("call_plate")
+
+[node name="CallLight" type="MeshInstance3D" parent="Frame"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0.91, 1.15, 0.124)
+gi_mode = 2
+mesh = SubResource("button")
+
+[node name="CallButton" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.91, 1.15, 0.2)
+script = ExtResource("2")
+prompt = "Call the lift"
+
+[node name="DoorsButton" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.2)
+script = ExtResource("2")
+prompt = "Open"
+
+[node name="LeftDoor" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 1.05, 0.045)
+gi_mode = 2
+mesh = SubResource("door_panel")
+
+[node name="RightDoor" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 1.05, 0.045)
+gi_mode = 2
+mesh = SubResource("door_panel")
+
+[node name="Doorway" type="StaticBody3D" parent="."]
+
+[node name="DoorBlocker" type="CollisionShape3D" parent="Doorway"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0.05)
+shape = SubResource("doorway")
+
+[node name="Car" type="StaticBody3D" parent="."]
+
+[node name="FloorMesh" type="MeshInstance3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, -1)
+gi_mode = 2
+mesh = SubResource("car_floor")
+
+[node name="Floor" type="CollisionShape3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, -1)
+shape = SubResource("car_floor_shape")
+
+[node name="CeilingMesh" type="MeshInstance3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.425, -1)
+gi_mode = 2
+mesh = SubResource("car_ceiling")
+
+[node name="Ceiling" type="CollisionShape3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.425, -1)
+shape = SubResource("car_ceiling_shape")
+
+[node name="BackMesh" type="MeshInstance3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -1.975)
+gi_mode = 2
+mesh = SubResource("car_back")
+
+[node name="Back" type="CollisionShape3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -1.975)
+shape = SubResource("car_back_shape")
+
+[node name="LeftMesh" type="MeshInstance3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.975, 1.2, -1)
+gi_mode = 2
+mesh = SubResource("car_side")
+
+[node name="Left" type="CollisionShape3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.975, 1.2, -1)
+shape = SubResource("car_side_shape")
+
+[node name="RightMesh" type="MeshInstance3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.975, 1.2, -1)
+gi_mode = 2
+mesh = SubResource("car_side")
+
+[node name="Right" type="CollisionShape3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.975, 1.2, -1)
+shape = SubResource("car_side_shape")
+
+[node name="FrontLeftMesh" type="MeshInstance3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 1.2, -0.02)
+gi_mode = 2
+mesh = SubResource("car_front_side")
+
+[node name="FrontLeft" type="CollisionShape3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 1.2, -0.02)
+shape = SubResource("car_front_side_shape")
+
+[node name="FrontRightMesh" type="MeshInstance3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1.2, -0.02)
+gi_mode = 2
+mesh = SubResource("car_front_side")
+
+[node name="FrontRight" type="CollisionShape3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1.2, -0.02)
+shape = SubResource("car_front_side_shape")
+
+[node name="FrontTopMesh" type="MeshInstance3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, -0.02)
+gi_mode = 2
+mesh = SubResource("car_front_top")
+
+[node name="FrontTop" type="CollisionShape3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, -0.02)
+shape = SubResource("car_front_top_shape")
+
+[node name="ButtonPanel" type="MeshInstance3D" parent="Car"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -1.94)
+gi_mode = 2
+mesh = SubResource("button_panel")
+
+[node name="NavigationCarve" type="NavigationObstacle3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, -1)
+height = 3.0
+vertices = PackedVector3Array(-1.05, 0, -1.05, 1.05, 0, -1.05, 1.05, 0, 1.05, -1.05, 0, 1.05)
+affect_navigation_mesh = true
+carve_navigation_mesh = true
+avoidance_enabled = false
+
+[node name="FloorButtons" type="Node3D" parent="."]
+unique_name_in_owner = true
+
+[node name="GroundFloor" type="Node3D" parent="FloorButtons"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, 1.2, -1.93)
+script = ExtResource("2")
+floor_index = 0
+prompt = "Ground floor"
+
+[node name="Button" type="MeshInstance3D" parent="FloorButtons/GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.04, 0)
+gi_mode = 2
+mesh = SubResource("button")
+
+[node name="Label" type="Label3D" parent="FloorButtons/GroundFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+pixel_size = 0.001
+modulate = Color(0.02, 0.02, 0.02, 1)
+text = "0"
+font_size = 64
+outline_size = 0
+
+[node name="FirstFloor" type="Node3D" parent="FloorButtons"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -1.93)
+script = ExtResource("2")
+floor_index = 1
+prompt = "First floor"
+
+[node name="Button" type="MeshInstance3D" parent="FloorButtons/FirstFloor"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.04, 0)
+gi_mode = 2
+mesh = SubResource("button")
+
+[node name="Label" type="Label3D" parent="FloorButtons/FirstFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+pixel_size = 0.001
+modulate = Color(0.02, 0.02, 0.02, 1)
+text = "1"
+font_size = 64
+outline_size = 0
+
+[node name="SecondFloor" type="Node3D" parent="FloorButtons"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 1.2, -1.93)
+script = ExtResource("2")
+floor_index = 2
+prompt = "Second floor"
+
+[node name="Button" type="MeshInstance3D" parent="FloorButtons/SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.04, 0)
+gi_mode = 2
+mesh = SubResource("button")
+
+[node name="Label" type="Label3D" parent="FloorButtons/SecondFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+pixel_size = 0.001
+modulate = Color(0.02, 0.02, 0.02, 1)
+text = "2"
+font_size = 64
+outline_size = 0
