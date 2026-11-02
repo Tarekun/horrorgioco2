@@ -318,8 +318,8 @@ const FURNITURE: Dictionary[String, Array] = {
 		["wall_clock", 29.88, 1.9, -2.4, -90],
 		["armchair", 24.2, 0, -6.3, 0],
 		["armchair", 25.4, 0, -6.3, 0],
-		# Corridor: the sunbeds stacked against the stairs door (the obstacle).
-		["sunbed_stack", 3, 0, 0.53, 0, "ObstacleSunbeds"],
+		# Corridor. The sunbeds stacked against the stairs door are the obstacle
+		# (scenes/levels/sunbeds_obstacle.tscn), placed under Doors since they move.
 		["sign/sign_stairs", 3, 2.75, 0.89, 180],
 		# Building site under room 15: the skip and the chute's mouth.
 		["skip", 9, 0, 4.5, 0, "Skip"],

@@ -82,7 +82,7 @@
 [ext_resource type="PackedScene" uid="uid://dktrxracytfq3" path="res://assets/models/props/sign/sign_reception.gltf" id="66_omc8v"]
 [ext_resource type="PackedScene" uid="uid://crnb876pi0xgx" path="res://assets/models/props/wall_clock/wall_clock.gltf" id="67_6f8w4"]
 [ext_resource type="PackedScene" uid="uid://codjm78432486" path="res://assets/models/props/armchair/armchair.gltf" id="68_csqy6"]
-[ext_resource type="PackedScene" uid="uid://d03i04dr5bnqh" path="res://assets/models/props/sunbed_stack/sunbed_stack.gltf" id="69_q87df"]
+[ext_resource type="PackedScene" path="res://scenes/levels/sunbeds_obstacle.tscn" id="69_sunbeds"]
 [ext_resource type="PackedScene" uid="uid://c7i2bhg482ub3" path="res://assets/models/props/sign/sign_stairs.gltf" id="70_fqrgp"]
 [ext_resource type="PackedScene" uid="uid://bn6utdnqrvew2" path="res://assets/models/props/skip/skip.gltf" id="71_e4qgp"]
 [ext_resource type="PackedScene" uid="uid://bki5yqhtj5aa1" path="res://assets/models/props/rubble_chute/rubble_chute.gltf" id="72_6f8uh"]
@@ -5190,9 +5190,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.2, 0, -6.3)
 [node name="Armchair2" parent="Props/GroundFloor" unique_id=2109197689 instance=ExtResource("68_csqy6")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4, 0, -6.3)
 
-[node name="ObstacleSunbeds" parent="Props/GroundFloor" unique_id=139320571 instance=ExtResource("69_q87df")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0.53)
-
 [node name="SignStairs" parent="Props/GroundFloor" unique_id=1759039783 instance=ExtResource("70_fqrgp")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3, 2.75, 0.89)
 
@@ -5772,8 +5769,13 @@ door_id = &"door_changing_room"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 1)
 is_locked = true
 locked_message = "Something heavy on the other side."
+open_angle = 90.0
 door_id = &"door_stairs_gf"
-metadata/blocked_by = &"obstacle_sunbeds"
+
+[node name="ObstacleSunbeds" parent="Doors/GroundFloor" unique_id=139320571 instance=ExtResource("69_sunbeds")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0.53)
+obstacle_id = &"obstacle_sunbeds"
+roll_offset = Vector3(-1.79, 0, -0.08)
 
 [node name="DoorBuildingSite" parent="Doors/GroundFloor" unique_id=259779114 instance=ExtResource("5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 1)
@@ -6013,6 +6015,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 6.5, -4)
 
 [node name="Player" parent="." unique_id=236724104 instance=ExtResource("1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.8, 6.5, -4)
+
+[connection signal="moved" from="Doors/GroundFloor/ObstacleSunbeds" to="Doors/GroundFloor/DoorStairsGF" method="unlock"]
 
 [editable path="Props/GroundFloor/DeskLamp"]
 [editable path="Props/SecondFloor/BedsideLamp"]
