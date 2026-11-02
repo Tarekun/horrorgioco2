@@ -1,0 +1,91 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/combination_lock_screen.gd" id="1"]
+
+[node name="CombinationLockScreen" type="CanvasLayer" node_paths=PackedStringArray("panel", "wheel_label_0", "wheel_label_1", "wheel_label_2", "wheel_label_3", "message_label")]
+process_mode = 3
+layer = 16
+script = ExtResource("1")
+panel = NodePath("Panel")
+wheel_label_0 = NodePath("Panel/Margin/Layout/Wheels/Wheel0")
+wheel_label_1 = NodePath("Panel/Margin/Layout/Wheels/Wheel1")
+wheel_label_2 = NodePath("Panel/Margin/Layout/Wheels/Wheel2")
+wheel_label_3 = NodePath("Panel/Margin/Layout/Wheels/Wheel3")
+message_label = NodePath("Panel/Margin/Layout/Message")
+
+[node name="Panel" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.025, 0.94)
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 160
+theme_override_constants/margin_top = 160
+theme_override_constants/margin_right = 160
+theme_override_constants/margin_bottom = 160
+
+[node name="Layout" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Title" type="Label" parent="Panel/Margin/Layout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+text = "KEY CABINET"
+
+[node name="Wheels" type="HBoxContainer" parent="Panel/Margin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="Wheel0" type="Label" parent="Panel/Margin/Layout/Wheels"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+horizontal_alignment = 1
+text = "0"
+
+[node name="Wheel1" type="Label" parent="Panel/Margin/Layout/Wheels"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+horizontal_alignment = 1
+text = "0"
+
+[node name="Wheel2" type="Label" parent="Panel/Margin/Layout/Wheels"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+horizontal_alignment = 1
+text = "0"
+
+[node name="Wheel3" type="Label" parent="Panel/Margin/Layout/Wheels"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+horizontal_alignment = 1
+text = "0"
+
+[node name="Message" type="Label" parent="Panel/Margin/Layout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+modulate = Color(0.95, 0.85, 0.6, 1)
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Footer" type="Label" parent="Panel/Margin/Layout"]
+modulate = Color(1, 1, 1, 0.45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+text = "▲ ▼  change digit    ◀ ▶  change wheel"
