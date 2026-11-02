@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/lift.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/levels/lift_stop.tscn" id="2"]
+[ext_resource type="AudioStream" path="res://assets/audio/lift_hum.wav" id="3"]
+[ext_resource type="AudioStream" path="res://assets/audio/lift_chime.wav" id="4"]
+
+[node name="Lift" type="Node3D" node_paths=PackedStringArray("stops", "hum_sound", "chime_sound")]
+script = ExtResource("1")
+stops = [NodePath("StopGroundFloor"), NodePath("StopFirstFloor"), NodePath("StopSecondFloor")]
+hum_sound = NodePath("Hum")
+chime_sound = NodePath("Chime")
+
+[node name="StopGroundFloor" parent="." instance=ExtResource("2")]
+
+[node name="StopFirstFloor" parent="." instance=ExtResource("2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+
+[node name="StopSecondFloor" parent="." instance=ExtResource("2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.4, 0)
+
+[node name="Hum" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -1)
+stream = ExtResource("3")
+bus = &"SFX"
+unit_size = 3.0
+max_distance = 20.0
+
+[node name="Chime" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0.2)
+stream = ExtResource("4")
+bus = &"SFX"
+unit_size = 3.0
+max_distance = 20.0
