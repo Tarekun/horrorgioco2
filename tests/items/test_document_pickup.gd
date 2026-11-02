@@ -60,3 +60,19 @@ func test_a_non_document_pickup_does_not_open_the_reader() -> void:
 	other.interact(_player)
 	assert_false(_reader.is_open)
 	assert_true(_player.inventory.has(key))
+
+
+func test_picking_up_sets_its_read_flag() -> void:
+	var flag := LevelFlag.new()
+	flag.flag_id = &"test_letter_read"
+	add_child_autofree(flag)
+	_pickup.read_flag = flag
+	_pickup.interact(_player)
+	assert_true(flag.is_set)
+	SaveSystem.reset()
+
+
+func test_a_pickup_without_a_flag_still_opens_the_reader() -> void:
+	_pickup.read_flag = null
+	_pickup.interact(_player)
+	assert_true(_reader.is_open)

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+; Working text until #21 writes the slice's documents.
+
+[ext_resource type="Script" path="res://scripts/items/item_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"doc_lost_property"
+display_name = "Lost property ledger"
+category = 4
+description = "Housekeeping's ledger of things guests left behind."
+pages = PackedStringArray("LOST PROPERTY\n\nRoom 22. One sandal, left.\nRoom 22. Sunglasses, tortoiseshell.\nRoom 22. Hair clip.\nRoom 22. Paperback, a page folded down.", "Room 22. Men's watch.\nGuest says keep it.")

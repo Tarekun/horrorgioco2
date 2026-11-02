@@ -125,6 +125,14 @@
 [ext_resource type="Script" uid="uid://d2b7720nnhlqm" path="res://scripts/interaction/phone_examinable.gd" id="phone_examinable_162"]
 [ext_resource type="PackedScene" path="res://scenes/levels/rubble_chute.tscn" id="105_chute"]
 [ext_resource type="PackedScene" path="res://scenes/levels/tension/hotel_tension_events.tscn" id="105_tension"]
+[ext_resource type="PackedScene" path="res://scenes/items/document_pickup.tscn" id="82_document_pickup"]
+[ext_resource type="Resource" path="res://assets/data/items/doc_registration_card.tres" id="82_doc_registration_card"]
+[ext_resource type="Resource" path="res://assets/data/items/doc_lost_property.tres" id="82_doc_lost_property"]
+[ext_resource type="Resource" path="res://assets/data/items/doc_porter_log.tres" id="82_doc_porter_log"]
+[ext_resource type="Resource" path="res://assets/data/items/doc_postcard.tres" id="82_doc_postcard"]
+[ext_resource type="Resource" path="res://assets/data/items/key_basement.tres" id="82_key_basement"]
+[ext_resource type="Script" path="res://scripts/levels/combination_lock_puzzle.gd" id="82_combination_lock"]
+[ext_resource type="Script" path="res://scripts/levels/flag_reveal.gd" id="82_flag_reveal"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c7jyt"]
 resource_name = "concrete_floor"
@@ -6007,32 +6015,41 @@ spot_id = &"save_basement_stairs"
 
 [node name="Documents" type="Node3D" parent="." unique_id=1647217408]
 
-[node name="DocRegistrationCard" type="Marker3D" parent="Documents" unique_id=175497135]
+[node name="DocRegistrationCard" parent="Documents" unique_id=175497135 instance=ExtResource("82_document_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.4, 7.15, -5.4)
-metadata/document_id = &"doc_registration_card"
+item = ExtResource("82_doc_registration_card")
+pickup_id = &"doc_registration_card"
 
-[node name="DocLostProperty" type="Marker3D" parent="Documents" unique_id=1573227710]
+[node name="DocLostProperty" parent="Documents" unique_id=1573227710 instance=ExtResource("82_document_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, 4.2, -5.7)
-metadata/document_id = &"doc_lost_property"
+item = ExtResource("82_doc_lost_property")
+pickup_id = &"doc_lost_property"
 
-[node name="DocPorterLog" type="Marker3D" parent="Documents" unique_id=1922918583]
+[node name="DocPorterLog" parent="Documents" unique_id=1922918583 node_paths=PackedStringArray("read_flag") instance=ExtResource("82_document_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0.75, 4.5)
-metadata/document_id = &"doc_porter_log"
+item = ExtResource("82_doc_porter_log")
+pickup_id = &"doc_porter_log"
+read_flag = NodePath("../../LevelFlags/PorterLogRead")
 
-[node name="DocPostcard" type="Marker3D" parent="Documents" unique_id=1510449742]
+[node name="DocPostcard" parent="Documents" unique_id=1510449742 instance=ExtResource("82_document_pickup")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 3.73, -4.5)
-metadata/document_id = &"doc_postcard"
+item = ExtResource("82_doc_postcard")
+pickup_id = &"doc_postcard"
 
 [node name="Puzzles" type="Node3D" parent="." unique_id=2017780374]
 
-[node name="PuzzleKeyCabinet" type="Marker3D" parent="Puzzles" unique_id=559233693]
+[node name="PuzzleKeyCabinet" type="Node3D" parent="Puzzles" unique_id=559233693]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 4.4, -4)
-metadata/puzzle_id = &"puzzle_key_cabinet"
-metadata/reward_item = &"key_basement"
+script = ExtResource("82_combination_lock")
+code = "0447"
+reward_item = ExtResource("82_key_basement")
+already_solved_message = "The cabinet stands open."
+puzzle_id = &"puzzle_key_cabinet"
 
-[node name="ClockRoom22" type="Marker3D" parent="Puzzles" unique_id=295565761]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.65, 7, -5.3)
-metadata/appears_after = &"doc_porter_log"
+[node name="ClockRoom22" type="Node" parent="Puzzles" unique_id=295565761 node_paths=PackedStringArray("flag", "target")]
+script = ExtResource("82_flag_reveal")
+flag = NodePath("../../LevelFlags/PorterLogRead")
+target = NodePath("../../Props/SecondFloor/ClockRoom22")
 
 [node name="Examinables" type="Node3D" parent="."]
 

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+; Working text until #21 writes the slice's documents.
+
+[ext_resource type="Script" path="res://scripts/items/item_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"doc_registration_card"
+display_name = "Registration card"
+category = 4
+description = "The hotel's registration card, filled in at the desk."
+pages = PackedStringArray("HOTEL MIRAMARE\nRegistration card\n\nGuest: Luca\nRoom: 22\nGuests: 2\nArrival: the night of the closing party\nDeparture:")
