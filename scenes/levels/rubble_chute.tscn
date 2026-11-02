@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/rubble_chute.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/interaction/examinable.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/screen_fade.tscn" id="3"]
+[ext_resource type="AudioStream" path="res://assets/audio/chute_slide.wav" id="4"]
+
+[node name="RubbleChute" type="Node3D" node_paths=PackedStringArray("mouth", "landing", "screen_fade", "slide_noise")]
+script = ExtResource("1")
+mouth = NodePath("Mouth")
+landing = NodePath("Landing")
+screen_fade = NodePath("ScreenFade")
+slide_noise = NodePath("SlideNoise")
+
+[node name="Mouth" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.3, 0)
+script = ExtResource("2")
+
+[node name="Landing" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -3.2, -1.8)
+
+[node name="ScreenFade" parent="." instance=ExtResource("3")]
+
+[node name="SlideNoise" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4")
+bus = &"SFX"

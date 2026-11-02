@@ -51,7 +51,10 @@ func _bake(level_path: String, output_path: String) -> bool:
 	# up: before that, the locked door they block keeps paths out anyway.
 	for node: Node in level.find_children("*", "", true, false):
 		if node.get(&"starts_open") == true:
-			(node.get(&"hinge") as Node3D).rotation.y = 0.0
+			for leaf: StringName in [&"hinge", &"second_hinge"]:
+				var hinge := node.get(leaf) as Node3D
+				if hinge:
+					hinge.rotation.y = 0.0
 		if node.has_method(&"place_moved"):
 			node.call(&"place_moved")
 

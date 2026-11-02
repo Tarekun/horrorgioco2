@@ -2,7 +2,7 @@
 
 This project is a 3D survival horror videogame built with Godot 4 and GDScript.
 
-Project skills live in `.agent/skills/`: `pm` for project management on the Gitea repo, `dev` for developing an issue through to a pull request.
+Project skills live in `.agents/skills/`: `pm` for project management on the GitHub repo, `dev` for developing an issue through to a pull request, `review` for reviewing a single PR, and `auto` for running autonomously as a manager that delegates tasks and PR reviews to subagents.
 
 Design references live in `docs/design/`. Before starting a task, read the relevant doc:
 
@@ -88,4 +88,4 @@ To run only the tests: `godot --headless --path . -s res://addons/gut/gut_cmdln.
 
 ### CI
 
-`.gitea/workflows/ci.yml` runs `tools/check.sh` on Gitea Actions for every pull request and every push to `main`. It installs the pinned Godot with `tools/install_godot.sh` and gdtoolkit from `requirements-dev.txt`. A PR with a failing check must not be merged. If you change the Godot version, update `.godot-version` and CI picks it up.
+`.github/workflows/ci.yml` runs `tools/check.sh` on GitHub Actions for every pull request and every push to `main`. It installs the pinned Godot with `tools/install_godot.sh` and gdtoolkit from `requirements-dev.txt`. A PR with a failing check must not be merged. If you change the Godot version, update `.godot-version` and CI picks it up.

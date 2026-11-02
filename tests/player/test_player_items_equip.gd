@@ -1,4 +1,5 @@
-## Tests for equipping weapons from the inventory.
+## Tests for equipping weapons from the inventory, on a player given the plank
+## to start with (the player scene itself starts unarmed).
 
 extends GutTest
 
@@ -15,8 +16,9 @@ var _screen: InventoryScreen
 
 func before_each() -> void:
 	_player = PLAYER_SCENE.instantiate() as Player
-	add_child_autofree(_player)
 	_items = _player.get_node("PlayerItems") as PlayerItems
+	_items.starting_weapon = PLANK
+	add_child_autofree(_player)
 	_combat = _player.get_node("PlayerCombat") as PlayerCombat
 	_screen = _player.get_node("InventoryScreen") as InventoryScreen
 	await get_tree().process_frame
@@ -35,7 +37,7 @@ func test_the_weapons_are_items() -> void:
 		assert_eq(item.weapon.display_name, item.display_name)
 
 
-func test_the_player_starts_holding_the_plank_from_the_inventory() -> void:
+func test_the_player_starts_holding_the_starting_weapon_from_the_inventory() -> void:
 	assert_eq(_player.inventory.count(PLANK), 1)
 	assert_eq(_items.equipped_weapon, PLANK)
 	assert_eq(_combat.weapon, PLANK.weapon)

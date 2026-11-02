@@ -8,6 +8,7 @@ const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
 const ENEMY_SCENE: PackedScene = preload("res://scenes/enemies/enemy.tscn")
 const LEVEL_SCENE: PackedScene = preload("res://scenes/levels/graybox_level.tscn")
 const LEVEL_PATH: String = "res://scenes/levels/graybox_level.tscn"
+const PLANK: ItemData = preload("res://assets/data/items/wooden_plank.tres")
 const DIRECTORY: String = "user://test_save_spot"
 
 var _player: Player
@@ -87,6 +88,8 @@ func test_the_player_uses_it_with_interact() -> void:
 
 func test_the_save_holds_the_spot_area_and_player() -> void:
 	_player.health_component.take_damage(30.0)
+	_player.inventory.add(PLANK)
+	_player.items.equip(PLANK)
 	SaveSystem.play_time = 90.0
 	SaveSystem.world.record(&"Pickups/Ammo", {"is_collected": true})
 	var save: SaveData = SaveSystem.capture(_player, _spot)

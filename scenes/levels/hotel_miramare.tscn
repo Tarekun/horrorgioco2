@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://djh7q1yb67tir" path="res://scripts/audio/ambience_player.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://blmiojn8twg4q" path="res://assets/models/environment/floor/floor_floor_tiles.gltf" id="4_c7jyt"]
 [ext_resource type="PackedScene" path="res://scenes/levels/door.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/levels/double_door.tscn" id="5_double_door"]
 [ext_resource type="PackedScene" uid="uid://cbk1r0d6nqlgs" path="res://assets/models/environment/ceiling/ceiling_concrete_wall.gltf" id="5_sc03c"]
 [ext_resource type="NavigationMesh" path="res://assets/data/hotel_miramare_navmesh.res" id="6"]
 [ext_resource type="PackedScene" uid="uid://cpvqs03qt7ceu" path="res://assets/models/environment/floor/floor_concrete_floor.gltf" id="6_gmwgl"]
@@ -117,6 +118,7 @@
 [ext_resource type="PackedScene" uid="uid://dehys57fu60y5" path="res://assets/models/props/curtain/curtain.gltf" id="102_4npss"]
 [ext_resource type="PackedScene" uid="uid://dpdxm36dboj6m" path="res://assets/models/environment/balcony_divider/balcony_divider.gltf" id="103_87koc"]
 [ext_resource type="LightmapGIData" uid="uid://co2ik4xvqnmhn" path="res://scenes/levels/hotel_miramare.lmbake" id="104_sc03c"]
+[ext_resource type="PackedScene" path="res://scenes/levels/rubble_chute.tscn" id="105_chute"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c7jyt"]
 resource_name = "concrete_floor"
@@ -5737,6 +5739,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -3.2, 1)
 is_locked = true
 locked_message = "Chained shut."
 key_id = &"key_basement"
+is_self_closing = true
 door_id = &"door_basement"
 
 [node name="DoorLaundry" parent="Doors/Basement" unique_id=1786185263 instance=ExtResource("5")]
@@ -5792,7 +5795,7 @@ door_id = &"door_kitchen"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -1)
 door_id = &"door_dining_corridor"
 
-[node name="DoorDiningLobby" parent="Doors/GroundFloor" unique_id=1211863428 instance=ExtResource("5")]
+[node name="DoorDiningLobby" parent="Doors/GroundFloor" unique_id=1211863428 instance=ExtResource("5_double_door")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 18, 0, -4)
 door_id = &"door_dining_lobby"
 
@@ -5914,7 +5917,9 @@ pickup_id = &"pickup_drink_room22"
 
 [node name="BlockadeRoom28" parent="Pickups" unique_id=1235777228 instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 7.6, -0.9)
+prompt = "Pull the plank off."
 item = ExtResource("12")
+equips_on_pickup = true
 pickup_id = &"blockade_room_28"
 
 [node name="Plank" type="StaticBody3D" parent="Pickups/BlockadeRoom28" unique_id=1005475622]
@@ -6002,6 +6007,9 @@ metadata/reward_item = &"key_basement"
 [node name="ClockRoom22" type="Marker3D" parent="Puzzles" unique_id=295565761]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.65, 7, -5.3)
 metadata/appears_after = &"doc_porter_log"
+
+[node name="RubbleChute" parent="." unique_id=1551550155 instance=ExtResource("105_chute")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 3.2, 4.5)
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=322884459]
 navigation_mesh = ExtResource("6")

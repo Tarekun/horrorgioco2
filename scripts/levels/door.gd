@@ -13,6 +13,11 @@
 ## Enemies can't open doors: the navigation link through the doorway is enabled
 ## only while the door is open, so pathing respects closed doors. The level's
 ## navmesh is baked with the doors shut (see tools/bake_navmesh.gd).
+##
+## A self-closing door shuts by itself `close_delay` seconds after opening, as
+## soon as nobody (the player or an enemy) stands in the space its panel sweeps.
+## A double door has a second leaf on the opposite jamb that swings with the
+## first, mirrored, so both open to the same side.
 
 class_name Door
 extends Interactable
@@ -43,18 +48,36 @@ signal unlocked_with_key(key: ItemData)
 @export var open_angle: float = 100.0
 @export var swing_time: float = 0.5
 
+## Closes by itself `close_delay` seconds after opening, once its doorway is
+## clear. Set before the door enters the tree.
+@export var is_self_closing: bool = false
+@export var close_delay: float = 1.0
+
 ## Stable id for saves. Left empty, it is the door's path inside its level.
 @export var door_id: StringName
 
 ## The hinge the panel rotates on (child).
 @export var hinge: Node3D
 
+## The other leaf of a double door (child), hinged on the opposite jamb.
+## Optional.
+@export var second_hinge: Node3D
+
 ## Lets enemies path through the doorway while the door is open (child).
 @export var navigation_link: NavigationLink3D
+
+## The space the panel sweeps on its -Z side (child), watched by a self-closing
+## door so it doesn't shut on anyone. It moves to whichever side the door opens
+## to.
+@export var doorway: Area3D
 
 var is_open: bool = false
 
 var _tween: Tween
+## Seconds since the door last opened.
+var _time_open: float = 0.0
+## How far the doorway's middle is from the door's plane.
+var _doorway_offset: float = 0.0
 
 
 func _ready() -> void:
@@ -64,10 +87,20 @@ func _ready() -> void:
 	navigation_link.enabled = false
 	if door_id.is_empty():
 		door_id = WorldState.default_id(self)
+	_doorway_offset = absf(doorway.position.z)
+	doorway.monitoring = is_self_closing
 	if starts_open and not is_locked:
 		is_open = true
 		navigation_link.enabled = true
-		hinge.rotation.y = -deg_to_rad(open_angle)
+		_set_angle(-deg_to_rad(open_angle))
+
+
+func _physics_process(delta: float) -> void:
+	if not (is_self_closing and is_open):
+		return
+	_time_open += delta
+	if should_close_by_itself(_time_open, close_delay, not doorway.has_overlapping_bodies()):
+		close()
 
 
 func get_prompt() -> String:
@@ -99,6 +132,7 @@ func open(from: Vector3) -> void:
 	if is_open or is_locked:
 		return
 	is_open = true
+	_time_open = 0.0
 	navigation_link.enabled = true
 	var side: float = signf(global_basis.z.dot(from - global_position))
 	_swing_to(deg_to_rad(open_angle) * (side if side != 0.0 else 1.0))
@@ -158,12 +192,36 @@ static func used_key_message(key: ItemData) -> String:
 	return "Used %s." % key.display_name
 
 
+## Whether a self-closing door that has been open `time_open` seconds shuts now.
+static func should_close_by_itself(time_open: float, delay: float, is_doorway_clear: bool) -> bool:
+	return time_open >= delay and is_doorway_clear
+
+
 func _record() -> void:
 	SaveSystem.world.record(door_id, {"is_locked": is_locked})
 
 
+## Swings the leaves to `angle` (the first leaf's) over swing_time.
 func _swing_to(angle: float) -> void:
 	if _tween:
 		_tween.kill()
 	_tween = create_tween()
 	_tween.tween_property(hinge, "rotation:y", angle, swing_time)
+	if second_hinge:
+		_tween.parallel().tween_property(second_hinge, "rotation:y", -angle, swing_time)
+	_place_doorway(angle)
+
+
+## Puts the leaves at `angle` (the first leaf's) at once.
+func _set_angle(angle: float) -> void:
+	hinge.rotation.y = angle
+	if second_hinge:
+		second_hinge.rotation.y = -angle
+	_place_doorway(angle)
+
+
+## Moves the doorway to the side the leaves swing to at `angle`: a positive
+## angle swings them to -Z. Closed, it stays on the side they swung to last.
+func _place_doorway(angle: float) -> void:
+	if angle != 0.0:
+		doorway.position.z = -signf(angle) * _doorway_offset
