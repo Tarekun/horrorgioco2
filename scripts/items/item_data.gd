@@ -34,6 +34,11 @@ enum Category { WEAPON, AMMO, HEALING, KEY_ITEM, DOCUMENT }
 ## Restores all health, whatever `heal_amount` says.
 @export var is_full_heal: bool = false
 
+@export_group("Document")
+## The pages shown in the document reader, in order. A document always has at
+## least one page.
+@export_multiline var pages: PackedStringArray = []
+
 
 ## Whether the inventory screen offers Equip for it: weapons.
 func is_equippable() -> bool:
@@ -43,6 +48,11 @@ func is_equippable() -> bool:
 ## Whether the inventory screen offers Use for it: healing items.
 func is_usable() -> bool:
 	return category == Category.HEALING
+
+
+## Whether the inventory screen offers Read for it: documents.
+func is_document() -> bool:
+	return category == Category.DOCUMENT
 
 
 ## Health this item restores to someone with `max_health`.

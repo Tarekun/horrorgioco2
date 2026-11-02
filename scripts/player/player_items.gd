@@ -8,6 +8,8 @@
 ## Equip on a weapon swaps the weapon PlayerCombat swings. Weapons stay in the
 ## inventory whether held or not; the player starts holding `starting_weapon`,
 ## or nothing when it is unset (a new game starts unarmed).
+##
+## Read on a document closes the inventory and opens the document reader.
 
 class_name PlayerItems
 extends Node
@@ -26,6 +28,7 @@ const FULL_HEALTH_MESSAGE: String = "You don't need that right now."
 @export var health_component: HealthComponent
 @export var combat: PlayerCombat
 @export var inventory_screen: InventoryScreen
+@export var document_reader: DocumentReader
 
 ## The weapon item held, or null.
 var equipped_weapon: ItemData
@@ -34,6 +37,7 @@ var equipped_weapon: ItemData
 func _ready() -> void:
 	inventory_screen.use_requested.connect(_on_use_requested)
 	inventory_screen.equip_requested.connect(equip)
+	inventory_screen.read_requested.connect(_on_read_requested)
 	if starting_weapon:
 		if not player.inventory.has(starting_weapon):
 			player.inventory.add(starting_weapon)
@@ -77,3 +81,10 @@ func _on_use_requested(item: ItemData) -> void:
 	var message: String = use_item(item)
 	if not message.is_empty():
 		inventory_screen.show_message(message)
+
+
+func _on_read_requested(item: ItemData) -> void:
+	if document_reader == null or not player.inventory.has(item):
+		return
+	inventory_screen.close()
+	document_reader.open(item)

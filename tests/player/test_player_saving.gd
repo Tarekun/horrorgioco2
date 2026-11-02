@@ -44,6 +44,15 @@ func test_an_unarmed_player_saves_no_weapon() -> void:
 	assert_eq(save.equipped_weapon, &"")
 
 
+func test_writes_read_documents() -> void:
+	var letter := ItemData.new()
+	letter.id = &"doc_letter"
+	_player.document_log.mark_read(letter)
+	var save := SaveData.new()
+	_player.write_save(save)
+	assert_eq(save.documents_read, {"doc_letter": true} as Dictionary[String, bool])
+
+
 func test_a_lit_flashlight_is_saved_on() -> void:
 	_player.flashlight.set_on(true)
 	var save := SaveData.new()
@@ -77,10 +86,22 @@ func test_reading_replaces_what_the_player_carried() -> void:
 	assert_false(_player.inventory.has(ROUNDS))
 
 
+func test_reads_documents_read() -> void:
+	var save: SaveData = _save_with(100.0, {"wooden_plank": 1}, &"wooden_plank")
+	save.documents_read = {"doc_letter": true}
+	_player.read_save(save)
+	var letter := ItemData.new()
+	letter.id = &"doc_letter"
+	assert_true(_player.document_log.is_read(letter))
+
+
 func test_a_round_trip_keeps_the_player() -> void:
 	_player.health_component.take_damage(20.0)
 	_player.inventory.add(PIPE)
 	_player.items.equip(PIPE)
+	var letter := ItemData.new()
+	letter.id = &"doc_letter"
+	_player.document_log.mark_read(letter)
 	var save := SaveData.new()
 	_player.write_save(save)
 	var other := PLAYER_SCENE.instantiate() as Player
