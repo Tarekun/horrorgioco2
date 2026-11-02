@@ -247,7 +247,8 @@ const FURNITURE: Dictionary[String, Array] = {
 		["room_number/room_number_23", 16.3, 1.7, 0.9, 180],
 		["room_number/room_number_25", 10.3, 1.7, 0.9, 180],
 		["sign/sign_stairs", 3, 2.75, 0.89, 180],
-		["curtain", 0.17, 2.45, -0.25, 90],
+		# The curtain at the corridor's west end stirs (tension_curtain), so it belongs to
+		# scenes/levels/tension/hotel_tension_events.tscn.
 		["armchair", 19, 0, -6.3, 0],
 		["armchair", 23, 0, -6.3, 0],
 		# The balcony.
@@ -282,8 +283,8 @@ const FURNITURE: Dictionary[String, Array] = {
 		["scaffolding", 6.6, 0, 5.55, 90],
 		["rubble_chute", 9, 0, 4.5, 0, "ChuteTop"],
 		["room_number/room_number_15", 10.3, 1.7, 0.9, 180],
-		# Room 13, the wardrobe that creaks open.
-		["wardrobe", 17.56, 0, 3.75, -90, "Wardrobe"],
+		# Room 13. Its wardrobe creaks open (tension_wardrobe), so it belongs to
+		# scenes/levels/tension/hotel_tension_events.tscn.
 		["bed", 13.14, 0, 5.2, 90],
 		["nightstand", 12.4, 0, 6.6, 90],
 		["room_number/room_number_13", 16.3, 1.7, 0.9, 180],
@@ -317,8 +318,8 @@ const FURNITURE: Dictionary[String, Array] = {
 		["wall_clock", 29.88, 1.9, -2.4, -90],
 		["armchair", 24.2, 0, -6.3, 0],
 		["armchair", 25.4, 0, -6.3, 0],
-		# Corridor: the sunbeds stacked against the stairs door (the obstacle).
-		["sunbed_stack", 3, 0, 0.53, 0, "ObstacleSunbeds"],
+		# Corridor. The sunbeds stacked against the stairs door are the obstacle
+		# (scenes/levels/sunbeds_obstacle.tscn), placed under Doors since they move.
 		["sign/sign_stairs", 3, 2.75, 0.89, 180],
 		# Building site under room 15: the skip and the chute's mouth.
 		["skip", 9, 0, 4.5, 0, "Skip"],

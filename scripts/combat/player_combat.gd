@@ -12,6 +12,8 @@
 ## stomp costs no stamina, takes a while and kills the enemy for good partway
 ## through, leaving the player exposed (a hit interrupts it).
 ##
+## Unarmed (no weapon equipped), `attack` does nothing: no swing, no stomp.
+##
 ## The state machine is driven by tick(), so tests can step it without input.
 
 class_name PlayerCombat
@@ -48,7 +50,7 @@ const ENEMY_GROUP: StringName = &"enemies"
 @export var stomp_duration: float = 0.8
 @export_range(0.0, 1.0) var stomp_hit_time: float = 0.5
 
-## The equipped weapon.
+## The equipped weapon, or null while unarmed.
 @export var weapon: MeleeWeapon
 
 @export var player: Player
@@ -91,7 +93,7 @@ func _physics_process(delta: float) -> void:
 func attack_pressed() -> void:
 	match state:
 		State.IDLE:
-			if not is_enabled:
+			if not is_enabled or not has_weapon():
 				return
 			var downed: Enemy = find_stompable_enemy()
 			if downed:
@@ -149,6 +151,11 @@ func find_stompable_enemy() -> Enemy:
 			nearest = enemy
 			nearest_distance = offset.length()
 	return nearest
+
+
+## True while a weapon is equipped.
+func has_weapon() -> bool:
+	return weapon != null
 
 
 ## True while the player is attacking and can't move.
@@ -326,6 +333,8 @@ func _face_nearest_enemy() -> void:
 
 
 func _apply_weapon_reach() -> void:
+	if not has_weapon():
+		return
 	for child: Node in hitbox.get_children():
 		var shape_node := child as CollisionShape3D
 		var box := shape_node.shape as BoxShape3D if shape_node else null
@@ -336,7 +345,7 @@ func _apply_weapon_reach() -> void:
 
 func _on_hit_landed(hurtbox: Hurtbox, damage_dealt: float) -> void:
 	hit_landed.emit(hurtbox, damage_dealt)
-	if damage_dealt > 0.0 and weapon.hitstop_duration > 0.0:
+	if damage_dealt > 0.0 and has_weapon() and weapon.hitstop_duration > 0.0:
 		_hitstop_left = weapon.hitstop_duration
 		model.set_frozen(true)
 		hitstop_started.emit(weapon.hitstop_duration)

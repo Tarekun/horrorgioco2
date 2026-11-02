@@ -33,6 +33,13 @@ func _set_health(value: float) -> void:
 	_health.take_damage(_health.current_health - value)
 
 
+func test_the_player_scene_starts_unarmed() -> void:
+	assert_null(_items.starting_weapon)
+	assert_null(_items.equipped_weapon)
+	assert_null(_items.combat.weapon)
+	assert_true(_player.inventory.get_items_in(ItemData.Category.WEAPON).is_empty())
+
+
 func test_the_healing_items_are_defined() -> void:
 	for item: ItemData in [DRINK, FIRST_AID, AMPOULE]:
 		assert_eq(item.category, ItemData.Category.HEALING, item.id)

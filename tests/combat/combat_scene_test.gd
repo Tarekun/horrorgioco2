@@ -1,12 +1,14 @@
 ## Base for scene-level combat tests: a floor, the real player scene with its
-## combat nodes, and a training dummy 1.2 m in front (towards -Z). Presses are
-## sent through the combat node's methods so frames are exact.
+## combat nodes, armed with the wooden plank (the player scene starts unarmed),
+## and a training dummy 1.2 m in front (towards -Z). Presses are sent through
+## the combat node's methods so frames are exact.
 
 class_name CombatSceneTest
 extends GutTest
 
 const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
 const DUMMY_SCENE: PackedScene = preload("res://scenes/enemies/training_dummy.tscn")
+const PLANK_ITEM: ItemData = preload("res://assets/data/items/wooden_plank.tres")
 const DT: float = 1.0 / 60.0
 
 var _player: Player
@@ -26,6 +28,7 @@ func before_each() -> void:
 	add_child_autofree(floor_body)
 
 	_player = PLAYER_SCENE.instantiate() as Player
+	(_player.get_node("PlayerItems") as PlayerItems).starting_weapon = _starting_weapon()
 	add_child_autofree(_player)
 	_combat = _player.get_node("PlayerCombat") as PlayerCombat
 	_stamina = _player.stamina_component
@@ -39,6 +42,11 @@ func after_each() -> void:
 	Input.action_release(&"move_forward")
 	Input.action_release(&"move_back")
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+
+## The weapon the player starts holding; null for an unarmed player.
+func _starting_weapon() -> ItemData:
+	return PLANK_ITEM
 
 
 func _spawn_dummy(position: Vector3) -> TrainingDummy:
