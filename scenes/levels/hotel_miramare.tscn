@@ -134,6 +134,7 @@
 [ext_resource type="Script" path="res://scripts/levels/flag_reveal.gd" id="82_flag_reveal"]
 [ext_resource type="PackedScene" path="res://scenes/levels/roller_shutter.tscn" id="roller_shutter_159"]
 [ext_resource type="Script" path="res://scripts/levels/shutter_button.gd" id="shutter_button_159"]
+[ext_resource type="PackedScene" path="res://scenes/levels/lift.tscn" id="lift_5"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c7jyt"]
 resource_name = "concrete_floor"
@@ -5771,6 +5772,10 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 17.4
 script = ExtResource("shutter_button_159")
 power_flag = NodePath("../../LevelFlags/PowerRestored")
 shutter = NodePath("../ShutterStaff")
+[node name="Lift" parent="Mechanisms" node_paths=PackedStringArray("power_flag", "out_of_order_signs") instance=ExtResource("lift_5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, -4.9)
+power_flag = NodePath("../../LevelFlags/PowerRestored")
+out_of_order_signs = [NodePath("../../Props/GroundFloor/SignOutOfOrder"), NodePath("../../Props/FirstFloor/SignOutOfOrder"), NodePath("../../Props/SecondFloor/SignOutOfOrder")]
 
 [node name="Doors" type="Node3D" parent="." unique_id=698680099]
 

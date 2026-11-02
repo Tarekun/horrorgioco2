@@ -138,7 +138,9 @@ func test_a_ride_takes_the_rider_to_the_chosen_floor() -> void:
 	_stop(0).get_floor_button(2).interact(rider)
 	await _wait_for_arrival(3)
 	assert_eq(_lift.current_floor, 2)
-	assert_almost_eq(rider.global_position, start + Vector3(0.0, 2.0 * STOREY, 0.0), Vector3.ONE * 0.001)
+	assert_almost_eq(
+		rider.global_position, start + Vector3(0.0, 2.0 * STOREY, 0.0), Vector3.ONE * 0.001
+	)
 	assert_true(_stop(2).contains(rider.global_position))
 	assert_true(_stop(2).is_open, "the doors open on 2F")
 	assert_false(_stop(0).is_open)
