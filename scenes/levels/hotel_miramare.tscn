@@ -118,6 +118,7 @@
 [ext_resource type="PackedScene" uid="uid://dehys57fu60y5" path="res://assets/models/props/curtain/curtain.gltf" id="102_4npss"]
 [ext_resource type="PackedScene" uid="uid://dpdxm36dboj6m" path="res://assets/models/environment/balcony_divider/balcony_divider.gltf" id="103_87koc"]
 [ext_resource type="LightmapGIData" uid="uid://co2ik4xvqnmhn" path="res://scenes/levels/hotel_miramare.lmbake" id="104_sc03c"]
+[ext_resource type="PackedScene" path="res://scenes/levels/rubble_chute.tscn" id="105_chute"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c7jyt"]
 resource_name = "concrete_floor"
@@ -6002,6 +6003,9 @@ metadata/reward_item = &"key_basement"
 [node name="ClockRoom22" type="Marker3D" parent="Puzzles" unique_id=295565761]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.65, 7, -5.3)
 metadata/appears_after = &"doc_porter_log"
+
+[node name="RubbleChute" parent="." unique_id=1551550155 instance=ExtResource("105_chute")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 3.2, 4.5)
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=322884459]
 navigation_mesh = ExtResource("6")
