@@ -1,0 +1,100 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/levels/door.tscn" id="1"]
+[ext_resource type="Material" path="res://assets/materials/door.tres" id="2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_leaf"]
+size = Vector3(0.7, 2.4, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_doorway"]
+size = Vector3(1.4, 2.4, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glass"]
+albedo_color = Color(0.1, 0.12, 0.2, 1)
+roughness = 0.15
+
+[sub_resource type="BoxMesh" id="BoxMesh_glass"]
+size = Vector3(0.54, 1.98, 0.02)
+
+[sub_resource type="BoxMesh" id="BoxMesh_stile"]
+size = Vector3(0.08, 2.4, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_top_rail"]
+size = Vector3(0.54, 0.12, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bottom_rail"]
+size = Vector3(0.54, 0.3, 0.1)
+
+[node name="DoubleDoor" node_paths=PackedStringArray("second_hinge") instance=ExtResource("1")]
+second_hinge = NodePath("SecondHinge")
+
+[node name="Panel" parent="Hinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, 1.2, 0)
+
+[node name="Mesh" parent="Hinge/Panel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 0)
+mesh = SubResource("BoxMesh_glass")
+surface_material_override/0 = SubResource("StandardMaterial3D_glass")
+
+[node name="Shape" parent="Hinge/Panel"]
+shape = SubResource("BoxShape3D_leaf")
+
+[node name="HingeStile" type="MeshInstance3D" parent="Hinge/Panel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.31, 0, 0)
+mesh = SubResource("BoxMesh_stile")
+surface_material_override/0 = ExtResource("2")
+
+[node name="MeetingStile" type="MeshInstance3D" parent="Hinge/Panel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.31, 0, 0)
+mesh = SubResource("BoxMesh_stile")
+surface_material_override/0 = ExtResource("2")
+
+[node name="TopRail" type="MeshInstance3D" parent="Hinge/Panel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.14, 0)
+mesh = SubResource("BoxMesh_top_rail")
+surface_material_override/0 = ExtResource("2")
+
+[node name="BottomRail" type="MeshInstance3D" parent="Hinge/Panel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.05, 0)
+mesh = SubResource("BoxMesh_bottom_rail")
+surface_material_override/0 = ExtResource("2")
+
+[node name="SecondHinge" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0, 0)
+
+[node name="Panel" type="StaticBody3D" parent="SecondHinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 1.2, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="SecondHinge/Panel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 0)
+mesh = SubResource("BoxMesh_glass")
+surface_material_override/0 = SubResource("StandardMaterial3D_glass")
+
+[node name="Shape" type="CollisionShape3D" parent="SecondHinge/Panel"]
+shape = SubResource("BoxShape3D_leaf")
+
+[node name="HingeStile" type="MeshInstance3D" parent="SecondHinge/Panel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.31, 0, 0)
+mesh = SubResource("BoxMesh_stile")
+surface_material_override/0 = ExtResource("2")
+
+[node name="MeetingStile" type="MeshInstance3D" parent="SecondHinge/Panel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.31, 0, 0)
+mesh = SubResource("BoxMesh_stile")
+surface_material_override/0 = ExtResource("2")
+
+[node name="TopRail" type="MeshInstance3D" parent="SecondHinge/Panel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.14, 0)
+mesh = SubResource("BoxMesh_top_rail")
+surface_material_override/0 = ExtResource("2")
+
+[node name="BottomRail" type="MeshInstance3D" parent="SecondHinge/Panel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.05, 0)
+mesh = SubResource("BoxMesh_bottom_rail")
+surface_material_override/0 = ExtResource("2")
+
+[node name="Doorway" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.4)
+
+[node name="Shape" parent="Doorway"]
+shape = SubResource("BoxShape3D_doorway")

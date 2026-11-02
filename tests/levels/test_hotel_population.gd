@@ -1,6 +1,6 @@
 ## Tests for what is placed in the hotel: enemies, pickups and their budget,
-## save spots, persistent ids, and the placeholders for documents and the
-## puzzle, against docs/design/slice.md.
+## save spots, persistent ids, the documents and the puzzle, against
+## docs/design/slice.md.
 
 extends "res://tests/levels/hotel_level_test.gd"
 
@@ -33,9 +33,17 @@ const SAVE_SPOTS: Dictionary[StringName, float] = {
 	&"save_basement_stairs": BASEMENT_Y,
 }
 
+## slice.md's saved level flags.
+const LEVEL_FLAGS: Array[StringName] = [&"power_restored", &"doc_porter_log_read"]
+
+## Other persistent objects, by their ids in slice.md.
+const MECHANISMS: Array[StringName] = [&"obstacle_sunbeds", &"shutter_staff"]
+
 const DOCUMENT_IDS: Array[StringName] = [
 	&"doc_registration_card", &"doc_lost_property", &"doc_porter_log", &"doc_postcard"
 ]
+
+const PUZZLE_IDS: Array[StringName] = [&"puzzle_key_cabinet"]
 
 ## How far from where the player can stand something may be and still be used.
 const REACH: float = 1.5
@@ -129,14 +137,23 @@ func test_the_save_spots_are_the_ones_in_the_doc() -> void:
 	assert_eq(placed, SAVE_SPOTS)
 
 
-func test_documents_and_the_puzzle_have_placeholders() -> void:
+func test_the_documents_are_the_ones_in_the_doc() -> void:
 	var ids: Array[StringName] = []
-	for node: Node in _level.get_node("Documents").get_children():
-		ids.append(node.get_meta(&"document_id"))
+	for pickup: DocumentPickup in _documents():
+		assert_not_null(pickup.item, pickup.name)
+		if pickup.item:
+			assert_true(pickup.item.is_document(), pickup.name)
+			assert_false(pickup.item.pages.is_empty(), pickup.name)
+			assert_eq(pickup.pickup_id, pickup.item.id, pickup.name)
+			ids.append(pickup.item.id)
 	assert_eq(ids, DOCUMENT_IDS)
-	var cabinet := _level.get_node("Puzzles/PuzzleKeyCabinet") as Node3D
-	assert_eq(cabinet.get_meta(&"puzzle_id"), &"puzzle_key_cabinet")
-	assert_eq(cabinet.get_meta(&"reward_item"), &"key_basement")
+
+
+func test_the_key_cabinet_gives_the_basement_key() -> void:
+	var cabinet := _level.get_node("Puzzles/PuzzleKeyCabinet") as CombinationLockPuzzle
+	assert_eq(cabinet.puzzle_id, &"puzzle_key_cabinet")
+	assert_eq(cabinet.wheel_count(), 4)
+	assert_eq(cabinet.reward_item.id, DOOR_KEYS[&"door_basement"])
 	var prop := _level.get_node("Props/FirstFloor/KeyCabinet") as Node3D
 	assert_lt(cabinet.global_position.distance_to(prop.global_position), 1.0)
 
@@ -144,9 +161,8 @@ func test_documents_and_the_puzzle_have_placeholders() -> void:
 func test_everything_placed_can_be_reached() -> void:
 	var placed: Array[Node3D] = []
 	placed.append_array(_pickups())
-	for name: String in ["Documents", "Puzzles"]:
-		for node: Node in _level.get_node(name).get_children():
-			placed.append(node as Node3D)
+	placed.append_array(_documents())
+	placed.append(_level.get_node("Puzzles/PuzzleKeyCabinet") as Node3D)
 	for node: Node3D in placed:
 		assert_lt(_distance_from_floor(node.global_position), REACH, node.name)
 		assert_lt(node.global_position.y - _floor_of(node.global_position), 2.0, node.name)
@@ -162,4 +178,27 @@ func test_every_persistent_object_has_its_own_id() -> void:
 		# A path-based default id would break as soon as the level is rearranged.
 		assert_false(String(id).contains("/"), "%s has no explicit id" % node.name)
 		ids[id] = node
-	assert_eq(ids.size(), DOOR_IDS.size() + PICKUPS.size() + ENEMIES.size() + SAVE_SPOTS.size())
+	for flag: StringName in LEVEL_FLAGS:
+		assert_true(ids.has(flag), "%s is placed" % flag)
+	for id: StringName in MECHANISMS:
+		assert_has(ids, id)
+	assert_eq(
+		ids.size(),
+		(
+			DOOR_IDS.size()
+			+ PICKUPS.size()
+			+ DOCUMENT_IDS.size()
+			+ PUZZLE_IDS.size()
+			+ ENEMIES.size()
+			+ SAVE_SPOTS.size()
+			+ LEVEL_FLAGS.size()
+			+ MECHANISMS.size()
+		)
+	)
+
+
+func _documents() -> Array[DocumentPickup]:
+	var documents: Array[DocumentPickup] = []
+	for node: Node in _level.get_node("Documents").get_children():
+		documents.append(node as DocumentPickup)
+	return documents

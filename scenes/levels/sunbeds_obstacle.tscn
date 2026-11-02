@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/sunbeds_obstacle.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://d03i04dr5bnqh" path="res://assets/models/props/sunbed_stack/sunbed_stack.gltf" id="2"]
+
+[node name="SunbedsObstacle" type="Node3D" node_paths=PackedStringArray("stack")]
+script = ExtResource("1")
+stack = NodePath("Stack")
+prompt = "Push the sunbeds aside."
+
+[node name="Stack" parent="." instance=ExtResource("2")]
+
+[node name="Mesh" parent="Stack" index="0"]
+gi_mode = 2
+
+[editable path="Stack"]

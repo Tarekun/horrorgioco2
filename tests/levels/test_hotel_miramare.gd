@@ -94,8 +94,9 @@ func test_locked_doors_are_marked_with_their_keys() -> void:
 func test_the_ground_floor_stairs_are_blocked() -> void:
 	var door: Door = _door(&"door_stairs_gf")
 	assert_true(door.is_locked)
-	assert_eq(door.get_meta(&"blocked_by", &""), &"obstacle_sunbeds")
-	assert_not_null(_level.get_node_or_null("Props/GroundFloor/ObstacleSunbeds"))
+	var obstacle := _level.get_node_or_null("Doors/GroundFloor/ObstacleSunbeds") as SunbedsObstacle
+	assert_not_null(obstacle)
+	assert_lt(obstacle.global_position.distance_to(door.global_position), 1.0, "against the door")
 
 
 func test_the_navmesh_covers_the_player_spawn() -> void:

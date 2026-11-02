@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3]
+[gd_scene load_steps=31 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -9,7 +9,6 @@
 [ext_resource type="Script" path="res://scripts/combat/hurtbox.gd" id="6"]
 [ext_resource type="Script" path="res://scripts/combat/player_combat.gd" id="7"]
 [ext_resource type="Script" path="res://scripts/combat/hitbox.gd" id="8"]
-[ext_resource type="Resource" path="res://assets/data/weapons/wooden_plank.tres" id="9"]
 [ext_resource type="Script" path="res://scripts/combat/player_dodge.gd" id="10"]
 [ext_resource type="PackedScene" path="res://scenes/player/flashlight.tscn" id="11"]
 [ext_resource type="PackedScene" path="res://scenes/ui/damage_overlay.tscn" id="12"]
@@ -26,7 +25,6 @@
 [ext_resource type="Script" path="res://scripts/player/player_stamina_cues.gd" id="23"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory_screen.tscn" id="24"]
 [ext_resource type="Script" path="res://scripts/player/player_items.gd" id="25"]
-[ext_resource type="Resource" path="res://assets/data/items/wooden_plank.tres" id="26"]
 [ext_resource type="PackedScene" path="res://scenes/ui/save_screen.tscn" id="27"]
 [ext_resource type="PackedScene" path="res://scenes/ui/document_reader.tscn" id="28"]
 [ext_resource type="PackedScene" path="res://scenes/ui/combination_lock_screen.tscn" id="29"]
@@ -92,7 +90,6 @@ shape = SubResource("BoxShape3D_swing")
 
 [node name="PlayerCombat" type="Node" parent="." node_paths=PackedStringArray("player", "stamina_component", "model", "hitbox")]
 script = ExtResource("7")
-weapon = ExtResource("9")
 player = NodePath("..")
 stamina_component = NodePath("../StaminaComponent")
 model = NodePath("../Model")
@@ -136,7 +133,6 @@ player = NodePath("..")
 
 [node name="PlayerItems" type="Node" parent="." node_paths=PackedStringArray("player", "health_component", "combat", "inventory_screen", "document_reader")]
 script = ExtResource("25")
-starting_weapon = ExtResource("26")
 player = NodePath("..")
 health_component = NodePath("../HealthComponent")
 combat = NodePath("../PlayerCombat")

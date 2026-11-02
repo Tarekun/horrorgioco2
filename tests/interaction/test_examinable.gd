@@ -73,3 +73,16 @@ func test_the_player_reads_it_on_the_hint() -> void:
 	interaction.interact()
 	assert_eq(interaction.hint.message_label.text, "Battery low.")
 	assert_true(interaction.hint.message_label.visible)
+
+
+func test_restart_goes_back_to_the_first_line() -> void:
+	_examinable.interact(null)
+	_examinable.restart()
+	assert_true(_examinable.is_at_start())
+	assert_eq(_examinable.interact(null), "No signal.")
+
+
+func test_fewer_lines_mid_description_start_over() -> void:
+	_examinable.interact(null)
+	_examinable.lines = PackedStringArray(["Only one."])
+	assert_eq(_examinable.interact(null), "Only one.")

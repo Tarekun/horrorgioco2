@@ -15,6 +15,8 @@
 ##
 ## A dormant enemy stands still, blind and deaf, until a level event calls
 ## wake() or the player hits it; either way it wakes alerted to the player.
+## A level loading a save where the event already happened wakes it unalerted,
+## as placed.
 ##
 ## Its EnemyModel shows all this: it is fed the enemy's speed, and plays the
 ## attack, stagger, fall and get-up clips as the state changes. A downed enemy
@@ -63,6 +65,10 @@ const PLAYER_GROUP: StringName = &"player"
 @export var turn_speed: float = 360.0
 ## How far from its spawn point the enemy wanders (metres).
 @export var wander_radius: float = 6.0
+## How far the chased position must move before the enemy plans a new path
+## (metres). Planning every frame starts the path over from the closest point
+## on the navmesh each time, which holds the enemy back at a door's link.
+@export var repath_distance: float = 0.5
 
 @export_group("Attack")
 ## Distance to the target (metres) from which the enemy strikes.
@@ -182,13 +188,14 @@ func get_persistent_id() -> StringName:
 	return enemy_id
 
 
-## Wakes a dormant enemy, already alerted to the player.
-func wake() -> void:
+## Wakes a dormant enemy, already alerted to the player unless `is_alerted`
+## is false (a loaded save wakes it as placed, like any other enemy).
+func wake(is_alerted: bool = true) -> void:
 	if not is_dormant:
 		return
 	is_dormant = false
 	var player: Node3D = _get_target()
-	if player:
+	if player and is_alerted:
 		perception.alert_to(player.global_position)
 
 
@@ -259,7 +266,7 @@ func _run_state(delta: float) -> void:
 		EnemyBrain.State.WANDER:
 			_move_along_path(wander_speed, delta)
 		EnemyBrain.State.CHASE:
-			navigation_agent.target_position = perception.last_known_position
+			_chase(perception.last_known_position)
 			_move_along_path(chase_speed, delta)
 		EnemyBrain.State.ATTACK:
 			_stop()
@@ -276,6 +283,13 @@ func _run_attack(delta: float) -> void:
 		attack_hitbox.activate()
 	if previous < attack_windup + attack_active and _attack_time >= attack_windup + attack_active:
 		attack_hitbox.deactivate()
+
+
+## Heads for `point`, keeping the current path while it ends near enough.
+func _chase(point: Vector3) -> void:
+	var target_moved: float = navigation_agent.target_position.distance_to(point)
+	if navigation_agent.is_navigation_finished() or target_moved > repath_distance:
+		navigation_agent.target_position = point
 
 
 func _move_along_path(speed: float, delta: float) -> void:

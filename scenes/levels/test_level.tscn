@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
+[ext_resource type="Resource" path="res://assets/data/items/wooden_plank.tres" id="starting_weapon"]
 [ext_resource type="Environment" path="res://assets/data/atmosphere_environment.tres" id="2"]
 
 [ext_resource type="Script" path="res://scripts/audio/ambience_player.gd" id="4"]
@@ -110,3 +111,8 @@ shape = SubResource("BoxShape3D_1")
 
 [node name="Player" parent="." instance=ExtResource("1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 2)
+
+[node name="PlayerItems" parent="Player"]
+starting_weapon = ExtResource("starting_weapon")
+
+[editable path="Player"]

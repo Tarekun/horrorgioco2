@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+; Working text until #21 writes the slice's documents. The last page is the
+; puzzle clue (slice.md, "The puzzle: the key cabinet").
+
+[ext_resource type="Script" path="res://scripts/items/item_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"doc_porter_log"
+display_name = "Night porter's log"
+category = 4
+description = "The night porter's log for the closing night."
+pages = PackedStringArray("NIGHT LOG\n\n22:10  Lights out in the dining room.\n23:40  Complaint about the music from the beach. Nothing to be done.\n01:15  Last guests checked out. Hotel closed.", "03:30  Signor Luca came in. Gave him twenty-two.", "Changed the code on the key cabinet upstairs. Same as the clock in twenty-two, so I won't forget.")

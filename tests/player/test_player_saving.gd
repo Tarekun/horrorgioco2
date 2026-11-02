@@ -32,12 +32,16 @@ func test_writes_health_inventory_weapon_and_flashlight() -> void:
 	var save := SaveData.new()
 	_player.write_save(save)
 	assert_eq(save.player_health, 65.0)
-	assert_eq(
-		save.inventory,
-		{"wooden_plank": 1, "pistol_ammo": 16, "steel_pipe": 1} as Dictionary[String, int]
-	)
+	assert_eq(save.inventory, {"pistol_ammo": 16, "steel_pipe": 1} as Dictionary[String, int])
 	assert_eq(save.equipped_weapon, &"steel_pipe")
 	assert_false(save.is_flashlight_on)
+
+
+func test_an_unarmed_player_saves_no_weapon() -> void:
+	var save := SaveData.new()
+	save.equipped_weapon = &"steel_pipe"
+	_player.write_save(save)
+	assert_eq(save.equipped_weapon, &"")
 
 
 func test_writes_read_documents() -> void:

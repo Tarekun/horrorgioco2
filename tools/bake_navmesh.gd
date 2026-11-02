@@ -1,6 +1,7 @@
 ## Bakes a level's navigation mesh from its collision geometry, with the doors
-## shut, and saves it next to the other data resources. Run it again after
-## changing a level's walls, doors or solid props:
+## shut and obstacles that get moved for good (place_moved()) already moved,
+## and saves it next to the other data resources. Run it again after changing a
+## level's walls, doors or solid props:
 ##
 ##   godot --headless --path . -s res://tools/bake_navmesh.gd -- hotel_miramare
 ##
@@ -46,9 +47,16 @@ func _bake(level_path: String, output_path: String) -> bool:
 	root.add_child(level)
 	# Shut the doors that start open, so the navmesh stops at every doorway.
 	# Matched by property: naming Door would compile it, and it needs autoloads.
+	# Obstacles that are moved for good (the sunbeds) are baked where they end
+	# up: before that, the locked door they block keeps paths out anyway.
 	for node: Node in level.find_children("*", "", true, false):
 		if node.get(&"starts_open") == true:
-			(node.get(&"hinge") as Node3D).rotation.y = 0.0
+			for leaf: StringName in [&"hinge", &"second_hinge"]:
+				var hinge := node.get(leaf) as Node3D
+				if hinge:
+					hinge.rotation.y = 0.0
+		if node.has_method(&"place_moved"):
+			node.call(&"place_moved")
 
 	var navmesh := NavigationMesh.new()
 	navmesh.agent_radius = 0.5
