@@ -112,9 +112,7 @@ func test_each_examinable_is_within_reach_of_the_navmesh() -> void:
 		var examinable: Examinable = _examinable(path)
 		var position: Vector3 = examinable.global_position
 		assert_lt(_distance_from_floor(position), _interaction.interact_range, EXAMINABLES[path])
-		assert_lt(
-			position.y - _floor_of(position), _interaction.interact_height, EXAMINABLES[path]
-		)
+		assert_lt(position.y - _floor_of(position), _interaction.interact_height, EXAMINABLES[path])
 
 
 func test_each_examinable_is_picked_from_somewhere_before_the_power() -> void:
@@ -172,7 +170,11 @@ func _assert_neighbours_keep_their_spots(neighbours: Array[Interactable]) -> voi
 		var alone: int = _count_spots_picking(neighbour)
 		var name: String = str(_level.get_path_to(neighbour))
 		assert_gt(kept[neighbour], 0, name)
-		assert_gte(kept[neighbour], ceili(alone * KEPT_SPOTS), "%s: %d of %d spots" % [name, kept[neighbour], alone])
+		assert_gte(
+			kept[neighbour],
+			ceili(alone * KEPT_SPOTS),
+			"%s: %d of %d spots" % [name, kept[neighbour], alone]
+		)
 	for examinable: Node in examinables:
 		examinable.add_to_group(Interactable.GROUP)
 
@@ -196,7 +198,9 @@ func _neighbours() -> Array[Interactable]:
 		if interactable is Examinable or interactable in neighbours:
 			continue
 		for examinable: Node in examinables:
-			var offset: Vector3 = (examinable as Node3D).global_position - interactable.global_position
+			var offset: Vector3 = (
+				(examinable as Node3D).global_position - interactable.global_position
+			)
 			if absf(offset.y) < 2.5 and Vector2(offset.x, offset.z).length() < NEIGHBOUR_DISTANCE:
 				neighbours.append(interactable)
 				break
@@ -258,4 +262,3 @@ func _pick_from(spot: Vector3, toward: Vector3) -> Interactable:
 		_interaction.interact_height
 	)
 	return candidates[index] if index >= 0 else null
-
