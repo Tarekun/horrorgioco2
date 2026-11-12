@@ -16,6 +16,8 @@ const ACTIONS: Array[StringName] = [
 	&"flashlight",
 	&"pause",
 	&"inventory",
+	&"aim",
+	&"next_target",
 ]
 
 
