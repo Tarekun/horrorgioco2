@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3]
+[gd_scene load_steps=33 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -28,6 +28,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/save_screen.tscn" id="27"]
 [ext_resource type="PackedScene" path="res://scenes/ui/document_reader.tscn" id="28"]
 [ext_resource type="PackedScene" path="res://scenes/ui/combination_lock_screen.tscn" id="29"]
+[ext_resource type="Script" path="res://scripts/player/lock_on_aim.gd" id="30"]
+[ext_resource type="Script" path="res://scripts/combat/lock_on_scanner.gd" id="31"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -198,3 +200,11 @@ shape = SubResource("SphereShape3D_1")
 fov = 70.0
 
 [node name="Flashlight" parent="CameraController/SpringArm3D/Camera3D" instance=ExtResource("11")]
+
+[node name="LockOnAim" type="Node" parent="." node_paths=PackedStringArray("scanner", "camera")]
+script = ExtResource("30")
+scanner = NodePath("LockOnScanner")
+camera = NodePath("../CameraController/SpringArm3D/Camera3D")
+
+[node name="LockOnScanner" type="Node" parent="LockOnAim"]
+script = ExtResource("31")
