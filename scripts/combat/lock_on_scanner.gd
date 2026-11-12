@@ -39,7 +39,10 @@ func scan(observer: Node3D) -> Array[LockOnCandidate]:
 			continue
 		candidates.append(
 			LockOnCandidate.new(
-				enemy.global_position, _can_see(observer, enemy, excluded), _is_standing(enemy)
+				enemy.global_position,
+				_can_see(observer, enemy, excluded),
+				_is_standing(enemy),
+				enemy
 			)
 		)
 	return candidates
