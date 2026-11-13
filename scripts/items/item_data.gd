@@ -27,6 +27,8 @@ enum Category { WEAPON, AMMO, HEALING, KEY_ITEM, DOCUMENT }
 @export_group("Weapon")
 ## The melee weapon a weapon item equips.
 @export var weapon: MeleeWeapon
+## The firearm a weapon item equips (pistol, shotgun).
+@export var firearm: Firearm
 
 @export_group("Healing")
 ## Health a healing item restores.

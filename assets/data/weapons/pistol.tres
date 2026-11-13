@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="Firearm" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/firearm.gd" id="1"]
+[ext_resource type="Resource" path="res://assets/data/items/pistol_ammo.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Pistol"
+damage = 20.0
+near_chance = 0.9
+near_distance = 4.0
+far_chance = 0.35
+far_distance = 20.0
+max_range = 25.0
+steady_min = 0.75
+steady_time = 0.8
+recoil = 0.15
+shot_interval = 0.35
+magazine_size = 10
+reload_time = 1.4
+noise_radius = 25.0
+ammo_item = ExtResource("2")
