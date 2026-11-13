@@ -83,6 +83,20 @@ func test_the_pistol_lies_within_reach_of_the_spawn() -> void:
 	)
 
 
+func test_the_shotgun_lies_with_its_shells_in_the_yard() -> void:
+	var pickup := _level.get_node("Pickups/ShotgunInYard") as Pickup
+	assert_not_null(pickup)
+	assert_eq(pickup.item.id, &"shotgun")
+	assert_true(pickup.equips_on_pickup)
+	var shells := _level.get_node("Pickups/ShotgunShellsYard") as Pickup
+	assert_not_null(shells)
+	assert_lt(
+		pickup.global_position.distance_to(shells.global_position),
+		2.0,
+		"the shotgun lies with its shells, in the yard"
+	)
+
+
 func test_at_least_two_enemies_are_placed() -> void:
 	assert_gte(_level.get_node("Enemies").get_child_count(), 2)
 	assert_gte(get_tree().get_nodes_in_group(Enemy.ENEMY_GROUP).size(), 2)

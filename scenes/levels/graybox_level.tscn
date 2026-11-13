@@ -1,4 +1,4 @@
-[gd_scene load_steps=73 format=3]
+[gd_scene load_steps=74 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
 [ext_resource type="Resource" path="res://assets/data/items/wooden_plank.tres" id="starting_weapon"]
@@ -17,6 +17,7 @@
 [ext_resource type="Resource" path="res://assets/data/items/fire_axe.tres" id="14"]
 [ext_resource type="PackedScene" path="res://scenes/levels/save_spot.tscn" id="15"]
 [ext_resource type="Resource" path="res://assets/data/items/pistol.tres" id="16"]
+[ext_resource type="Resource" path="res://assets/data/items/shotgun.tres" id="17"]
 
 [sub_resource type="BoxShape3D" id="Shape_0"]
 size = Vector3(11.3, 3.0, 0.3)
@@ -748,6 +749,11 @@ item = ExtResource("14")
 [node name="PistolNearSpawn" parent="Pickups" instance=ExtResource("8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 18.5)
 item = ExtResource("16")
+equips_on_pickup = true
+
+[node name="ShotgunInYard" parent="Pickups" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, 15.2)
+item = ExtResource("17")
 equips_on_pickup = true
 
 [editable path="Player"]
