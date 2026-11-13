@@ -129,14 +129,49 @@ func test_writes_the_held_firearm_magazine() -> void:
 
 func test_reads_the_firearm_magazine() -> void:
 	var save: SaveData = _save_with(100.0, {"pistol": 1, "pistol_ammo": 20}, &"pistol")
+	save.firearm_item = &"pistol"
 	save.firearm_magazine = 5
 	_player.read_save(save)
 	assert_eq(_player.items.equipped_weapon, PISTOL)
 	assert_eq(_player.items.player_firearm.magazine, 5)
 
 
+func test_reading_updates_the_magazine_when_the_firearm_is_already_held() -> void:
+	_player.inventory.add(ROUNDS, 20)
+	_player.inventory.add(PISTOL)
+	_player.items.equip(PISTOL)
+	_player.items.player_firearm.magazine = 8
+	var save: SaveData = _save_with(100.0, {"pistol": 1, "pistol_ammo": 20}, &"pistol")
+	save.firearm_item = &"pistol"
+	save.firearm_magazine = 2
+	_player.read_save(save)
+	assert_eq(_player.items.player_firearm.magazine, 2, "not the stale 8")
+
+
+func test_the_held_firearm_is_restored_with_a_melee_weapon_equipped() -> void:
+	# The firearm stays held while the melee weapon is equipped: the save
+	# keeps both, and loading puts both back.
+	_player.inventory.add(ROUNDS, 20)
+	_player.inventory.add(PISTOL)
+	_player.inventory.add(PIPE)
+	_player.items.equip(PISTOL)
+	_player.items.equip(PIPE)
+	_player.items.player_firearm.magazine = 4
+	var save := SaveData.new()
+	_player.write_save(save)
+	assert_eq(save.equipped_weapon, &"steel_pipe")
+	assert_eq(save.firearm_item, &"pistol")
+	assert_eq(save.firearm_magazine, 4)
+	var other := PLAYER_SCENE.instantiate() as Player
+	add_child_autofree(other)
+	other.read_save(save)
+	assert_eq(other.items.equipped_weapon, PIPE)
+	assert_eq(other.items.player_firearm.current, PISTOL.firearm)
+	assert_eq(other.items.player_firearm.magazine, 4)
+
+
 func test_a_save_without_a_magazine_loads_the_magazine_full() -> void:
-	# A save made before firearms have no firearm_magazine key: the held
+	# A save made before firearms have no firearm keys: the equipped
 	# firearm starts with a full magazine.
 	var data: Dictionary = {
 		"level_path": "res://scenes/levels/graybox_level.tscn",

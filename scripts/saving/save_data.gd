@@ -38,6 +38,10 @@ var documents_read: Dictionary[String, bool] = {}
 ## Id of the weapon held, or empty.
 var equipped_weapon: StringName = &""
 
+## Id of the firearm item held, or empty. May differ from the equipped
+## weapon: the firearm stays held while a melee weapon is equipped.
+var firearm_item: StringName = &""
+
 ## Rounds left in the held firearm's magazine, or -1 when no firearm is
 ## held (and for saves made before firearms existed).
 var firearm_magazine: int = -1
@@ -61,6 +65,7 @@ func to_dict() -> Dictionary:
 			"inventory": inventory.duplicate(),
 			"documents_read": documents_read.duplicate(),
 			"equipped_weapon": String(equipped_weapon),
+			"firearm_item": String(firearm_item),
 			"firearm_magazine": firearm_magazine,
 			"is_flashlight_on": is_flashlight_on,
 		},
@@ -93,6 +98,7 @@ static func from_dict(data: Dictionary) -> SaveData:
 		if read_documents[id]:
 			save.documents_read[str(id)] = true
 	save.equipped_weapon = StringName(_get_string(player, "equipped_weapon"))
+	save.firearm_item = StringName(_get_string(player, "firearm_item"))
 	var magazine: Variant = player.get("firearm_magazine")
 	save.firearm_magazine = int(magazine) if magazine is int or magazine is float else -1
 	var flashlight: Variant = player.get("is_flashlight_on")

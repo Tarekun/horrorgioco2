@@ -144,10 +144,10 @@ func write_save(save: SaveData) -> void:
 	var weapon: ItemData = items.equipped_weapon if items else null
 	save.equipped_weapon = weapon.id if weapon else &""
 	if items and items.player_firearm != null:
-		save.firearm_magazine = items.player_firearm.magazine_for(
-			items.player_firearm.held_item_id()
-		)
+		save.firearm_item = items.player_firearm.held_item_id()
+		save.firearm_magazine = items.player_firearm.magazine_for(save.firearm_item)
 	else:
+		save.firearm_item = &""
 		save.firearm_magazine = -1
 	save.is_flashlight_on = is_lit()
 
@@ -163,12 +163,30 @@ func read_save(save: SaveData) -> void:
 		var weapon: ItemData = null
 		if not save.equipped_weapon.is_empty():
 			weapon = ItemCatalog.find(save.equipped_weapon)
-		if weapon != null and weapon.firearm != null and save.firearm_magazine >= 0:
-			items.player_firearm.restore_magazine(weapon.id, save.firearm_magazine)
 		if weapon != null:
 			items.equip(weapon)
+		_restore_held_firearm(items, weapon, save)
 	if flashlight:
 		flashlight.set_on(save.is_flashlight_on)
+
+
+## Puts back the firearm held at the moment of the save, whether or not it
+## is the equipped weapon (it stays held while a melee weapon is equipped).
+## Old saves have no firearm_item: then the held firearm was the equipped
+## weapon, if it carried one.
+func _restore_held_firearm(items: PlayerItems, weapon: ItemData, save: SaveData) -> void:
+	if items.player_firearm == null:
+		return
+	var firearm_item: ItemData = null
+	if not save.firearm_item.is_empty():
+		firearm_item = ItemCatalog.find(save.firearm_item)
+	if firearm_item == null and weapon != null and weapon.firearm != null:
+		firearm_item = weapon
+	if firearm_item != null and save.firearm_magazine >= 0:
+		items.player_firearm.restore_magazine(firearm_item.id, save.firearm_magazine)
+	items.player_firearm.set_item(firearm_item)
+	if firearm_item != null and save.firearm_magazine >= 0:
+		items.player_firearm.magazine = save.firearm_magazine
 
 
 ## Puts the player at `marker`, facing its way, with the camera behind.
