@@ -29,6 +29,7 @@ const FULL_HEALTH_MESSAGE: String = "You don't need that right now."
 @export var combat: PlayerCombat
 @export var inventory_screen: InventoryScreen
 @export var document_reader: DocumentReader
+@export var player_firearm: PlayerFirearm
 
 ## The weapon item held, or null.
 var equipped_weapon: ItemData
@@ -44,14 +45,22 @@ func _ready() -> void:
 		equip(starting_weapon)
 
 
-## Equips the weapon `item` from the inventory. Returns false if it isn't held
-## or isn't a weapon.
+## Equips the weapon `item` from the inventory, melee or firearm. Returns
+## false if it isn't held or isn't a weapon. Equipping a firearm puts the
+## melee weapon away and hands the item to the PlayerFirearm; equipping a
+## melee weapon leaves the held firearm as it is.
 func equip(item: ItemData) -> bool:
-	if item == null or item.weapon == null or not player.inventory.has(item):
+	if item == null or (item.weapon == null and item.firearm == null):
+		return false
+	if not player.inventory.has(item):
 		return false
 	if item != equipped_weapon:
 		equipped_weapon = item
-		combat.equip(item.weapon)
+		if item.firearm != null:
+			combat.equip(null)
+			player_firearm.set_item(item)
+		else:
+			combat.equip(item.weapon)
 		inventory_screen.set_equipped(item)
 		weapon_equipped.emit(item)
 	return true

@@ -177,9 +177,10 @@ func is_in_recovery() -> bool:
 	return is_swinging and _swing_time >= _swing_duration * weapon.active_end
 
 
-## Holds `new_weapon` from now on, ending any attack in progress.
+## Holds `new_weapon` from now on, ending any attack in progress. Passing
+## null puts the weapon away.
 func equip(new_weapon: MeleeWeapon) -> void:
-	if new_weapon == null or new_weapon == weapon:
+	if new_weapon == weapon:
 		return
 	interrupt()
 	weapon = new_weapon

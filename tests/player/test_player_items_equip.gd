@@ -7,10 +7,12 @@ const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
 const PLANK: ItemData = preload("res://assets/data/items/wooden_plank.tres")
 const PIPE: ItemData = preload("res://assets/data/items/steel_pipe.tres")
 const AXE: ItemData = preload("res://assets/data/items/fire_axe.tres")
+const PISTOL: ItemData = preload("res://assets/data/items/pistol.tres")
 
 var _player: Player
 var _items: PlayerItems
 var _combat: PlayerCombat
+var _firearm: PlayerFirearm
 var _screen: InventoryScreen
 
 
@@ -20,6 +22,7 @@ func before_each() -> void:
 	_items.starting_weapon = PLANK
 	add_child_autofree(_player)
 	_combat = _player.get_node("PlayerCombat") as PlayerCombat
+	_firearm = _player.get_node("PlayerFirearm") as PlayerFirearm
 	_screen = _player.get_node("InventoryScreen") as InventoryScreen
 	await get_tree().process_frame
 
@@ -94,3 +97,32 @@ func test_equip_is_off_for_the_weapon_held() -> void:
 	assert_true(_screen.equip_button.disabled)
 	_screen.select_item(PIPE)
 	assert_false(_screen.equip_button.disabled)
+
+
+# --- Firearms ---
+
+
+func test_equipping_a_firearm_puts_the_melee_away_and_holds_it() -> void:
+	_player.inventory.add(PISTOL)
+	assert_true(_items.equip(PISTOL))
+	assert_eq(_items.equipped_weapon, PISTOL)
+	assert_null(_combat.weapon, "the melee weapon is put away")
+	assert_eq(_firearm.current, PISTOL.firearm)
+	assert_eq(_firearm.magazine, 10, "the held firearm starts full")
+
+
+func test_equipping_a_melee_weapon_keeps_the_held_firearm() -> void:
+	_player.inventory.add(PISTOL)
+	_player.inventory.add(PIPE)
+	_items.equip(PISTOL)
+	_items.equip(PIPE)
+	assert_eq(_combat.weapon, PIPE.weapon)
+	assert_eq(_firearm.current, PISTOL.firearm, "the firearm stays held")
+
+
+func test_the_ammo_counter_is_hidden_when_not_aiming() -> void:
+	var counter := _player.get_node("AmmoCounter") as AmmoCounter
+	assert_not_null(counter)
+	_player.inventory.add(PISTOL)
+	_items.equip(PISTOL)
+	assert_false(counter.shows_count)
