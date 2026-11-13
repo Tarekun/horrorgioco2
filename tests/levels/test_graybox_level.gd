@@ -70,6 +70,19 @@ func test_player_spawns_at_the_spawn_point() -> void:
 	)
 
 
+func test_the_pistol_lies_within_reach_of_the_spawn() -> void:
+	var pickup := _level.get_node("Pickups/PistolNearSpawn") as Pickup
+	assert_not_null(pickup)
+	assert_eq(pickup.item.id, &"pistol")
+	assert_true(pickup.equips_on_pickup)
+	var player := _level.get_node("Player") as Player
+	assert_lt(
+		pickup.global_position.distance_to(player.global_position),
+		3.0,
+		"the pistol is close enough to pick up on arrival"
+	)
+
+
 func test_at_least_two_enemies_are_placed() -> void:
 	assert_gte(_level.get_node("Enemies").get_child_count(), 2)
 	assert_gte(get_tree().get_nodes_in_group(Enemy.ENEMY_GROUP).size(), 2)

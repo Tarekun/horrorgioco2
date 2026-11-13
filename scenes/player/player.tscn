@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3]
+[gd_scene load_steps=35 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/camera_controller.gd" id="2"]
@@ -30,6 +30,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/combination_lock_screen.tscn" id="29"]
 [ext_resource type="Script" path="res://scripts/player/lock_on_aim.gd" id="30"]
 [ext_resource type="Script" path="res://scripts/combat/lock_on_scanner.gd" id="31"]
+[ext_resource type="Script" path="res://scripts/combat/player_firearm.gd" id="32"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ammo_counter.tscn" id="33"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.35
@@ -133,13 +135,22 @@ player = NodePath("..")
 [node name="DocumentReader" parent="." node_paths=PackedStringArray("player") instance=ExtResource("28")]
 player = NodePath("..")
 
-[node name="PlayerItems" type="Node" parent="." node_paths=PackedStringArray("player", "health_component", "combat", "inventory_screen", "document_reader")]
+[node name="AmmoCounter" parent="." instance=ExtResource("33")]
+
+[node name="PlayerFirearm" type="Node" parent="." node_paths=PackedStringArray("player", "aim", "ammo_counter")]
+script = ExtResource("32")
+player = NodePath("..")
+aim = NodePath("../LockOnAim")
+ammo_counter = NodePath("../AmmoCounter")
+
+[node name="PlayerItems" type="Node" parent="." node_paths=PackedStringArray("player", "health_component", "combat", "inventory_screen", "document_reader", "player_firearm")]
 script = ExtResource("25")
 player = NodePath("..")
 health_component = NodePath("../HealthComponent")
 combat = NodePath("../PlayerCombat")
 inventory_screen = NodePath("../InventoryScreen")
 document_reader = NodePath("../DocumentReader")
+player_firearm = NodePath("../PlayerFirearm")
 
 [node name="HealthOverlay" parent="." instance=ExtResource("19")]
 
