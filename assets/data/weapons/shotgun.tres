@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="Firearm" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/firearm.gd" id="1"]
+[ext_resource type="Resource" path="res://assets/data/items/shotgun_shells.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Shotgun"
+pellets = 8
+knockdown_pellets = 5
+damage = 8.0
+near_chance = 0.9
+near_distance = 3.0
+far_chance = 0.15
+far_distance = 12.0
+max_range = 15.0
+steady_min = 0.8
+steady_time = 0.6
+recoil = 0.3
+shot_interval = 1.0
+magazine_size = 6
+reload_time = 0.6
+per_shell_reload = true
+noise_radius = 30.0
+ammo_item = ExtResource("2")

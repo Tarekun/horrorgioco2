@@ -12,7 +12,15 @@ extends Resource
 
 @export var display_name: String = "Pistol"
 
-## Damage of each shot that hits.
+## Pellets per shot; a single-round firearm is one. The shotgun's spread
+## rolls each pellet separately and does `damage` per pellet that hits.
+@export var pellets: int = 1
+
+## Pellets that must hit one standard enemy for it to be knocked down;
+## 0 for none (the pistol).
+@export var knockdown_pellets: int = 0
+
+## Damage of each pellet that hits.
 @export var damage: float = 20.0
 
 ## Hit chance at or inside the near distance, and at the far distance.
@@ -33,9 +41,13 @@ extends Resource
 ## Seconds between shots.
 @export var shot_interval: float = 0.35
 
-## Rounds per magazine, and seconds a full reload takes.
+## Rounds per magazine, and seconds a reload takes. With
+## `per_shell_reload` (the shotgun) it is one shell at a time, interruptible
+## by firing; otherwise (the pistol) it is the whole magazine in one fixed
+## time.
 @export var magazine_size: int = 10
 @export var reload_time: float = 1.4
+@export var per_shell_reload: bool = false
 
 ## Radius of the noise event each shot makes (25 m for the pistol,
 ## NoiseEvent.PISTOL_SHOT_RADIUS).
