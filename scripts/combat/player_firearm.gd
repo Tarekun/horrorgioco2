@@ -46,8 +46,15 @@ var rng: RandomNumberGenerator
 
 ## The firearm held, or null.
 var current: Firearm = null
-## Rounds left in the magazine.
-var magazine: int = 0
+## Rounds left in the magazine; writing keeps the per-item memory in sync.
+var magazine: int = 0:
+	get:
+		return _magazine
+	set(value):
+		_magazine = value
+		if _current_item_id != &"":
+			_magazines[_current_item_id] = value
+
 ## True while a reload runs.
 var is_reloading: bool = false
 
@@ -57,6 +64,7 @@ var _reload_left: float = 0.0
 ## Magazine contents per weapon item id, so re-equipping keeps the rounds.
 var _magazines: Dictionary[StringName, int] = {}
 var _current_item_id: StringName = &""
+var _magazine: int = 0
 
 
 func _ready() -> void:
@@ -113,7 +121,6 @@ func set_item(item: ItemData) -> void:
 	_current_item_id = item.id
 	var stored: int = _magazines.get(item.id, -1)
 	magazine = current.magazine_size if stored < 0 else stored
-	_magazines[item.id] = magazine
 	current.apply_to(hit_chance)
 	_update_counter()
 
@@ -136,7 +143,6 @@ func try_fire() -> void:
 			start_reload()
 		return
 	magazine -= 1
-	_magazines[_current_item_id] = magazine
 	_cooldown = current.shot_interval
 	_fire_shot()
 	_update_counter()
@@ -152,6 +158,11 @@ func start_reload() -> void:
 		return
 	is_reloading = true
 	_reload_left = current.reload_time
+
+
+## The item id of the firearm held, or empty when none is held.
+func held_item_id() -> StringName:
+	return _current_item_id
 
 
 ## The magazine this session has stored for the weapon item `item_id`, or
@@ -208,7 +219,6 @@ func _finish_reload() -> void:
 	magazine += take
 	if take > 0:
 		player.inventory.remove(current.ammo_item, take)
-	_magazines[_current_item_id] = magazine
 	_update_counter()
 	reload_finished.emit(take)
 

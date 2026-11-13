@@ -6,7 +6,8 @@
 ## play time and timestamp are what a save slot shows.
 ##
 ## to_dict() and from_dict() turn it into plain, JSON-safe data and back.
-## Firearms will add magazine and reserve ammo here.
+## The held firearm's magazine is saved in firearm_magazine; the reserve
+## ammo is just the inventory count of the firearm's ammo item.
 
 class_name SaveData
 extends RefCounted
@@ -37,6 +38,10 @@ var documents_read: Dictionary[String, bool] = {}
 ## Id of the weapon held, or empty.
 var equipped_weapon: StringName = &""
 
+## Rounds left in the held firearm's magazine, or -1 when no firearm is
+## held (and for saves made before firearms existed).
+var firearm_magazine: int = -1
+
 var is_flashlight_on: bool = true
 
 var world := WorldState.new()
@@ -56,6 +61,7 @@ func to_dict() -> Dictionary:
 			"inventory": inventory.duplicate(),
 			"documents_read": documents_read.duplicate(),
 			"equipped_weapon": String(equipped_weapon),
+			"firearm_magazine": firearm_magazine,
 			"is_flashlight_on": is_flashlight_on,
 		},
 		"world": world.to_dict(),
@@ -87,6 +93,8 @@ static func from_dict(data: Dictionary) -> SaveData:
 		if read_documents[id]:
 			save.documents_read[str(id)] = true
 	save.equipped_weapon = StringName(_get_string(player, "equipped_weapon"))
+	var magazine: Variant = player.get("firearm_magazine")
+	save.firearm_magazine = int(magazine) if magazine is int or magazine is float else -1
 	var flashlight: Variant = player.get("is_flashlight_on")
 	save.is_flashlight_on = flashlight if flashlight is bool else true
 	save.world.from_dict(_get_dictionary(data, "world"))

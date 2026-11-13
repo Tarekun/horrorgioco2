@@ -136,25 +136,37 @@ func is_lit() -> bool:
 
 
 ## Puts the player's part of a save in `save`: health, inventory, the weapon
-## held and the flashlight.
+## held, the held firearm's magazine and the flashlight.
 func write_save(save: SaveData) -> void:
 	save.player_health = health_component.current_health
 	save.inventory = inventory.to_dict()
 	save.documents_read = document_log.to_dict()
 	var weapon: ItemData = items.equipped_weapon if items else null
 	save.equipped_weapon = weapon.id if weapon else &""
+	if items and items.player_firearm != null:
+		save.firearm_magazine = items.player_firearm.magazine_for(
+			items.player_firearm.held_item_id()
+		)
+	else:
+		save.firearm_magazine = -1
 	save.is_flashlight_on = is_lit()
 
 
-## Takes back the player's part of `save`: health, inventory, the weapon held
-## and the flashlight.
+## Takes back the player's part of `save`: health, inventory, the weapon
+## held, the held firearm's magazine and the flashlight.
 func read_save(save: SaveData) -> void:
 	# Revive sets the health whether or not the player is down.
 	health_component.revive(save.player_health)
 	inventory.from_dict(save.inventory)
 	document_log.from_dict(save.documents_read)
-	if items and not save.equipped_weapon.is_empty():
-		items.equip(ItemCatalog.find(save.equipped_weapon))
+	if items:
+		var weapon: ItemData = null
+		if not save.equipped_weapon.is_empty():
+			weapon = ItemCatalog.find(save.equipped_weapon)
+		if weapon != null and weapon.firearm != null and save.firearm_magazine >= 0:
+			items.player_firearm.restore_magazine(weapon.id, save.firearm_magazine)
+		if weapon != null:
+			items.equip(weapon)
 	if flashlight:
 		flashlight.set_on(save.is_flashlight_on)
 
