@@ -175,6 +175,17 @@ func test_a_shot_subtracts_recoil_floored_at_steady_min() -> void:
 	assert_almost_eq(hit_chance.steadiness, 0.75, 0.0001)
 	hit_chance.fire(4.0)
 	assert_almost_eq(hit_chance.steadiness, 0.75, 0.0001)
+	# The shotgun spread rolls each pellet without applying the recoil and
+	# takes it once, after all the pellets: the steadiness a single-round
+	# fire() leaves.
+	var spread: HitChance = _pistol()
+	_steady(spread)
+	assert_true(spread.fire_pellet(5.0))  # 0.107 < 0.8656
+	assert_true(spread.fire_pellet(5.0))  # 0.452 < 0.8656
+	assert_true(spread.fire_pellet(5.0))  # 0.021 < 0.8656
+	assert_almost_eq(spread.steadiness, 1.0, 0.0001)
+	spread.apply_recoil()
+	assert_almost_eq(spread.steadiness, 0.85, 0.0001)
 
 
 func test_switching_targets_resets_the_steadiness() -> void:

@@ -112,6 +112,37 @@ func chance(
 	return Scarcity.current().clamp_hit_chance(p)
 
 
+## Rolls one pellet of a spread shot at `distance` metres with the given
+## conditions, consuming one randf() of the injected generator. The roll
+## leaves the steadiness alone: a spread shot takes its recoil once, after
+## all its pellets (apply_recoil()).
+func fire_pellet(
+	distance: float,
+	is_player_moving: bool = false,
+	is_target_moving: bool = false,
+	is_target_impaired: bool = false,
+	is_in_danger: bool = false,
+	is_exhausted: bool = false
+) -> bool:
+	return (
+		_rng.randf()
+		< chance(
+			distance,
+			is_player_moving,
+			is_target_moving,
+			is_target_impaired,
+			is_in_danger,
+			is_exhausted
+		)
+	)
+
+
+## Drops the steadiness by the recoil, floored at steady_min. Called once
+## per shot; a spread shot calls it after all its pellets.
+func apply_recoil() -> void:
+	_steadiness = maxf(steady_min, _steadiness - recoil)
+
+
 ## Rolls a shot at `distance` metres with the given conditions, consuming
 ## one randf() of the injected generator. The shot rolls with the
 ## steadiness before the recoil, and the recoil then drops the steadiness
@@ -124,18 +155,10 @@ func fire(
 	is_in_danger: bool = false,
 	is_exhausted: bool = false
 ) -> bool:
-	var hit: bool = (
-		_rng.randf()
-		< chance(
-			distance,
-			is_player_moving,
-			is_target_moving,
-			is_target_impaired,
-			is_in_danger,
-			is_exhausted
-		)
+	var hit: bool = fire_pellet(
+		distance, is_player_moving, is_target_moving, is_target_impaired, is_in_danger, is_exhausted
 	)
-	_steadiness = maxf(steady_min, _steadiness - recoil)
+	apply_recoil()
 	return hit
 
 

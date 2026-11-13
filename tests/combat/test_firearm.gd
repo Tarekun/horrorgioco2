@@ -8,6 +8,9 @@ extends GutTest
 func test_defaults_are_the_pistol_of_the_spec_table() -> void:
 	var firearm := Firearm.new()
 	assert_eq(firearm.display_name, "Pistol")
+	assert_eq(firearm.pellets, 1)
+	assert_eq(firearm.knockdown_pellets, 0)
+	assert_eq(firearm.per_shell_reload, false)
 	assert_eq(firearm.damage, 20.0)
 	assert_eq(firearm.near_chance, 0.90)
 	assert_eq(firearm.near_distance, 4.0)
@@ -44,6 +47,44 @@ func test_apply_to_copies_the_chance_values_into_the_hit_chance() -> void:
 	assert_eq(hit_chance.steady_min, 0.8)
 	assert_eq(hit_chance.steady_time, 0.6)
 	assert_eq(hit_chance.recoil, 0.3)
+
+
+func test_the_shotgun_resource_in_the_data_folder_is_the_shotgun() -> void:
+	var firearm := load("res://assets/data/weapons/shotgun.tres") as Firearm
+	assert_true(firearm != null, "the shotgun resource must load as a Firearm")
+	if firearm == null:
+		return
+	assert_eq(firearm.display_name, "Shotgun")
+	assert_eq(firearm.pellets, 8)
+	assert_eq(firearm.knockdown_pellets, 5)
+	assert_eq(firearm.damage, 8.0)
+	assert_eq(firearm.near_chance, 0.90)
+	assert_eq(firearm.near_distance, 3.0)
+	assert_eq(firearm.far_chance, 0.15)
+	assert_eq(firearm.far_distance, 12.0)
+	assert_eq(firearm.max_range, 15.0)
+	assert_eq(firearm.steady_min, 0.80)
+	assert_eq(firearm.steady_time, 0.6)
+	assert_eq(firearm.recoil, 0.30)
+	assert_eq(firearm.shot_interval, 1.0)
+	assert_eq(firearm.magazine_size, 6)
+	assert_eq(firearm.reload_time, 0.6)
+	assert_true(firearm.per_shell_reload)
+	assert_eq(firearm.noise_radius, 30.0)
+	assert_true(firearm.ammo_item != null)
+	if firearm.ammo_item != null:
+		assert_eq(firearm.ammo_item.id, &"shotgun_shells")
+
+
+func test_the_shotgun_item_equips_the_shotgun() -> void:
+	var item := load("res://assets/data/items/shotgun.tres") as ItemData
+	assert_true(item != null, "the shotgun item must load")
+	if item == null:
+		return
+	assert_eq(item.id, &"shotgun")
+	assert_eq(item.category, ItemData.Category.WEAPON)
+	assert_true(item.is_equippable())
+	assert_not_null(item.firearm)
 
 
 func test_the_pistol_resource_in_the_data_folder_is_the_pistol() -> void:
