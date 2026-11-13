@@ -11,6 +11,7 @@ extends GutTest
 
 const TEST_GROUP: StringName = &"player_firearm_test_enemies"
 const PISTOL_ITEM_PATH: String = "res://assets/data/items/pistol.tres"
+const SHOTGUN_ITEM_PATH: String = "res://assets/data/items/shotgun.tres"
 const PLANK_ITEM_PATH: String = "res://assets/data/items/wooden_plank.tres"
 
 ## Seed whose first draw (0.1071, pinned in test_hit_chance.gd) is under the
@@ -37,6 +38,19 @@ class _Ear:
 
 	func hear_noise(_position: Vector3, radius: float) -> void:
 		last_radius = radius
+
+
+## A standard-enemy stand-in: health plus the knock_down() the shotgun's
+## pellet count calls.
+class _PunchBag:
+	extends Node3D
+	var knockdowns: int = 0
+
+	func _init() -> void:
+		add_child(HealthComponent.new())
+
+	func knock_down() -> void:
+		knockdowns += 1
 
 
 var _camera: Camera3D
@@ -96,6 +110,23 @@ func _equip_pistol(reserve: int) -> void:
 	if reserve > 0:
 		_player.inventory.add(item.firearm.ammo_item, reserve)
 	_firearm.set_item(item)
+
+
+## Gives the player reserve shotgun shells and holds the shotgun.
+func _equip_shotgun(reserve: int) -> void:
+	var item := load(SHOTGUN_ITEM_PATH) as ItemData
+	if reserve > 0:
+		_player.inventory.add(item.firearm.ammo_item, reserve)
+	_firearm.set_item(item)
+
+
+## Spawns the knockdown stand-in straight ahead, `distance` metres away.
+func _add_bag(distance: float) -> _PunchBag:
+	var bag := _PunchBag.new()
+	bag.position = Vector3(0.0, 0.0, -distance)
+	add_child_autofree(bag)
+	bag.add_to_group(TEST_GROUP)
+	return bag
 
 
 ## Spawns a plain Node3D enemy with a HealthComponent child, `angle_deg`
@@ -284,3 +315,71 @@ func test_the_count_shows_only_while_aiming() -> void:
 	assert_eq(_counter._label.text, "9 / 24")
 	_aim.stop_aiming()
 	assert_false(_counter.shows_count)
+
+
+# --- The shotgun ---
+
+
+func test_the_spread_hits_pellet_by_pellet_and_knocks_the_target_down() -> void:
+	_equip_shotgun(10)
+	var bag := _add_bag(3.0)
+	await _frames(2)
+	_aim.start_aiming()
+	await _frames(2)
+	assert_eq(_aim.locked_target, bag)
+	assert_eq(_aim.aim_range, 15.0, "the shotgun's maximum range sets the aim range")
+	_firearm.try_fire()
+	# At 3 m the chance per pellet is 0.9 × 0.8 = 0.72; the first eight draws
+	# of seed 1234 hit six times: 6 × 8 damage, and 5 or more pellets knock a
+	# standard enemy down.
+	assert_eq(_health_of(bag).current_health, 52.0)
+	assert_eq(bag.knockdowns, 1, "five or more pellets knock the standard enemy down")
+	assert_eq(_firearm.magazine, 5)
+	assert_eq(_ear.last_radius, 30.0, "every shot makes the shotgun's noise")
+	assert_signal_emitted_with_parameters(_firearm, "shot_fired", [true])
+	_aim.stop_aiming()
+	var plank := load(PLANK_ITEM_PATH) as ItemData
+	_firearm.set_item(plank)
+	assert_eq(_aim.aim_range, 25.0, "putting the shotgun away restores the aim range")
+
+
+func test_a_spread_with_too_few_hits_does_not_knock_down() -> void:
+	_equip_shotgun(10)
+	var bag := _add_bag(6.0)
+	await _frames(2)
+	_aim.start_aiming()
+	await _frames(2)
+	_firearm.try_fire()
+	# At 6 m the chance per pellet is 0.65 × 0.8 = 0.52; the first eight draws
+	# of seed 1234 hit three times: damage without the knockdown.
+	assert_eq(_health_of(bag).current_health, 76.0)
+	assert_eq(bag.knockdowns, 0)
+	assert_signal_emitted_with_parameters(_firearm, "shot_fired", [true])
+	_aim.stop_aiming()
+
+
+func test_the_shotgun_reloads_one_shell_at_a_time_and_a_shot_interrupts_it() -> void:
+	_equip_shotgun(10)
+	# One shell per 0.6 s; a full magazine ends the reload.
+	_firearm.magazine = 5
+	_firearm.start_reload()
+	assert_true(_firearm.is_reloading)
+	_firearm.tick(0.6)
+	assert_eq(_firearm.magazine, 6, "one shell in")
+	assert_false(_firearm.is_reloading, "a full magazine ends the per-shell reload")
+	assert_signal_emitted_with_parameters(_firearm, "reload_finished", [1])
+	# A shot between shells interrupts the pump.
+	_firearm.magazine = 1
+	_aim.start_aiming()
+	await _frames(2)
+	_firearm.start_reload()
+	_firearm.tick(0.6)
+	assert_eq(_firearm.magazine, 2, "the first shell is in")
+	assert_true(_firearm.is_reloading)
+	_firearm.try_fire()
+	assert_eq(_firearm.magazine, 1, "the shot spends the loaded shell")
+	assert_false(_firearm.is_reloading, "the shot interrupts the reload")
+	_firearm.tick(1.2)
+	assert_eq(_firearm.magazine, 1, "no further shells after the interruption")
+	assert_eq(_player.inventory.count(_firearm.current.ammo_item), 8, "only two shells were drawn")
+	_aim.stop_aiming()

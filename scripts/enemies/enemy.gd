@@ -375,9 +375,19 @@ func _on_hit_received(hit: HitData, damage_dealt: float) -> void:
 	if hit.attacker:
 		perception.alert_to(hit.attacker.global_position)
 	if hit.causes_knockdown:
-		brain.knock_down(_roll_downed_duration())
+		knock_down()
 	elif hit.causes_stagger:
 		brain.stagger()
+
+
+## Falls as if hit by a knockdown blow, with the usual downed duration
+## roll. Melee knockdown hits and the shotgun's pellet count both route
+## through here.
+func knock_down() -> void:
+	if health_component.is_dead or brain.is_dead():
+		return
+	wake()
+	brain.knock_down(_roll_downed_duration())
 
 
 func _on_died() -> void:

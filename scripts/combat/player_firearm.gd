@@ -5,11 +5,15 @@
 ## of the LockOnAim. A hit damages the target; a miss strikes the
 ## environment near the target (a spark) and never the target itself. With
 ## no locked target the shot strikes whatever the camera-forward ray meets.
-## Every shot makes the firearm's noise event.
+## The shotgun rolls its shot once per pellet: each pellet that hits does
+## the pellet damage, and enough pellets on one standard enemy knock it
+## down. Every shot makes the firearm's noise event.
 ##
 ## The magazine and the reserve (the ammo item in the inventory) are tracked
-## separately. Reloading is the fixed reload_time of the firearm: press
-## `reload`, or try to fire with an empty magazine while reserve remains.
+## separately. A reload starts on `reload`, or on trying to fire with an
+## empty magazine while reserve remains, and takes the firearm's
+## reload_time: once for the whole magazine (the pistol), or one shell at a
+## time (the shotgun), interruptible by firing between shells.
 ## While aiming, the magazine count is shown on the AmmoCounter; nothing is
 ## shown when not aiming.
 ##
@@ -32,6 +36,10 @@ const MISS_OFFSET: float = 0.5
 ## How far a shot with no locked target travels before it is deemed to hit
 ## nothing (metres).
 const MAX_TRAVEL: float = 10.0
+
+## The aim range a bare LockOnAim scans with; set_item() switches it to the
+## held firearm's maximum range, and _clear() puts it back.
+const DEFAULT_AIM_RANGE: float = 25.0
 
 ## The player that carries the reserve ammo and is the shot's attacker.
 @export var player: Player
@@ -61,6 +69,8 @@ var is_reloading: bool = false
 var hit_chance: HitChance
 var _cooldown: float = 0.0
 var _reload_left: float = 0.0
+## Rounds loaded by the reload now running, reported when it ends.
+var _reload_loaded: int = 0
 ## Magazine contents per weapon item id, so re-equipping keeps the rounds.
 var _magazines: Dictionary[StringName, int] = {}
 var _current_item_id: StringName = &""
@@ -103,7 +113,7 @@ func tick(delta: float) -> void:
 	if is_reloading:
 		_reload_left -= delta
 		if _reload_left <= 0.0:
-			_finish_reload()
+			_advance_reload()
 
 
 ## Holds the firearm of `item` from now on (called when the item is
@@ -122,6 +132,8 @@ func set_item(item: ItemData) -> void:
 	var stored: int = _magazines.get(item.id, -1)
 	magazine = current.magazine_size if stored < 0 else stored
 	current.apply_to(hit_chance)
+	if aim != null:
+		aim.aim_range = current.max_range
 	_update_counter()
 
 
@@ -134,10 +146,15 @@ func reserve() -> int:
 
 ## Fires one shot when it can. With an empty magazine and reserve left,
 ## starts the reload instead (the spec's firing-empty trigger); with no
-## reserve, nothing happens.
+## reserve, nothing happens. A shot fired while a per-shell reload is
+## between shells interrupts it.
 func try_fire() -> void:
-	if current == null or aim == null or not aim.is_aiming or is_reloading:
+	if current == null or aim == null or not aim.is_aiming:
 		return
+	if is_reloading and magazine <= 0:
+		return  # A shell is still in the tube; the reload goes on.
+	if is_reloading:
+		_cancel_reload()  # The shot takes priority over the pump.
 	if _cooldown > 0.0 or magazine <= 0:
 		if magazine <= 0 and reserve() > 0:
 			start_reload()
@@ -149,14 +166,14 @@ func try_fire() -> void:
 
 
 ## Starts a reload: only with a held firearm, a short magazine and reserve
-## left. The pistol's reload is a fixed time; it can be cut short only by
-## putting the firearm away.
+## left.
 func start_reload() -> void:
 	if current == null or is_reloading:
 		return
 	if magazine >= current.magazine_size or reserve() <= 0:
 		return
 	is_reloading = true
+	_reload_loaded = 0
 	_reload_left = current.reload_time
 
 
@@ -190,37 +207,67 @@ static func miss_impact_point(target_position: Vector3, rng: RandomNumberGenerat
 ## target, or strikes the environment along the camera forward with none,
 ## and makes the shot's noise event.
 func _fire_shot() -> void:
-	var hit: bool = false
 	var target: Node3D = aim.locked_target
-	if target != null:
-		var distance: float = _camera_position().distance_to(target.global_position)
-		hit = hit_chance.fire(
+	var hit: bool = _fire_at_target(target) if target != null else false
+	if target == null:
+		_spawn_impact(_first_world_hit(_camera_position(), aim.get_aim_direction()))
+	NoiseEvent.emit_noise(get_tree(), _player_position(), current.noise_radius)
+	shot_fired.emit(hit)
+
+
+## Rolls the shot at the target: once per pellet, with each pellet that
+## hits doing the pellet damage. Enough pellets on one standard enemy
+## knock it down; a shot with no pellets hit strikes the environment near
+## the target instead.
+func _fire_at_target(target: Node3D) -> bool:
+	var distance: float = _camera_position().distance_to(target.global_position)
+	var hits: int = 0
+	for _pellet: int in range(current.pellets):
+		if hit_chance.fire_pellet(
 			distance,
 			_player_is_moving(),
 			_target_is_moving(target),
 			_target_is_impaired(target),
 			_player_in_danger(),
 			_player_is_exhausted()
-		)
-		if hit:
+		):
+			hits += 1
 			_damage_target(target)
-		else:
-			_spawn_impact(miss_impact_point(target.global_position, rng))
-	else:
-		_spawn_impact(_first_world_hit(_camera_position(), aim.get_aim_direction()))
-	NoiseEvent.emit_noise(get_tree(), _player_position(), current.noise_radius)
-	shot_fired.emit(hit)
+	# The spread takes its recoil once, after all its pellets.
+	hit_chance.apply_recoil()
+	if hits == 0:
+		_spawn_impact(miss_impact_point(target.global_position, rng))
+		return false
+	if current.knockdown_pellets > 0 and hits >= current.knockdown_pellets:
+		_knock_down_target(target)
+	return true
 
 
-## Loads reserve rounds into the magazine and reports them.
-func _finish_reload() -> void:
-	is_reloading = false
-	var take: int = mini(current.magazine_size - magazine, reserve())
+## Loads the reserve rounds the reload step is for: one shell for the
+## per-shell reload (the shotgun), the rest of the magazine for the fixed
+## one (the pistol). The per-shell reload keeps stepping while the magazine
+## is not full and the reserve lasts.
+func _advance_reload() -> void:
+	var room: int = current.magazine_size - magazine
+	if room <= 0 or reserve() <= 0:
+		_end_reload()
+		return
+	var take: int = mini(room, reserve())
+	if current.per_shell_reload:
+		take = mini(take, 1)
 	magazine += take
-	if take > 0:
-		player.inventory.remove(current.ammo_item, take)
+	player.inventory.remove(current.ammo_item, take)
+	_reload_loaded += take
 	_update_counter()
-	reload_finished.emit(take)
+	if current.per_shell_reload and magazine < current.magazine_size and reserve() > 0:
+		_reload_left = current.reload_time
+		return
+	_end_reload()
+
+
+func _end_reload() -> void:
+	is_reloading = false
+	reload_finished.emit(_reload_loaded)
 
 
 ## Damages the target's health, found among its children.
@@ -228,6 +275,12 @@ func _damage_target(target: Node3D) -> void:
 	var health := _find_health(target)
 	if health != null and player != null:
 		health.take_damage(current.damage, player)
+
+
+## Knocks the target down when it can be knocked (the standard enemies).
+func _knock_down_target(target: Node3D) -> void:
+	if target.has_method(&"knock_down"):
+		target.call(&"knock_down")
 
 
 func _find_health(target: Node3D) -> HealthComponent:
@@ -324,10 +377,14 @@ func _cancel_reload() -> void:
 
 
 func _clear() -> void:
+	if current == null:
+		return
 	_cancel_reload()
 	current = null
 	_current_item_id = &""
 	magazine = 0
+	if aim != null:
+		aim.aim_range = DEFAULT_AIM_RANGE
 	_update_counter()
 
 
